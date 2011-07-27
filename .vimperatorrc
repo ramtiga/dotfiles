@@ -1,0 +1,40 @@
+" ブラウザのタイトル
+set titlestring=Firefox
+
+" メニューバー、ツールバーなどを表示
+set guioptions=mrbTB
+
+" beepのかわりに、visualbellをつかう。
+set visualbell
+
+" 選択文字列ののコピーを <C-c> に割り当て
+map <C-c> Y
+
+" j/k でのスクロール幅を 1行 から 3行 に変更
+map j 3<C-e>
+map k 3<C-y>
+
+" Backspace に戻るを割り当て
+map <BS> <A-Left>
+
+" h/l に戻るや進むを割り当て
+map h <C-p>
+map l <C-n>
+
+" 検索結果をハイライト
+set hlsearch
+
+set wildoptions=auto
+set complete=sl
+
+" フィードボタンをステータスラインに表示
+:javascript <<EOF
+(function(){
+var feedPanel = document.createElement('statusbarpanel');
+var feedButton = document.getElementById('feed-button');
+feedPanel.setAttribute('id','feed-panel-clone');
+feedPanel.appendChild(feedButton.cloneNode(true));
+feedButton.parentNode.removeChild(feedButton);
+document.getElementById('status-bar').insertBefore(feedPanel,document.getElementById('security-button'));
+})();
+EOF
