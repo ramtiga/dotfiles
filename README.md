@@ -1,3 +1,2 @@
-## My Configuration Files
-
+My Configuration Files
 
