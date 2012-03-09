@@ -1,6 +1,12 @@
 unbind-key C-b
+
 set-option -g prefix C-j
-set-window-option -g mode-keys vi
+
+# vでマーク開始
+bind -t vi-copy v begin-selection
+
+# yでヤンク
+bind -t vi-copy y copy-selection
 
 set-window-option -g utf8 on
 set-window-option -g mode-keys vi
@@ -18,10 +24,10 @@ set -g status-fg white
 set -g status-attr dim
 
 # 左部:whoami@hostname
-set -g status-left '#[fg=blue,bold][#20(whoami) No.#I-#P]#[default]'
+set -g status-left '#[fg=green,bold][#20(whoami) No.#I-#P]#[default]'
 set -g status-left-length 20
 # 右部:[2011/03/06(Sun)20:21]
-set -g status-right '#[fg=blue,bold][%Y/%m/%d(%a)%H:%M]#[default]'
+set -g status-right '#[fg=green,bold][%Y/%m/%d(%a)%H:%M]#[default]'
 set -g message-attr bold
 set -g message-fg white
 set -g message-bg red
