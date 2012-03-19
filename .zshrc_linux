@@ -10,6 +10,7 @@ alias gc='git commit'
 alias gcm='git commit -a -m'
 alias gci='git commit -a'
 alias gl='git log'
+alias gd='git diff'
 
 source ~/perl5/perlbrew/etc/bashrc
 PATH="$PATH":/usr/local/bin/vim:~/src/ruby:/home/hane/.nvm/v0.6.7/bin/
