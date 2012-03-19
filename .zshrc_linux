@@ -3,9 +3,16 @@ PATH=$PATH:$HOME/bin
 export PATH
 export PATH=$PATH:/sbin/
 alias ll='ls -la'
+alias lld='ll -F | grep /'
 alias vi='vim'
+alias gs='git status'
+alias gc='git commit'
+alias gcm='git commit -a -m'
+alias gci='git commit -a'
+alias gl='git log'
+
 source ~/perl5/perlbrew/etc/bashrc
-PATH="$PATH":/usr/local/bin/vim:~/src/ruby
+PATH="$PATH":/usr/local/bin/vim:~/src/ruby:/home/hane/.nvm/v0.6.7/bin/
 
 
 # 補間
@@ -111,3 +118,7 @@ source $HOME/perl5/perlbrew/etc/bashrc
 function cpanv (){
   perl -M$1 -le "print \$$1::VERSION"
 }
+
+. ~/.nvm/nvm.sh
+nvm use v0.6.7
+
