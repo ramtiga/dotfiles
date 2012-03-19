@@ -18,6 +18,7 @@ Bundle 'ref.vim'
 Bundle 'vtreeexplorer'
 Bundle 'mattn/vdbi-vim'
 Bundle 'mattn/webapi-vim'
+Bundle 'scrooloose/nerdcommenter.git'
 
 filetype plugin indent on
 
@@ -158,6 +159,7 @@ nnoremap <Leader>c :bd<CR>
 nnoremap <Leader>w :w<CR>
 nnoremap <Leader>e :w<CR>
 inoremap <Leader>w <Esc>:w<CR>
+inoremap <Leader>e <Esc>:w<CR>
 nnoremap <Leader>, i<% %><Left><Left><Left>
 inoremap <M-,> <% %><Left><Left><Left>
 inoremap b<Tab> <br /><Esc> 
