@@ -5,10 +5,13 @@ export PATH=$PATH:/sbin/
 alias ll='ls -la'
 alias lld='ll -F | grep /'
 alias vi='vim'
+
+alias ga='git add'
 alias gs='git status'
 alias gc='git commit'
 alias gcm='git commit -a -m'
 alias gci='git commit -a'
+alias gco='git checkout'
 alias gl='git log'
 alias gd='git diff'
 
@@ -32,6 +35,7 @@ PROMPT="
 %{${fg[yellow]}%}%~%{${reset_color}%}
 [%n]$ "
 PROMPT2='[%n]> '
+
 
 #履歴
 #履歴を保存するファイル指定
@@ -96,7 +100,6 @@ unsetopt promptcr
 #個別設定を読み込む
 [ -f ~/.zshrc.mine ] && source ~/.zshrc.mine
 
-#export PATH=/opt/local/bin:/opt/local/apache2/bin:/opt/local/sbin:~/bin:/Users/dhanegm731/.rvm/gems/ruby-1.8.7-p302@rails2/bin:$PATH
 #export MANPATH=/opt/local/man:$MANPATH
 #export APXS2=/opt/local/apache2/bin/apxs
 
