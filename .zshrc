@@ -76,6 +76,17 @@ esac
 alias la='ls -a'
 alias ll='ls -l'
 alias lla='ls -al'
+alias lld='ll -F | grep /'
+
+# git関連
+alias ga='git add'
+alias gs='git status'
+alias gc='git commit'
+alias gcm='git commit -a -m'
+alias gci='git commit -a'
+alias gco='git checkout'
+alias gl='git log'
+alias gd='git diff'
 
 #w3mでALC検索
 function alc() {
@@ -102,12 +113,16 @@ unsetopt promptcr
 #個別設定を読み込む
 [ -f ~/.zshrc.mine ] && source ~/.zshrc.mine
 
+autoload -Uz select-word-style
+select-word-style bash
+
 export PATH=/opt/local/bin:/opt/local/apache2/bin:/opt/local/sbin:~/bin:/Users/dhanegm731/.rvm/gems/ruby-1.8.7-p302@rails2/bin:$PATH
 export MANPATH=/opt/local/man:$MANPATH
 export APXS2=/opt/local/apache2/bin/apxs
 
 
-alias mysql=/usr/local/mysql/bin/mysql
+#alias mysql=/usr/local/mysql/bin/mysql
+alias mysql=/opt/local/lib/mysql5/bin/mysql
 alias mysqladmin=/usr/local/mysql/bin/mysqladmin
 
 if [[ -s /Users/dhanegm731/.rvm/scripts/rvm ]] ; then source /Users/dhanegm731/.rvm/scripts/rvm ; fi
@@ -118,8 +133,11 @@ rails3
 alias r='rails'
 alias php4=/usr/local/lib/php-4.4.9/bin/php
 # ADDED BY npm FOR NVM
-. /usr/local/lib/node/.npm/nvm/0.1.0/package/nvm.sh
+#. /usr/local/lib/node/.npm/nvm/0.1.0/package/nvm.sh
 # END ADDED BY npm FOR NVM
+#. ~/.nvm/nvm.sh
+#nvm use v0.6.7
+
 source $HOME/perl5/perlbrew/etc/bashrc
 #source $HOME/perl5/perlbrew/etc/zshrc
 #export PERL5LIB=$HOME/perl5/lib/perl5
@@ -129,4 +147,10 @@ source .zsh/plugin/incr*.zsh
 function cpanv (){
   perl -M$1 -le "print \$$1::VERSION"
 }
+
+export GISTY_DIR="$HOME/dev/gists"
+
+export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
+alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 

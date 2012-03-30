@@ -1,5 +1,7 @@
+syntax on
+
 "leader 設定
-""let mapleader = '<C-m>'
+let mapleader = ';'
 
 set runtimepath+=$VIMRUNTIME/after
 set runtimepath+=$VIMRUNTIME/after
@@ -7,20 +9,24 @@ set runtimepath+=$VIMRUNTIME/after
 set nocompatible
 
 filetype off
-set rtp+=~/.vim/vundle.git/
+set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
  
-" 利用中のプラグインをBundle
+"" 利用中のプラグインをBundle
+Bundle 'gmarik/vundle'
+Bundle 'tpope/vim-rails'
+Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/neocomplcache'
+Bundle 'Shougo/vimproc.git'
 Bundle 'rails.vim'
-Bundle 'bufexplorer.vim'
-Bundle 'neocomplcache.vim'
-Bundle 'unite.vim'
-Bundle 'Perldoc.vim'
-Bundle 'snipMate.vim'
-Bundle "tpope/vim-fugitive"
+Bundle 'snipMate'
+Bundle 'thinca/vim-ref'
+Bundle 'thinca/vim-quickrun'
+Bundle 'ref.vim'
+Bundle 'vtreeexplorer'
+Bundle 'scrooloose/nerdcommenter.git'
 
 filetype plugin indent on
-
 
 "カーソルキーで行末／行頭の移動可能に設定。
 set whichwrap=b,s,[,],<,>
@@ -76,7 +82,7 @@ set fileencodings=utf-8,cp932,euc-jp
 set encoding=utf-8
 
 " ヤンクをクリップボードへ送り込む
-set clipboard+=unnamed
+"set clipboard+=unnamed
 
 "ルーラーを表示
 set ruler
@@ -86,7 +92,7 @@ set title
 set virtualedit+=block
 
 "escでハイライトをオフ
-"nnoremap <ESC> <ESC>:noh<CR>
+nnoremap <ESC><ESC> :noh<CR>
 
 " ノーマルモード中でもエンターキーで改行挿入でノーマルモードに戻る
 "noremap <CR> i<CR><ESC>
@@ -113,8 +119,8 @@ augroup END
 " gvim用
 "nmap <M-h> <C-w><C-h>
 ""nmap <d-j> <C-w><C-j>
-nmap <Down> <C-w><C-j>
-nmap <Up> <C-w><C-k>
+nmap <C-n> <C-w><C-j>
+nmap <C-p> <C-w><C-k>
 nmap <d-n> :bn<CR>
 nmap <d-p> :bN<CR>
 
@@ -157,34 +163,35 @@ set cursorline
 
 cnoremap <C-k> <Esc>
 inoremap <C-k> <Esc>
-inoremap <Space>w <Esc>:w<CR>
-nnoremap <Space>w :w<CR>
-nnoremap <C-k>e :Explore<CR>
-nnoremap <C-k>q :q!<CR>
-nnoremap <C-k>vi vipy
-noremap  <C-k>s :%s/
-nnoremap <C-k>gr :vimgrep // **/*.rb |cw
-""nnoremap <C-k>d :cd %:h<CR>
-nnoremap <C-k>/ /<C-r>*<CR>
-nnoremap <C-k>d :Perldoc 
-nnoremap <C-k>3 0i#<ESC>
-nnoremap <C-k>@ :bd<CR>
-nnoremap <C-k>r :!ruby %<CR>
-nnoremap <C-k>x :!perl %<CR>
+inoremap <leader>e <Esc>:w<CR>
+nnoremap <Leader>e :w<CR>
+nnoremap <leader>t :VTreeExplore<CR>
+nnoremap <leader>q :q!<CR>
+nnoremap <leader>vi vipy
+noremap  <leader>s :%s/
+nnoremap <leader>gr :vimgrep //j **/*.rb |cw
+""nnoremap <leader>d :cd %:h<CR>
+nnoremap <leader>/ /<C-r>*<CR>
+nnoremap <leader>d :Perldoc 
+nnoremap <leader>3 0i#<ESC>
+nnoremap <leader>@ :bd<CR>
+nnoremap <leader>r :!ruby %<CR>
+nnoremap <leader>x :!perl %<CR>
 
 inoremap <<Tab> <% %><Left><Left><Left>
 inoremap b<Tab> <br /><Esc> 
-inoremap ><Tab> <Space>=><Space>''<Left>
+inoremap ><Tab> <Space>=><Space>
 inoremap =0 <Space>=<Space>
 ""nnoremap <C-l> :BufExplorer<CR>
 ""nnoremap <leader>m :Unite file_mru<CR>
 nnoremap <C-m>m :Unite file_mru<CR>
 nnoremap <C-l> :Unite buffer<CR>
-nnoremap <C-k>u :Unite buffer file_mru<CR>
-nnoremap <C-k>uf :Unite file<CR>
-nnoremap <C-k>ud :UniteWithCurrentDir file<CR>
+""nnoremap <C-k>u :Unite buffer file_mru<CR>
+""nnoremap <C-k>uf :Unite file<CR>
+""nnoremap <C-k>ud :UniteWithCurrentDir file<CR>
 let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 200
+let g:unite_cursor_line_highlight = "TabLineSel"
 
 let g:neocomplcache_enable_at_startup = 1
 
@@ -198,7 +205,7 @@ set laststatus=2
 "neocomplcache
 "let g:NeoComplCache_EnableAtStartup               = 1 
 let g:NeoComplCache_MaxList                       = 20
-let g:NeoComplCache_KeywordCompletionStartLength  = 2 
+""let g:NeoComplCache_KeywordCompletionStartLength  = 2 
 let g:NeoComplCache_MinKeywordLength              = 2 
 let g:NeoComplCache_MinSyntaxLength               = 2 
 let g:NeoComplCache_SmartCase                     = 1 
@@ -206,6 +213,7 @@ let g:NeoComplCache_EnableCamelCaseCompletion     = 1
 let g:NeoComplCache_EnableUnderbarCompletion      = 1
 
 ""let g:NeoComplCache_SnippetsDir = '~/.vim/snippets'
+""let g:neocomplcache_snippets_dir = '~/.vim/snippets'
 
 " neocon keybindings
 "------------------
@@ -213,8 +221,8 @@ let g:NeoComplCache_EnableUnderbarCompletion      = 1
 ""inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 
 " snippets expand key
-"imap <silent> <CR> <Plug>(neocomplcache_snippets_expand)
-"smap <silent> <C-e> <Plug>(neocomplcache_snippets_expand)
+imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
+smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
 
 au FileType javascript set ts=2 sw=2 expandtab
 au BufNewFile *.js set ft=javascript fenc=utf-8
@@ -227,4 +235,33 @@ autocmd BufNewFile,BufRead *.psgi set filetype=perl fenc=utf-8
 ""    let $RUBY_DLL = s:ruby_libruby
 ""  endif
 ""endif
+
+"preview interpreter's output(Tip #1244)
+function! Ruby_eval_vsplit() range
+    if &filetype == "ruby"
+        let src = tempname()
+        let dst = "Ruby Output"
+        " put current buffer's content in a temp file
+        silent execute ": " . a:firstline . "," . a:lastline . "w " . src
+        " open the preview window
+        silent execute ":pedit! " . dst
+        " change to preview window
+        wincmd P
+        " set options
+        setlocal buftype=nofile
+        setlocal noswapfile
+        setlocal syntax=none
+        setlocal bufhidden=delete
+        " replace current buffer with ruby's output
+        silent execute ":%! ruby " . src . " 2>&1 "
+        " change back to the source buffer
+        wincmd p
+    endif
+endfunction
+"<F10>でバッファのRubyスクリプトを実行し、結果をプレビュー表示
+vmap <silent> <F10> :call Ruby_eval_vsplit()<CR>
+nmap <silent> <F10> mzggVG<F10>`z
+map  <silent> <S-F10> :pc<CR>
+
+colorscheme desert
 
