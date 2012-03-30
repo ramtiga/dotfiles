@@ -109,11 +109,14 @@ unsetopt promptcr
 
 [[ -s "/home/hane/.rvm/scripts/rvm" ]] && source "/home/hane/.rvm/scripts/rvm"
 
+#ruby
 rvm use 1.9.2-p180
 rvm gemset use rails30
 #"alias rails3='rvm use ruby-1.9.2-p180@rails3_1'
 #rails3
 alias r='rails'
+alias rgu='rvm gemset use'
+
 source $HOME/perl5/perlbrew/etc/bashrc
 #source $HOME/perl5/perlbrew/etc/zshrc
 #export PERL5LIB=$HOME/perl5/lib/perl5
