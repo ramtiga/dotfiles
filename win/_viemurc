@@ -1,0 +1,38 @@
+nnoremap                h              <backspace>
+nnoremap                l              <space>
+nnoremap                <Left>         <backspace>
+nnoremap                <Right>        <space>
+
+inoremap [ []<LEFT>
+inoremap ( ()<LEFT>
+inoremap { {}<LEFT>
+inoremap " ""<LEFT>
+inoremap ' ''<LEFT>
+
+"escでハイライトをオフ
+nnoremap <silent> <ESC><ESC>:noh<CR>
+
+nnoremap ;w :w!<CR>
+inoremap ;w <Esc>:w<CR>
+nnoremap ;e :w!<CR>
+inoremap ;e <Esc>:w<CR>
+
+inoremap <C-k> <ESC> 
+nmap > $a
+
+" 検索を循環させない
+set nowrapscan
+
+" 削除でレジスタに格納しない(ビジュアルモードでの選択後は格納する)
+nnoremap x "_x
+"nnoremap dd "_dd
+nnoremap diw "_diw
+nnoremap dw "_dw
+
+nnoremap ;v vwp
+
+
+"検索に大文字小文字区別しない
+set ic
+
+

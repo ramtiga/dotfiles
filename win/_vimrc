@@ -1,0 +1,232 @@
+let mapleader = ";"
+
+set runtimepath+=$VIMRUNTIME/after
+"vi互換の動きにしない
+set nocompatible
+
+"カーソルキーで行末／行頭の移動可能に設定。
+set whichwrap=b,s,[,],<,>
+nnoremap h <Left>
+nnoremap l <Right>
+
+" 検索を循環させない
+set nowrapscan
+
+" バックアップファイルを作成しない
+set nobackup
+
+"インデント
+set shiftwidth=2
+
+" スワップファイルを作成しない
+set noswapfile
+
+" 対応括弧の瞬間強調時間
+set matchtime=3
+
+" 行番号表示
+set number
+
+" 見た目で行移動
+nnoremap j gj
+nnoremap k gk
+
+" 削除でレジスタに格納しない(ビジュアルモードでの選択後は格納する)
+nnoremap x "_x
+"nnoremap dd "_dd
+nnoremap diw "_diw
+nnoremap dw "_dw
+nnoremap D "_D
+
+"タブを空白で入力する
+set expandtab
+
+"標準タブは4
+set tabstop=2
+set softtabstop=2
+
+"自動的にインデントする
+set autoindent
+
+"インクリメンタルサーチを行う
+set incsearch
+
+"検索に大文字小文字区別しない
+set ic
+
+" 文字コード関連
+" 文字コードの自動解釈の優先順位
+set fileencodings=utf-8,cp932,euc-jp
+
+" 内部の解釈の文字コード　設定ファイルもこのコードで書け
+set encoding=utf-8
+
+" ヤンクをクリップボードへ送り込む
+set clipboard+=unnamed
+
+"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
+set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
+
+"ルーラーを表示
+set ruler
+set title
+
+" 矩形選択で行末を超えてブロックを選択できるようにする
+set virtualedit+=block
+
+"escでハイライトをオフ
+nnoremap <silent> <ESC> <ESC>:noh<CR>
+" ノーマルモード中でもエンターキーで改行挿入でノーマルモードに戻る
+"noremap <CR> i<CR><ESC>
+
+inoremap [ []<LEFT>
+inoremap ( ()<LEFT>
+inoremap { {}<LEFT>
+inoremap " ""<LEFT>
+inoremap ' ''<LEFT>
+vnoremap { "zdi^V{<C-R>z}<ESC>
+vnoremap [ "zdi^V[<C-R>z]<ESC>
+vnoremap ( "zdi^V(<C-R>z)<ESC>
+vnoremap " "zdi^V"<C-R>z^V"<ESC>
+vnoremap ' "zdi'<C-R>z'<ESC>
+
+
+"入力モード時、ステータスラインのカラーを変更
+augroup InsertHook
+autocmd!
+autocmd InsertEnter * highlight StatusLine guifg=#ccdc90 guibg=#2E4340
+autocmd InsertLeave * highlight StatusLine guifg=#000099 guibg=#ccdc90
+augroup END
+
+" gvim用
+nmap <M-n> :bn<CR>
+nmap <M-p> :bN<CR>
+nmap <Down> <C-w><C-j>
+nmap <Up> <C-w><C-k>
+nmap <C-n> <C-w><C-j>
+nmap <C-p> <C-w><C-k>
+
+"nmap > $a{
+"nmap > $a;<CR>
+nmap > $a
+nmap , 0
+
+"----------------------------------------
+" Kaoriya対策
+"----------------------------------------
+""""""""""""""""""""""""""""""
+"g:no_vimrc_exampleを利用してvimrc_example.vimを無効化している時はここで読込
+""""""""""""""""""""""""""""""
+""if exists('g:no_vimrc_example') && g:no_vimrc_example == 1
+""  silent! source $VIMRUNTIME/vimrc_example.vim
+""endif
+
+"プラグインを有効にする
+filetype plugin indent on
+
+" hilight cursor line
+autocmd WinEnter *  setlocal cursorline
+autocmd WinLeave *  setlocal nocursorline
+set cursorline
+
+"MRU設定
+"":let MRU_Auto_Close=0
+"":let MRU_Max_Entries=50
+"":let MRU_Window_Height=10
+
+"ウィンドウ位置
+":winpos 318 1
+:winpos 538 100
+
+"変更中のファイルでも、保存しないで他のファイルを表示
+set hidden
+
+"独自キーバインド spaceキー
+"nnoremap <Space>m :MRU<CR>
+nnoremap <leader>e :w!<CR>
+inoremap <leader>e <ESC>:w!<CR>
+nnoremap <leader>q :q!<CR>
+nnoremap <leader>vi vipy
+nnoremap <leader>s :%s/
+nnoremap <leader>gr :vimgrep // **/*.php \|cw<LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT>
+"nnoremap <Space>pri iprint_r($);exit();<CR><ESC>k<RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT>a
+nnoremap <leader>aa ggVGx
+nnoremap <leader>c :bd<CR>
+nnoremap <leader>w :w!<CR>
+inoremap <leader>w <Esc>:w<CR>
+nnoremap <leader>, i<% %><Left><Left><Left>
+inoremap <M-,> <% %><Left><Left><Left>
+inoremap b<Tab> <br /><Esc> 
+nnoremap <leader>/ /<C-r>*<CR>
+inoremap ><Tab> <Space>=><Space>
+inoremap .<Tab> ->
+"nnoremap <C-l> :BufExplorer<CR>
+nnoremap <C-m>m :Unite file_mru<CR>
+"nnoremap <Space>m :Unite file_mru<CR>
+nnoremap <C-l> :Unite buffer<CR>
+nnoremap <leader>u :Unite buffer file_mru<CR>
+nnoremap <leader>uf :Unite file<CR>
+nnoremap <leader>ud :UniteWithCurrentDir file<CR>
+nnoremap <leader>v vwp
+nnoremap <Leader>t :PosttoTwitter<CR>
+nnoremap <Leader>tf :FriendsTwitter<CR>
+nnoremap <Leader>tr :RefreshTwitter<CR>
+map <Leader>x !python -m BeautifulSoup<CR>
+let g:unite_enable_start_insert = 1
+let g:unite_source_file_mru_limit = 200
+
+inoremap <C-k> <ESC>
+let twitvim_login_b64 = "dF9yYW11OmhhbmVwYXNzNw=="
+let twitvim_count = 200
+let twitvim_browser_cmd = 'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
+
+
+"カレントディレクトリ変更スクリプト"
+command! -nargs=? -complete=dir -bang CD  call s:ChangeCurrentDir('<args>', '<bang>') 
+function! s:ChangeCurrentDir(directory, bang)
+    if a:directory == ''
+        lcd %:p:h
+    else
+        execute 'lcd' . a:directory
+    endif
+
+    if a:bang == ''
+        pwd
+    endif
+endfunction
+
+" Change current directory.
+nnoremap <silent> <leader>cd :<C-u>CD<CR>
+
+"neocomplcache
+"let g:NeoComplCache_EnableAtStartup               = 1 
+let g:NeoComplCache_MaxList                       = 20
+let g:NeoComplCache_MinKeywordLength              = 2 
+let g:NeoComplCache_MinSyntaxLength               = 2 
+let g:NeoComplCache_SmartCase                     = 1 
+let g:NeoComplCache_EnableCamelCaseCompletion     = 1
+let g:NeoComplCache_EnableUnderbarCompletion      = 1
+let g:neocomplcache_enable_at_startup = 1
+
+imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
+smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
+
+nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
+nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
+
+"ファイルオープン時にカレントディレクトリ変更
+:au BufEnter *.php,*.ctp,*.m,*.h execute ":lcd " . expand("%:p:h")
+
+let g:buftabs_only_basename=1
+let g:buftabs_in_statusline=1
+
+"改行コード
+set fileformats=unix,dos
+
+autocmd BufNewFile,BufRead *.psgi set filetype=perl fenc=utf-8
+au FileType html set ts=2 sw=2 expandtab
+au FileType javascript set ts=2 sw=2 expandtab
+au BufNewFile *.js set ft=javascript fenc=utf-8
+
+nnoremap <leader>r :!ruby %<CR>
+
