@@ -1,3 +1,5 @@
+" viemu config file for Visual Studio 2008.
+
 nnoremap                h              <backspace>
 nnoremap                l              <space>
 nnoremap                <Left>         <backspace>
