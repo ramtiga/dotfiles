@@ -25,6 +25,7 @@ Bundle 'thinca/vim-quickrun'
 Bundle 'ref.vim'
 Bundle 'vtreeexplorer'
 Bundle 'scrooloose/nerdcommenter.git'
+Bundle 'scrooloose/nerdtree.git'
 
 filetype plugin indent on
 
@@ -264,4 +265,18 @@ nmap <silent> <F10> mzggVG<F10>`z
 map  <silent> <S-F10> :pc<CR>
 
 colorscheme desert
+
+"-----------------------
+" NERDTree
+"-----------------------
+nmap <silent> <C-e>      :NERDTreeToggle<CR>
+vmap <silent> <C-e> <Esc>:NERDTreeToggle<CR>
+omap <silent> <C-e>      :NERDTreeToggle<CR>
+imap <silent> <C-e> <Esc>:NERDTreeToggle<CR>
+cmap <silent> <C-e> <C-u>:NERDTreeToggle<CR>
+
+let g:NERDTreeShowHidden=1
+let g:NERDTreeMinimalUI=1
+let g:NERDTreeDirArrows = 1
+let g:NERDTreeMouseMode=3
 
