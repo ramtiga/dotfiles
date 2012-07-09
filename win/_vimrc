@@ -1,8 +1,33 @@
+set nocompatible 
+filetype off 
+
+if has("win32") || has("win64") 
+  set rtp+=~/vimfiles/bundle/vundle 
+  call vundle#rc('~/vimfiles/bundle') 
+else 
+  set rtp+=~/.vim/bundle/vundle 
+  call vundle#rc() 
+endif 
+
+Bundle 'gmarik/vundle' 
+Bundle 'tpope/vim-rails'
+Bundle 'Shougo/unite.vim'
+Bundle 'Shougo/neocomplcache'
+Bundle 'Shougo/vimproc.git'
+Bundle 'rails.vim'
+Bundle 'thinca/vim-ref'
+Bundle 'thinca/vim-quickrun'
+Bundle 'ref.vim'
+Bundle 'vtreeexplorer'
+Bundle 'scrooloose/nerdcommenter.git'
+Bundle 'scrooloose/nerdtree.git'
+
+filetype plugin indent on 
+
+
 let mapleader = ";"
 
 set runtimepath+=$VIMRUNTIME/after
-"vi互換の動きにしない
-set nocompatible
 
 "カーソルキーで行末／行頭の移動可能に設定。
 set whichwrap=b,s,[,],<,>
@@ -55,6 +80,7 @@ set incsearch
 set ic
 
 " 文字コード関連
+let &termencoding = &encoding
 " 文字コードの自動解釈の優先順位
 set fileencodings=utf-8,cp932,euc-jp
 
@@ -122,7 +148,7 @@ nmap , 0
 ""endif
 
 "プラグインを有効にする
-filetype plugin indent on
+""filetype plugin indent on
 
 " hilight cursor line
 autocmd WinEnter *  setlocal cursorline
@@ -168,7 +194,7 @@ nnoremap <leader>u :Unite buffer file_mru<CR>
 nnoremap <leader>uf :Unite file<CR>
 nnoremap <leader>ud :UniteWithCurrentDir file<CR>
 nnoremap <leader>v vwp
-nnoremap <Leader>t :PosttoTwitter<CR>
+nnoremap <Leader>t :VTreeExplore<CR>
 nnoremap <Leader>tf :FriendsTwitter<CR>
 nnoremap <Leader>tr :RefreshTwitter<CR>
 map <Leader>x !python -m BeautifulSoup<CR>
@@ -199,17 +225,27 @@ endfunction
 nnoremap <silent> <leader>cd :<C-u>CD<CR>
 
 "neocomplcache
-"let g:NeoComplCache_EnableAtStartup               = 1 
+""let g:NeoComplCache_EnableAtStartup               = 0
 let g:NeoComplCache_MaxList                       = 20
 let g:NeoComplCache_MinKeywordLength              = 2 
 let g:NeoComplCache_MinSyntaxLength               = 2 
 let g:NeoComplCache_SmartCase                     = 1 
 let g:NeoComplCache_EnableCamelCaseCompletion     = 1
 let g:NeoComplCache_EnableUnderbarCompletion      = 1
-let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_at_startup             = 1
 
-imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
-smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
+" TABでスニペットを展開
+imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+let g:neocomplcache_snippets_dir = $HOME . '/vimfiles/snippets'
+
+fun! Filename(...)
+  let filename = expand('%:t:r')
+  if filename == '' | return a:0 == 2 ? a:2 : '' | endif
+  return !a:0 || a:1 == '' ? filename : substitute(a:1, '$1', filename, 'g')
+endf
+""imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
+""smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
 
 nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
@@ -228,5 +264,5 @@ au FileType html set ts=2 sw=2 expandtab
 au FileType javascript set ts=2 sw=2 expandtab
 au BufNewFile *.js set ft=javascript fenc=utf-8
 
+"ruby 実行
 nnoremap <leader>r :!ruby %<CR>
-
