@@ -1,3 +1,7 @@
+"------------------------------------------------------------------
+" vim config file for windows.
+"------------------------------------------------------------------
+
 set nocompatible 
 filetype off 
 
@@ -13,6 +17,7 @@ Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-rails'
 Bundle 'Shougo/unite.vim'
 Bundle 'Shougo/neocomplcache'
+Bundle 'Shougo/neocomplcache-snippets-complete'
 Bundle 'Shougo/vimproc.git'
 Bundle 'rails.vim'
 Bundle 'thinca/vim-ref'
@@ -235,17 +240,16 @@ let g:NeoComplCache_EnableUnderbarCompletion      = 1
 let g:neocomplcache_enable_at_startup             = 1
 
 " TABでスニペットを展開
-imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
-smap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
 let g:neocomplcache_snippets_dir = $HOME . '/vimfiles/snippets'
-
-fun! Filename(...)
-  let filename = expand('%:t:r')
-  if filename == '' | return a:0 == 2 ? a:2 : '' | endif
-  return !a:0 || a:1 == '' ? filename : substitute(a:1, '$1', filename, 'g')
-endf
-""imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
-""smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
+inoremap <expr><Tab>  pumvisible() ? "\<C-n>" : "\<TAB>"
+imap <silent> <Tab> <Plug>(neocomplcache_snippets_expand)
+smap <silent> <Tab> <Plug>(neocomplcache_snippets_expand)
+""
+""fun! Filename(...)
+""  let filename = expand('%:t:r')
+""  if filename == '' | return a:0 == 2 ? a:2 : '' | endif
+""  return !a:0 || a:1 == '' ? filename : substitute(a:1, '$1', filename, 'g')
+""endf
 
 nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
