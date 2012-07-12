@@ -18,6 +18,7 @@ Bundle 'tpope/vim-rails'
 Bundle 'Shougo/unite.vim'
 Bundle 'Shougo/neocomplcache'
 Bundle 'Shougo/neocomplcache-snippets-complete'
+Bundle 'Shougo/vimshell'
 Bundle 'Shougo/vimproc.git'
 Bundle 'rails.vim'
 Bundle 'thinca/vim-ref'
@@ -26,6 +27,7 @@ Bundle 'ref.vim'
 Bundle 'vtreeexplorer'
 Bundle 'scrooloose/nerdcommenter.git'
 Bundle 'scrooloose/nerdtree.git'
+Bundle 'tomtom/tcomment_vim.git'
 
 filetype plugin indent on 
 
@@ -203,6 +205,9 @@ nnoremap <Leader>t :VTreeExplore<CR>
 nnoremap <Leader>tf :FriendsTwitter<CR>
 nnoremap <Leader>tr :RefreshTwitter<CR>
 map <Leader>x !python -m BeautifulSoup<CR>
+nnoremap <Leader>q :TComment<CR>
+vnoremap <Leader>q :TComment<CR>
+
 let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 200
 
@@ -238,6 +243,10 @@ let g:NeoComplCache_SmartCase                     = 1
 let g:NeoComplCache_EnableCamelCaseCompletion     = 1
 let g:NeoComplCache_EnableUnderbarCompletion      = 1
 let g:neocomplcache_enable_at_startup             = 1
+let g:neocomplcache_dictionary_filetype_lists = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell',
+    \ }
 
 " TABでスニペットを展開
 let g:neocomplcache_snippets_dir = $HOME . '/vimfiles/snippets'
@@ -270,3 +279,9 @@ au BufNewFile *.js set ft=javascript fenc=utf-8
 
 "ruby 実行
 nnoremap <leader>r :!ruby %<CR>
+
+""if !exists('g:tcomment_types')
+""  let g:tcomment_types = {}
+""endif
+""let g:tcomment_types['rb'] = '# %s'
+
