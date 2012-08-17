@@ -28,6 +28,11 @@ Bundle 'vtreeexplorer'
 Bundle 'scrooloose/nerdcommenter.git'
 Bundle 'scrooloose/nerdtree.git'
 Bundle 'tomtom/tcomment_vim.git'
+Bundle 'mattn/gist-vim'
+Bundle 'mattn/webapi-vim'
+Bundle 'mattn/togetter-vim'
+Bundle 'Lokaltog/vim-powerline'
+Bundle 'tpope/vim-fugitive'
 
 filetype plugin indent on 
 
@@ -200,7 +205,7 @@ nnoremap <C-l> :Unite buffer<CR>
 nnoremap <leader>u :Unite buffer file_mru<CR>
 nnoremap <leader>uf :Unite file<CR>
 nnoremap <leader>ud :UniteWithCurrentDir file<CR>
-nnoremap <leader>v vwp
+nnoremap <leader>v vep
 nnoremap <Leader>t :VTreeExplore<CR>
 nnoremap <Leader>tf :FriendsTwitter<CR>
 nnoremap <Leader>tr :RefreshTwitter<CR>
@@ -253,7 +258,7 @@ let g:neocomplcache_snippets_dir = $HOME . '/vimfiles/snippets'
 inoremap <expr><Tab>  pumvisible() ? "\<C-n>" : "\<TAB>"
 imap <silent> <Tab> <Plug>(neocomplcache_snippets_expand)
 smap <silent> <Tab> <Plug>(neocomplcache_snippets_expand)
-""
+
 ""fun! Filename(...)
 ""  let filename = expand('%:t:r')
 ""  if filename == '' | return a:0 == 2 ? a:2 : '' | endif
@@ -284,4 +289,11 @@ nnoremap <leader>r :!ruby %<CR>
 ""  let g:tcomment_types = {}
 ""endif
 ""let g:tcomment_types['rb'] = '# %s'
+
+"gist-vim
+let g:gist_detect_filetype = 1
+
+"powerline
+set t_Co=256
+let g:Powerline_colorscheme = 'myset'
 
