@@ -1,8 +1,8 @@
 syntax on
 
-"vunlde.vimで管理してるpluginを読み込む
+"NeoBundle.vimで管理してるpluginを読み込む
 
-filetype off
+filetype on
 set rtp+=~/.vim/bundle/vundle/
 " call vundle#rc()
 
@@ -16,10 +16,16 @@ NeoBundle 'tpope/vim-rails'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/neocomplcache'
 NeoBundle 'git://github.com/Shougo/neobundle.vim.git'
-""NeoBundle 'Shougo/neocomplcache-snippets-complete'
 NeoBundle 'Shougo/neosnippet'
 NeoBundle 'Shougo/vimshell'
-NeoBundle 'git://github.com/Shougo/vimproc.git'
+NeoBundle 'Shougo/vimproc', {
+      \ 'build' : {
+      \ 'windows' : 'make -f make_mingw32.mak',
+      \ 'cygwin' : 'make -f make_cygwin.mak',
+      \ 'mac' : 'make -f make_mac.mak',
+      \ 'unix' : 'make -f make_unix.mak',
+      \ },
+      \ }
 NeoBundle 'rails.vim'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'thinca/vim-quickrun'
@@ -32,21 +38,28 @@ NeoBundle 'mattn/gist-vim'
 NeoBundle 'mattn/webapi-vim'
 NeoBundle 'mattn/togetter-vim'
 NeoBundle 'mattn/mkdpreview-vim'
+NeoBundle 'mattn/httpstatus-vim'
 NeoBundle 'Lokaltog/vim-powerline'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'fugalh/desert.vim'
 NeoBundle 'vim-scripts/Zenburn'
 NeoBundle 'ujihisa/unite-colorscheme'
+NeoBundle 'nanotech/jellybeans.vim'
+NeoBundle 'w0ng/vim-hybrid'
+NeoBundle 'mrkn/mrkn256.vim'
+NeoBundle 'jpo/vim-railscasts-theme'
+NeoBundle 'motemen/git-vim'
+NeoBundle 'gregsexton/gitv'
 
 filetype plugin indent on
 
 " Common -------------------------------
-""set t_Co=256
-set nocompatible
-colorscheme desert
-
 set t_Co=256
-" set cursorline
+set nocompatible
+colorscheme mrkn256
+
+" set t_Co=256
+set cursorline
 hi CursorLine   term=reverse cterm=none ctermbg=242
 
 "カーソルキーで行末／行頭の移動可能に設定。
@@ -153,10 +166,7 @@ autocmd InsertEnter * highlight StatusLine guifg=#ccdc90 guibg=#2E4340
 autocmd InsertLeave * highlight StatusLine guifg=#000099 guibg=#ccdc90
 augroup END
 
-" gvim用
-nmap <M-n> :bn<CR>
-nmap <M-p> :bN<CR>
-"nmap <Down> <C-w><C-j>
+"ウィンドウ移動
 nmap <C-n> <C-w><C-j>
 nmap <C-p> <C-w><C-k>
 
@@ -165,6 +175,9 @@ nmap <C-p> <C-w><C-k>
 nmap > $a
 nmap , 0
 
+"VimShell Setting
+let g:vimshell_interactive_update_time = 10
+nnoremap <silent> vs :VimShell<CR>
 
 nnoremap <Leader>t :VTreeExplore<CR>
 "nnoremap <Leader>q :q!<CR>
@@ -172,6 +185,7 @@ nnoremap <Leader>vi vipy
 nnoremap <Leader>s :%s/
 nnoremap <Leader>gr :vimgrep // **/*.php \|cw<LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT>
 "nnoremap <Leader>pri iprint_r($);exit();<CR><ESC>k<RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT>a
+nnoremap <Leader>v vep
 nnoremap <Leader>aa ggVGx
 nnoremap <Leader>c :bd<CR>
 nnoremap <Leader>w :w<CR>
@@ -185,13 +199,8 @@ nnoremap <Leader>/ /<C-r>*<CR>
 inoremap ><Tab> <Space>=><Space>
 inoremap .<Tab> ->
 inoremap <C-h> <BS>
-"nnoremap <C-l> :BufExplorer<CR>
 nnoremap <C-m>m :Unite file_mru<CR>
-"nnoremap <Space>m :Unite file_mru<CR>
 nnoremap <C-l> :Unite buffer<CR>
-"nnoremap <Space>u :Unite buffer file_mru<CR>
-"nnoremap <Space>uf :Unite file<CR>
-"nnoremap <Space>ud :UniteWithCurrentDir file<CR>
 map <Leader>x !python -m BeautifulSoup<CR>
 nnoremap <Leader>q :TComment<CR>
 vnoremap <Leader>q :TComment<CR>
@@ -229,3 +238,85 @@ let g:NERDTreeMinimalUI=1
 let g:NERDTreeDirArrows=1
 let g:NERDTreeMouseMode=3
 
+" Inspired by ujihisa's vimrc
+function! s:GitLogViewer()
+  " vnewだとコミットメッセージが切れてしまうのでnew
+  new
+  VimProcRead git log -u 'ORIG_HEAD..HEAD'
+  set filetype=git-log.git-diff
+  setlocal foldmethod=expr
+  setlocal foldexpr=getline(v:lnum)=~'^commit'?'>1':getline(v:lnum+1)=~'^commit'?'<1':'='
+  setlocal foldtext=FoldTextOfGitLog()
+endfunction
+command! GitLogViewer call s:GitLogViewer()
+
+" git log表示時の折りたたみ用
+function! FoldTextOfGitLog()
+  let month_map = {
+        \ 'Jan' : '01',
+        \ 'Feb' : '02',
+        \ 'Mar' : '03',
+        \ 'Apr' : '04',
+        \ 'May' : '05',
+        \ 'Jun' : '06',
+        \ 'Jul' : '07',
+        \ 'Aug' : '08',
+        \ 'Sep' : '09',
+        \ 'Oct' : '10',
+        \ 'Nov' : '11',
+        \ 'Dec' : '12',
+        \ }
+
+  if getline(v:foldstart) !~ '^commit'
+    return getline(v:foldstart)
+  endif
+
+  if getline(v:foldstart + 1) =~ '^Author:'
+    let author_lnum = v:foldstart + 1
+  elseif getline(v:foldstart + 2) =~ '^Author:'
+    " commitの次の行がMerge:の場合があるので
+    let author_lnum = v:foldstart + 2
+  else
+    " commitの下2行がどちらもAuthor:で始まらなければ諦めて終了
+    return getline(v:foldstart)
+  endif
+
+  let date_lnum = author_lnum + 1
+  let message_lnum = date_lnum + 2
+
+  let author = matchstr(getline(author_lnum), '^Author: \zs.*\ze <.\{-}>')
+  let date = matchlist(getline(date_lnum), ' \(\a\{3}\) \(\d\{1,2}\) \(\d\{2}:\d\{2}:\d\{2}\) \(\d\{4}\)')
+  let message = getline(message_lnum)
+
+  let month = date[1]
+  let day = printf('%02s', date[2])
+  let time = date[3]
+  let year = date[4]
+
+  let datestr = join([year, month_map[month], day], '-')
+
+  return join([datestr, time, author, message], ' ')
+endfunction
+
+" Gitv設定
+autocmd FileType gitv call s:my_gitv_settings()
+function! s:my_gitv_settings()
+  setlocal iskeyword+=/,-,.
+  nnoremap <silent><buffer> C :<C-u>Git checkout <C-r><C-w><CR> 
+  nnoremap <buffer> <Space>rb :<C-u>Git rebase <C-r>=GitvGetCurrentHash()<CR><Space>
+  nnoremap <buffer> <Space>R :<C-u>Git revert <C-r>=GitvGetCurrentHash()<CR><CR>
+  nnoremap <buffer> <Space>h :<C-u>Git cherry-pick <C-r>=GitvGetCurrentHash()<CR><CR>
+  nnoremap <buffer> <Space>rh :<C-u>Git reset --hard <C-r>=GitvGetCurrentHash()<CR>
+  nnoremap <silent><buffer> t :<C-u>windo call <SID>toggle_git_folding()<CR>1<C-w>w
+endfunction
+
+function! s:gitv_get_current_hash()
+  return matchstr(getline('.'), '\[\zs.\{7\}\ze\]$')
+endfunction
+
+autocmd FileType git setlocal nofoldenable foldlevel=0
+function! s:toggle_git_folding()
+  if &filetype ==# 'git'
+    setlocal foldenable!
+  endif
+endfunction
