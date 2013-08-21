@@ -9,25 +9,45 @@ set runtimepath+=$VIMRUNTIME/after
 set nocompatible
 
 filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+if has('vim_starting')
+  set runtimepath+=~/.vim/neobundle.vim.git
+  call neobundle#rc(expand('~/.vim/bundle'))
+endif
+
  
 "" 利用中のプラグインをBundle
-Bundle 'gmarik/vundle'
-Bundle 'tpope/vim-rails'
-Bundle 'Shougo/unite.vim'
-Bundle 'Shougo/neocomplcache'
-Bundle 'Shougo/vimproc.git'
-Bundle 'rails.vim'
-Bundle 'snipMate'
-Bundle 'thinca/vim-ref'
-Bundle 'thinca/vim-quickrun'
-Bundle 'ref.vim'
-Bundle 'vtreeexplorer'
-Bundle 'scrooloose/nerdcommenter.git'
-Bundle 'scrooloose/nerdtree.git'
+NeoBundle 'gmarik/vundle'
+NeoBundle 'tpope/vim-rails'
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'Shougo/vimproc.git'
+NeoBundle 'rails.vim'
+NeoBundle 'snipMate'
+NeoBundle 'thinca/vim-ref'
+NeoBundle 'thinca/vim-quickrun'
+NeoBundle 'ref.vim'
+NeoBundle 'vtreeexplorer'
+NeoBundle 'scrooloose/nerdcommenter.git'
+NeoBundle 'scrooloose/nerdtree.git'
+NeoBundle 'Lokaltog/vim-powerline'
+NeoBundle 'tpope/vim-fugitive'
+NeoBundle 'nanotech/jellybeans.vim'
+NeoBundle 'w0ng/vim-hybrid'
+NeoBundle 'vim-scripts/twilight'
+NeoBundle 'jonathanfilip/vim-lucius'
+NeoBundle 'jpo/vim-railscasts-theme'
+NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'vim-scripts/Wombat'
+NeoBundle 'tomasr/molokai'
+NeoBundle 'vim-scripts/rdark'
+NeoBundle 'mrkn256/mrkn256.vim'
+NeoBundle 'ujihisa/unite-colorscheme'
+NeoBundle 'tomtom/tcomment_vim.git'
+NeoBundle 'gregsexton/gitv'
+NeoBundle 'bling/vim-airline'
 
-filetype plugin indent on
+filetype plugin on
+filetype indent on
 
 "カーソルキーで行末／行頭の移動可能に設定。
 set whichwrap=b,s,[,],<,>
@@ -135,6 +155,7 @@ nmap , 0
 autocmd WinEnter *  setlocal cursorline
 autocmd WinLeave *  setlocal nocursorline
 set cursorline
+" hi 
 
 "MRU設定
 "":let MRU_Auto_Close=0
@@ -198,6 +219,8 @@ let g:neocomplcache_enable_at_startup = 1
 
 nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
+nnoremap <Leader>q :TComment<CR>
+vnoremap <Leader>q :TComment<CR>
 
 "ステータスラインを表示
 set laststatus=2
@@ -264,7 +287,7 @@ vmap <silent> <F10> :call Ruby_eval_vsplit()<CR>
 nmap <silent> <F10> mzggVG<F10>`z
 map  <silent> <S-F10> :pc<CR>
 
-colorscheme desert
+colorscheme mrkn256
 
 "-----------------------
 " NERDTree
@@ -279,4 +302,8 @@ let g:NERDTreeShowHidden=1
 let g:NERDTreeMinimalUI=1
 let g:NERDTreeDirArrows = 1
 let g:NERDTreeMouseMode=3
+
+"powerline
+let g:Powerline_symbols = 'fancy'
+set t_Co=256
 
