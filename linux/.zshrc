@@ -2,7 +2,7 @@ PATH=$PATH:$HOME/bin
 
 export PATH
 export PATH=$PATH:/sbin/
-alias ll='ls -la'
+alias ll='ls -alF'
 alias lld='ll -F | grep /'
 alias vi='vim'
 
@@ -17,7 +17,7 @@ alias gd='git diff'
 
 #source ~/perl5/perlbrew/etc/bashrc
 #PATH="$PATH":/usr/local/bin/vim:~/src/ruby:/home/hane/.nvm/v0.6.7/bin/
-
+PATH="$PATH":~/src/ruby-refm-1.9.3-dynamic-20120829/
 
 # 補間
 autoload -U compinit
@@ -26,6 +26,9 @@ setopt correct
 
 #文字コード
 export LANG=ja_JP.UTF-8
+
+#editor
+export EDITOR=vim
 
 #プロンプト
 autoload colors
@@ -58,8 +61,10 @@ setopt hist_ignore_space
 autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
-bindkey "^P" history-beginning-search-backward-end
-bindkey "^N" history-beginning-search-forward-end
+# bindkey "^P" history-beginning-search-backward-end
+# bindkey "^N" history-beginning-search-forward-end
+bindkey "^P" history-beginning-search-backward
+bindkey "^N" history-beginning-search-forward
 
 #cdの設定
 #ディレクトリ名だけで移動する。
@@ -158,3 +163,37 @@ function cpanv (){
 
 alias pry='nocorrect pry'
 export TERM=xterm-256color
+export PATH="$HOME/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
+
+#=============================
+# source auto-fu.zsh
+#=============================
+#if [ -f ~/.zsh/auto-fu.zsh ]; then
+#  source ~/.zsh/auto-fu.zsh
+#  function zle-line-init () {
+#    auto-fu-init
+#  }
+#  zle -N zle-line-init
+#  zstyle ':completion:*' completer _oldlist _complete
+#fi
+
+#source /home/hane/work/zaw/zaw.zsh
+
+# VCSの情報を取得するzshの便利関数 vcs_infoを使う
+autoload -Uz vcs_info
+
+# 表示フォーマットの指定
+# %b ブランチ情報
+# %a アクション名(mergeなど)
+zstyle ':vcs_info:*' formats '[%b]'
+zstyle ':vcs_info:*' actionformats '[%b|%a]'
+precmd () {
+    psvar=()
+        LANG=en_US.UTF-8 vcs_info
+            [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+            }
+
+            # バージョン管理されているディレクトリにいれば表示，そうでなければ非表示
+            RPROMPT="%1(v|%F{green}%1v%f|)"
+
