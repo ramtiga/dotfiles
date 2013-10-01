@@ -45,6 +45,9 @@ NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'tomtom/tcomment_vim.git'
 NeoBundle 'gregsexton/gitv'
 NeoBundle 'bling/vim-airline'
+NeoBundle 'mattn/vim-airline-weather'
+NeoBundle 'mattn/webapi-vim'
+NeoBundle 'mattn/gist-vim'
 
 filetype plugin on
 filetype indent on
@@ -118,6 +121,9 @@ nnoremap <ESC><ESC> :noh<CR>
 " ノーマルモード中でもエンターキーで改行挿入でノーマルモードに戻る
 "noremap <CR> i<CR><ESC>
 
+"enabled backspace
+set backspace=start,eol,indent
+
 "inoremap { {}<LEFT><CR><ESC>O<Tab>
 inoremap { {}<LEFT>
 inoremap [ []<LEFT>
@@ -148,19 +154,11 @@ nmap <d-p> :bN<CR>
 nmap > $a
 nmap , 0
 
-"プラグインを有効にする
-""filetype plugin indent on
-
 " hilight cursor line
 autocmd WinEnter *  setlocal cursorline
 autocmd WinLeave *  setlocal nocursorline
 set cursorline
 " hi 
-
-"MRU設定
-"":let MRU_Auto_Close=0
-"":let MRU_Max_Entries=50
-"":let MRU_Window_Height=10
 
 "ウィンドウ位置
 ":winpos 318 1
@@ -169,48 +167,31 @@ set cursorline
 "set hidden
 
 "独自キーバインド
-""nnoremap <Space>m :MRU<CR>
-"inoremap <Space>a <Esc>
-"inoremap <Space>w <Esc>:w<CR>
-"nnoremap <Space>e :Explore<CR>
-"nnoremap <Space>q :q!<CR>
-"nnoremap <Space>vi vipy
-"nnoremap <Space>s :%s/
-"nnoremap <Space>gr :vimgrep // **/*.rb |cw
-"nnoremap <Space>w :w<CR>
-"nnoremap <Space>w :w<CR>
-"nnoremap <Space>d :cd %:h<CR>
-"nnoremap <Space>c :bd<CR>
-"nnoremap <Space>/ /<C-r>*<CR>
-
 cnoremap <C-k> <Esc>
 inoremap <C-k> <Esc>
-inoremap <leader>e <Esc>:w<CR>
 nnoremap <Leader>e :w<CR>
 nnoremap <leader>t :VTreeExplore<CR>
 nnoremap <leader>q :q!<CR>
 nnoremap <leader>vi vipy
 noremap  <leader>s :%s/
 nnoremap <leader>gr :vimgrep //j **/*.rb |cw
-""nnoremap <leader>d :cd %:h<CR>
 nnoremap <leader>/ /<C-r>*<CR>
 nnoremap <leader>d :Perldoc 
 nnoremap <leader>3 0i#<ESC>
 nnoremap <leader>@ :bd<CR>
-nnoremap <leader>r :!ruby %<CR>
+nnoremap <leader>r :w<CR>:!ruby %<CR>
+nnoremap <leader>ss :w<CR>:!rspec -fs -c %<CR>
 nnoremap <leader>x :!perl %<CR>
 
+inoremap <leader>r <ESC>:w<CR>:!ruby %<CR>
+inoremap <Leader>e <ESC>:w<CR>
 inoremap <<Tab> <% %><Left><Left><Left>
 inoremap b<Tab> <br /><Esc> 
 inoremap ><Tab> <Space>=><Space>
 inoremap =0 <Space>=<Space>
-""nnoremap <C-l> :BufExplorer<CR>
-""nnoremap <leader>m :Unite file_mru<CR>
 nnoremap <C-m>m :Unite file_mru<CR>
 nnoremap <C-l> :Unite buffer<CR>
-""nnoremap <C-k>u :Unite buffer file_mru<CR>
-""nnoremap <C-k>uf :Unite file<CR>
-""nnoremap <C-k>ud :UniteWithCurrentDir file<CR>
+
 let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 200
 let g:unite_cursor_line_highlight = "TabLineSel"
@@ -235,9 +216,6 @@ let g:NeoComplCache_MinSyntaxLength               = 2
 let g:NeoComplCache_SmartCase                     = 1 
 let g:NeoComplCache_EnableCamelCaseCompletion     = 1
 let g:NeoComplCache_EnableUnderbarCompletion      = 1
-
-""let g:NeoComplCache_SnippetsDir = '~/.vim/snippets'
-""let g:neocomplcache_snippets_dir = '~/.vim/snippets'
 
 " neocon keybindings
 "------------------
