@@ -5,6 +5,10 @@ let mapleader = ';'
 
 set runtimepath+=$VIMRUNTIME/after
 set runtimepath+=$VIMRUNTIME/after
+set rtp+=$GOROOT/misc/vim
+
+exe "set rtp+=".globpath($GOPATH, "src/github.com/nsf/gocode/vim")
+
 "vi互換の動きにしない
 set nocompatible
 
@@ -48,6 +52,7 @@ NeoBundle 'bling/vim-airline'
 NeoBundle 'mattn/vim-airline-weather'
 NeoBundle 'mattn/webapi-vim'
 NeoBundle 'mattn/gist-vim'
+NeoBundle 'mattn/sonictemplate-vim'
 
 filetype plugin on
 filetype indent on
@@ -182,9 +187,11 @@ nnoremap <leader>@ :bd<CR>
 nnoremap <leader>r :w<CR>:!ruby %<CR>
 nnoremap <leader>ss :w<CR>:!rspec -fs -c %<CR>
 nnoremap <leader>x :!perl %<CR>
+nnoremap <leader>g :w<CR>:!go run %<CR>
 
 inoremap <leader>r <ESC>:w<CR>:!ruby %<CR>
 inoremap <Leader>e <ESC>:w<CR>
+inoremap <leader>g <ESC>:w<CR>:!go run %<CR>
 inoremap <<Tab> <% %><Left><Left><Left>
 inoremap b<Tab> <br /><Esc> 
 inoremap ><Tab> <Space>=><Space>

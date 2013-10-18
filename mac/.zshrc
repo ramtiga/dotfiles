@@ -2,6 +2,8 @@
 autoload -U compinit
 compinit
 
+setopt nonomatch
+
 #文字コード
 export LANG=ja_JP.UTF-8
 
@@ -74,8 +76,8 @@ linux*)
 esac
 
 alias la='ls -a'
-alias ll='ls -l'
-alias lla='ls -al'
+alias ll='ls -la'
+# alias lla='ls -al'
 alias lld='ll -F | grep /'
 
 # git関連
@@ -115,22 +117,9 @@ unsetopt promptcr
 
 autoload -Uz select-word-style
 select-word-style bash
+export PATH=/usr/local/bin:/usr/local/share:/Users/dhanegm731/.rbenv/bin:$PATH
+# eval "$(rbenv init -)"
 
-export PATH=/opt/local/bin:/opt/local/apache2/bin:/opt/local/sbin:~/bin:/Users/dhanegm731/.rvm/gems/ruby-1.8.7-p302@rails2/bin:$PATH
-export MANPATH=/opt/local/man:$MANPATH
-export APXS2=/opt/local/apache2/bin/apxs
-
-
-#alias mysql=/usr/local/mysql/bin/mysql
-alias mysql=/opt/local/lib/mysql5/bin/mysql
-alias mysqladmin=/usr/local/mysql/bin/mysqladmin
-
-if [[ -s /Users/dhanegm731/.rvm/scripts/rvm ]] ; then source /Users/dhanegm731/.rvm/scripts/rvm ; fi
-
-alias rails2='rvm use ruby-1.8.7-p302@rails2'
-alias rails3='rvm use ruby-1.9.2-p180@rails3_1'
-rails3
-alias r='rails'
 alias php4=/usr/local/lib/php-4.4.9/bin/php
 # ADDED BY npm FOR NVM
 #. /usr/local/lib/node/.npm/nvm/0.1.0/package/nvm.sh
@@ -142,7 +131,7 @@ source $HOME/perl5/perlbrew/etc/bashrc
 #source $HOME/perl5/perlbrew/etc/zshrc
 #export PERL5LIB=$HOME/perl5/lib/perl5
 
-source .zsh/plugin/incr*.zsh
+#source .zsh/plugin/incr*.zsh
 
 function cpanv (){
   perl -M$1 -le "print \$$1::VERSION"
@@ -151,6 +140,23 @@ function cpanv (){
 export GISTY_DIR="$HOME/dev/gists"
 
 export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
-alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+# alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+# alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+alias vi='/usr/local/bin/vim'
+
+# VCS settings
+autoload -Uz vcs_info
+precmd() {
+  psvar=()
+  LANG=en_US.UTF-8 vcs_info
+  psvar[1]=$vcs_info_msg_0_
+}
+# PROMPT=$'%2F%n@%m%f %3F%~%f%1v\n%# '
+PROMPT=$'%2F%n %3F%~%f%1v\n%# '
+export DYLD_LIBRARY_PATH=/usr/local/Cellar/libxml2/2.9.1/lib:$DYLD_LIBRARY_PATH
+
+# golang
+export GOROOT="/usr/local/Cellar/go/1.1.2"
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
 
