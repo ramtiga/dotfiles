@@ -53,6 +53,7 @@ NeoBundle 'mattn/vim-airline-weather'
 NeoBundle 'mattn/webapi-vim'
 NeoBundle 'mattn/gist-vim'
 NeoBundle 'mattn/sonictemplate-vim'
+NeoBundle 'mattn/emmet-vim'
 
 filetype plugin on
 filetype indent on
@@ -178,6 +179,7 @@ nnoremap <Leader>e :w<CR>
 nnoremap <leader>t :VTreeExplore<CR>
 nnoremap <leader>q :q!<CR>
 nnoremap <leader>vi vipy
+nnoremap <leader>v vep
 noremap  <leader>s :%s/
 nnoremap <leader>gr :vimgrep //j **/*.rb |cw
 nnoremap <leader>/ /<C-r>*<CR>
