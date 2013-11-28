@@ -17,13 +17,12 @@ if has('vim_starting')
   set runtimepath+=~/.vim/neobundle.vim.git
   call neobundle#rc(expand('~/.vim/bundle'))
 endif
-
  
 "" 利用中のプラグインをBundle
 NeoBundle 'gmarik/vundle'
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'Shougo/neocomplete'
 NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'rails.vim'
 NeoBundle 'snipMate'
@@ -32,7 +31,6 @@ NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'ref.vim'
 NeoBundle 'vtreeexplorer'
 NeoBundle 'scrooloose/nerdcommenter.git'
-NeoBundle 'scrooloose/nerdtree.git'
 NeoBundle 'Lokaltog/vim-powerline'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'nanotech/jellybeans.vim'
@@ -54,6 +52,7 @@ NeoBundle 'mattn/webapi-vim'
 NeoBundle 'mattn/gist-vim'
 NeoBundle 'mattn/sonictemplate-vim'
 NeoBundle 'mattn/emmet-vim'
+NeoBundle 'osyo-manga/vim-over'
 
 filetype plugin on
 filetype indent on
@@ -103,6 +102,9 @@ set autoindent
 
 "インクリメンタルサーチを行う
 set incsearch
+
+"検索大文字小文字区別なし
+set ic
 
 " 文字コード関連
 " 文字コードの自動解釈の優先順位
@@ -276,24 +278,37 @@ map  <silent> <S-F10> :pc<CR>
 
 colorscheme mrkn256
 
-"-----------------------
-" NERDTree
-"-----------------------
-nmap <silent> <C-e>      :NERDTreeToggle<CR>
-vmap <silent> <C-e> <Esc>:NERDTreeToggle<CR>
-omap <silent> <C-e>      :NERDTreeToggle<CR>
-imap <silent> <C-e> <Esc>:NERDTreeToggle<CR>
-cmap <silent> <C-e> <C-u>:NERDTreeToggle<CR>
-
-let g:NERDTreeShowHidden=1
-let g:NERDTreeMinimalUI=1
-let g:NERDTreeDirArrows = 1
-let g:NERDTreeMouseMode=3
-
 "powerline
 let g:Powerline_symbols = 'fancy'
 set t_Co=256
 
 "VTreeExplore
 let g:treeExplHidden = 1
+
+"Neocomplete
+let g:acp_enableAtStartup = 0
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
+" Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+
+" Define keyword.
+if !exists('g:neocomplete#keyword_patterns')
+      let g:neocomplete#keyword_patterns = {}
+    endif
+    let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+    
+    " Plugin key-mappings.
+    inoremap <expr><C-g>     neocomplete#undo_completion()
+    inoremap <expr><C-l>     neocomplete#complete_common_string()
 
