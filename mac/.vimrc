@@ -53,6 +53,7 @@ NeoBundle 'mattn/gist-vim'
 NeoBundle 'mattn/sonictemplate-vim'
 NeoBundle 'mattn/emmet-vim'
 NeoBundle 'osyo-manga/vim-over'
+NeoBundle 'itchyny/calendar.vim'
 
 filetype plugin on
 filetype indent on
