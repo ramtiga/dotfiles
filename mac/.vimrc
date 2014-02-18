@@ -95,8 +95,8 @@ nnoremap dw "_dw
 set expandtab
 
 "標準タブは2
-set tabstop=2
-set softtabstop=2
+" set tabstop=2
+" set softtabstop=2
 
 "自動的にインデントする
 set autoindent
@@ -238,8 +238,8 @@ let g:NeoComplCache_EnableUnderbarCompletion      = 1
 imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
 smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
 
-au FileType javascript set ts=2 sw=2 expandtab
-au BufNewFile *.js set ft=javascript fenc=utf-8
+" au FileType javascript set ts=2 sw=2 expandtab
+" au BufNewFile *.js set ft=javascript fenc=utf-8
 autocmd BufNewFile,BufRead *.psgi set filetype=perl fenc=utf-8
 
 ""if has('gui_macvim') && has('kaoriya')
