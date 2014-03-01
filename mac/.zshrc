@@ -77,8 +77,8 @@ esac
 
 alias la='ls -a'
 alias ll='ls -la'
-# alias lla='ls -al'
 alias lld='ll -F | grep /'
+alias ram='cd ~/go/src/github.com/ramtiga'
 
 # git関連
 alias ga='git add'
@@ -107,7 +107,7 @@ bindkey -e
 setopt nobeep
 
 #エディタ
-export EDITOR=emacs
+export EDITOR=vi
 
 #改行のない出力をプロンプトで上書きするのを防ぐ
 unsetopt promptcr
@@ -156,7 +156,7 @@ PROMPT=$'%2F%n %3F%~%f%1v\n%# '
 export DYLD_LIBRARY_PATH=/usr/local/Cellar/libxml2/2.9.1/lib:$DYLD_LIBRARY_PATH
 
 # golang
-export GOROOT="/usr/local/Cellar/go/1.1.2"
+export GOROOT="/usr/local/Cellar/go/1.2"
 export GOPATH=$HOME/go
 export PATH=$PATH:$GOPATH/bin
 
