@@ -4,8 +4,10 @@ syntax on
 let mapleader = ';'
 
 set runtimepath+=$VIMRUNTIME/after
-set runtimepath+=$VIMRUNTIME/after
-set rtp+=$GOROOT/misc/vim
+
+if $GOROOT != ''
+  set rtp+=$GOROOT/misc/vim
+endif
 
 exe "set rtp+=".globpath($GOPATH, "src/github.com/nsf/gocode/vim")
 
@@ -24,6 +26,7 @@ NeoBundle 'tpope/vim-rails'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/neocomplete'
 NeoBundle 'Shougo/vimproc.git'
+NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'rails.vim'
 NeoBundle 'snipMate'
 NeoBundle 'thinca/vim-ref'
