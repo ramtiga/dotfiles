@@ -57,6 +57,7 @@ NeoBundle 'mattn/sonictemplate-vim'
 NeoBundle 'mattn/emmet-vim'
 NeoBundle 'osyo-manga/vim-over'
 NeoBundle 'itchyny/calendar.vim'
+NeoBundle 'rbtnn/rabbit-ui.vim'
 
 filetype plugin on
 filetype indent on
@@ -181,6 +182,7 @@ set cursorline
 "独自キーバインド
 cnoremap <C-k> <Esc>
 inoremap <C-k> <Esc>
+vnoremap <C-k> <Esc>
 nnoremap <Leader>e :w<CR>
 nnoremap <leader>t :VTreeExplore<CR>
 nnoremap <leader>q :q!<CR>
@@ -315,4 +317,11 @@ if !exists('g:neocomplete#keyword_patterns')
     " Plugin key-mappings.
     inoremap <expr><C-g>     neocomplete#undo_completion()
     inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+"rbtnn/rabbit-ui.vim
+function! s:edit_csv(path)
+  call writefile(map(rabbit_ui#gridview(map(readfile(a:path),'split(v:val,",",1)')), "join(v:val, ',')"), a:path)
+endfunction
+
+command! -nargs=1 EditCSV  :call <sid>edit_csv(<q-args>)
 
