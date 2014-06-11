@@ -89,6 +89,7 @@ alias gci='git commit -a'
 alias gco='git checkout'
 alias gl='git log'
 alias gd='git diff'
+alias gb='git branch'
 
 #w3mでALC検索
 function alc() {
@@ -156,7 +157,12 @@ PROMPT=$'%2F%n %3F%~%f%1v\n%# '
 export DYLD_LIBRARY_PATH=/usr/local/Cellar/libxml2/2.9.1/lib:$DYLD_LIBRARY_PATH
 
 # golang
-export GOROOT="/usr/local/Cellar/go/1.2"
+export GOROOT=/usr/local/Cellar/go/1.2/libexec
 export GOPATH=$HOME/go
-export PATH=$PATH:$GOPATH/bin
+# export GOROOT=/usr/local/opt/go/libexec
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+
+# typeset -U name_of_the_variable
+unset LD_LIBRARY_PATH
+unset DYLD_LIBRARY_PATH
 
