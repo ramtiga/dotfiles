@@ -246,6 +246,7 @@ smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
 " au FileType javascript set ts=2 sw=2 expandtab
 " au BufNewFile *.js set ft=javascript fenc=utf-8
 autocmd BufNewFile,BufRead *.psgi set filetype=perl fenc=utf-8
+auto BufWritePre *.go Fmt
 
 ""if has('gui_macvim') && has('kaoriya')
 ""  let s:ruby_libdir = system("ruby -rrbconfig -e 'print Config::CONFIG[\"libdir\"]'")
