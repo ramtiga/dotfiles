@@ -180,3 +180,15 @@ function percol_select_history() {
 }
 zle -N percol_select_history
 bindkey '^R' percol_select_history
+
+function percol-src() {
+  local selected_dir=$(ghq list -p| percol --query "$LBUFFER")
+  if [ -n "$selected_dir" ]; then
+    BUFFER="cd ${selected_dir}"
+    zle accept-line
+  fi
+  zle clear-screen
+}
+zle -N percol-src
+stty -ixon
+bindkey '^s' percol-src
