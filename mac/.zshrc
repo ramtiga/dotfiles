@@ -166,29 +166,29 @@ export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 unset LD_LIBRARY_PATH
 unset DYLD_LIBRARY_PATH
 
-# percol
-function percol_select_history() {
+# peco
+function peco_select_history() {
   local tac
   if which tac > /dev/null; then
     tac="tac"
   else
     tac="tail -r"
   fi
-  BUFFER=$(fc -l -n 1 | eval $tac | percol --query "$LBUFFER")
+  BUFFER=$(fc -l -n 1 | eval $tac | peco --query "$LBUFFER")
   CURSOR=$#BUFFER             # move cursor
   zle -R -c                   # refresh
 }
-zle -N percol_select_history
-bindkey '^R' percol_select_history
+zle -N peco_select_history
+bindkey '^R' peco_select_history
 
-function percol-src() {
-  local selected_dir=$(ghq list -p| percol --query "$LBUFFER")
+function peco-src() {
+  local selected_dir=$(ghq list -p| peco --query "$LBUFFER")
   if [ -n "$selected_dir" ]; then
     BUFFER="cd ${selected_dir}"
     zle accept-line
   fi
   zle clear-screen
 }
-zle -N percol-src
+zle -N peco-src
 stty -ixon
-bindkey '^s' percol-src
+bindkey '^s' peco-src
