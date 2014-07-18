@@ -157,9 +157,8 @@ PROMPT=$'%2F%n %3F%~%f%1v\n%# '
 export DYLD_LIBRARY_PATH=/usr/local/Cellar/libxml2/2.9.1/lib:$DYLD_LIBRARY_PATH
 
 # golang
-export GOROOT=/usr/local/Cellar/go/1.2/libexec
+export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
-# export GOROOT=/usr/local/opt/go/libexec
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 
 # typeset -U name_of_the_variable
