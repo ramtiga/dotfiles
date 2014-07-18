@@ -195,7 +195,7 @@ nnoremap <leader>d :Perldoc
 nnoremap <leader>3 0i#<ESC>
 nnoremap <leader>@ :bd<CR>
 nnoremap <leader>r :w<CR>:!ruby %<CR>
-nnoremap <leader>ss :w<CR>:!rspec -fs -c %<CR>
+nnoremap <leader>ss :w<CR>:!bundle exec rspec -fd -c %<CR>
 nnoremap <leader>x :!perl %<CR>
 nnoremap <leader>g :w<CR>:!go run %<CR>
 
