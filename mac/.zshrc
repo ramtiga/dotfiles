@@ -191,3 +191,12 @@ function peco-src() {
 zle -N peco-src
 stty -ixon
 bindkey '^s' peco-src
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
+
+if which pyenv > /dev/null; then
+    export PYENV_ROOT="${HOME}/.pyenv"
+    export PATH=${PYENV_ROOT}/shims:${PATH}
+    eval "$(pyenv init -)";
+fi

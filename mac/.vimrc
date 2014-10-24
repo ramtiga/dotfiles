@@ -198,6 +198,7 @@ nnoremap <leader>r :w<CR>:!ruby %<CR>
 nnoremap <leader>ss :w<CR>:!bundle exec rspec -fd -c %<CR>
 nnoremap <leader>x :!perl %<CR>
 nnoremap <leader>g :w<CR>:!go run %<CR>
+nnoremap <leader>f :w<CR>:!python %<CR>
 
 inoremap <leader>r <ESC>:w<CR>:!ruby %<CR>
 inoremap <Leader>e <ESC>:w<CR>
