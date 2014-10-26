@@ -200,3 +200,6 @@ if which pyenv > /dev/null; then
     export PATH=${PYENV_ROOT}/shims:${PATH}
     eval "$(pyenv init -)";
 fi
+
+export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
+pyenv virtualenvwrapper
