@@ -16,8 +16,10 @@ set nocompatible
 
 filetype off
 if has('vim_starting')
-  set runtimepath+=~/.vim/neobundle.vim.git
-  call neobundle#rc(expand('~/.vim/bundle'))
+  set runtimepath+=~/.vim/bundle/neobundle.vim
+   call neobundle#begin(expand('~/.vim/bundle/'))
+   NeoBundleFetch 'Shougo/neobundle.vim'
+   call neobundle#end()
 endif
  
 "" 利用中のプラグインをBundle
@@ -25,16 +27,15 @@ NeoBundle 'gmarik/vundle'
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/neocomplete'
-NeoBundle 'Shougo/vimproc.git'
+"NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'rails.vim'
 NeoBundle 'snipMate'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'ref.vim'
-NeoBundle 'vtreeexplorer'
 NeoBundle 'scrooloose/nerdcommenter.git'
-NeoBundle 'Lokaltog/vim-powerline'
+" NeoBundle 'Lokaltog/vim-powerline'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'nanotech/jellybeans.vim'
 NeoBundle 'w0ng/vim-hybrid'
@@ -48,16 +49,17 @@ NeoBundle 'vim-scripts/rdark'
 NeoBundle 'mrkn256/mrkn256.vim'
 NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'tomtom/tcomment_vim.git'
-NeoBundle 'gregsexton/gitv'
+""NeoBundle 'gregsexton/gitv'
 NeoBundle 'bling/vim-airline'
-NeoBundle 'mattn/vim-airline-weather'
-NeoBundle 'mattn/webapi-vim'
-NeoBundle 'mattn/gist-vim'
-NeoBundle 'mattn/sonictemplate-vim'
+" NeoBundle 'mattn/vim-airline-weather'
+""NeoBundle 'mattn/webapi-vim'
+""NeoBundle 'mattn/gist-vim'
+" NeoBundle 'mattn/sonictemplate-vim'
 NeoBundle 'mattn/emmet-vim'
 NeoBundle 'osyo-manga/vim-over'
-NeoBundle 'itchyny/calendar.vim'
-NeoBundle 'rbtnn/rabbit-ui.vim'
+" NeoBundle 'rbtnn/rabbit-ui.vim'
+NeoBundle 'Shougo/vimfiler'
+NeoBundle "AndrewRadev/switch.vim"
 
 filetype plugin on
 filetype indent on
@@ -184,7 +186,7 @@ cnoremap <C-k> <Esc>
 inoremap <C-k> <Esc>
 vnoremap <C-k> <Esc>
 nnoremap <Leader>e :w<CR>
-nnoremap <leader>t :VTreeExplore<CR>
+nnoremap <leader>t :VimFiler<CR>
 nnoremap <leader>q :q!<CR>
 nnoremap <leader>vi vipy
 nnoremap <leader>v vep
@@ -198,7 +200,7 @@ nnoremap <leader>r :w<CR>:!ruby %<CR>
 nnoremap <leader>ss :w<CR>:!bundle exec rspec -fd -c %<CR>
 nnoremap <leader>x :!perl %<CR>
 nnoremap <leader>g :w<CR>:!go run %<CR>
-nnoremap <leader>f :w<CR>:!python %<CR>
+nnoremap <leader>f :Switch<CR>
 
 inoremap <leader>r <ESC>:w<CR>:!ruby %<CR>
 inoremap <Leader>e <ESC>:w<CR>
@@ -290,9 +292,6 @@ colorscheme mrkn256
 let g:Powerline_symbols = 'fancy'
 set t_Co=256
 
-"VTreeExplore
-let g:treeExplHidden = 1
-
 "Neocomplete
 let g:acp_enableAtStartup = 0
 " Use neocomplete.
@@ -327,3 +326,6 @@ endfunction
 
 command! -nargs=1 EditCSV  :call <sid>edit_csv(<q-args>)
 
+if filereadable(expand('~/.vimrc.sw'))
+  source ~/.vimrc.sw
+endif
