@@ -1,75 +1,75 @@
 syntax on
 
-"NeoBundle.vimで管理してるpluginを読み込む
+"leader 設定
+let mapleader = ';'
 
-filetype on
-set rtp+=~/.vim/bundle/vundle/
-" call vundle#rc()
+set runtimepath+=$VIMRUNTIME/after
 
-if has('vim_starting')
-  set runtimepath+=~/.vim/neobundle.vim.git
-  call neobundle#rc(expand('~/.vim/neobundle'))
+if $GOROOT != ''
+  set rtp+=$GOROOT/misc/vim
 endif
 
-NeoBundle 'gmarik/vundle' 
+exe "set rtp+=".globpath($GOPATH, "src/github.com/nsf/gocode/vim")
+
+"vi互換の動きにしない
+set nocompatible
+
+filetype off
+if has('vim_starting')
+  set runtimepath+=~/.vim/bundle/neobundle.vim
+"  call neobundle#rc(expand('~/.vim/bundle/'))
+   call neobundle#begin(expand('~/.vim/bundle/'))
+   NeoBundleFetch 'Shougo/neobundle.vim'
+   call neobundle#end()
+endif
+ 
+"" 利用中のプラグインをBundle
+NeoBundle 'gmarik/vundle'
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'git://github.com/Shougo/neobundle.vim.git'
-NeoBundle 'Shougo/neosnippet'
-NeoBundle 'Shougo/vimshell'
-NeoBundle 'Shougo/vimproc', {
-      \ 'build' : {
-      \ 'windows' : 'make -f make_mingw32.mak',
-      \ 'cygwin' : 'make -f make_cygwin.mak',
-      \ 'mac' : 'make -f make_mac.mak',
-      \ 'unix' : 'make -f make_unix.mak',
-      \ },
-      \ }
+NeoBundle 'Shougo/neocomplete'
+"NeoBundle 'Shougo/vimproc.git'
+NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'rails.vim'
+NeoBundle 'snipMate'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'ref.vim'
 NeoBundle 'vtreeexplorer'
 NeoBundle 'scrooloose/nerdcommenter.git'
-NeoBundle 'scrooloose/nerdtree.git'
-NeoBundle 'tomtom/tcomment_vim.git'
-NeoBundle 'mattn/gist-vim'
-NeoBundle 'mattn/webapi-vim'
-NeoBundle 'mattn/togetter-vim'
-NeoBundle 'mattn/mkdpreview-vim'
-NeoBundle 'mattn/httpstatus-vim'
-NeoBundle 'Lokaltog/vim-powerline'
+" NeoBundle 'Lokaltog/vim-powerline'
 NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'fugalh/desert.vim'
-NeoBundle 'vim-scripts/Zenburn'
-NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'nanotech/jellybeans.vim'
 NeoBundle 'w0ng/vim-hybrid'
-NeoBundle 'mrkn/mrkn256.vim'
+NeoBundle 'vim-scripts/twilight'
+NeoBundle 'jonathanfilip/vim-lucius'
 NeoBundle 'jpo/vim-railscasts-theme'
-NeoBundle 'motemen/git-vim'
-NeoBundle 'gregsexton/gitv'
+NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'vim-scripts/Wombat'
+NeoBundle 'tomasr/molokai'
+NeoBundle 'vim-scripts/rdark'
+NeoBundle 'mrkn256/mrkn256.vim'
+NeoBundle 'ujihisa/unite-colorscheme'
+NeoBundle 'tomtom/tcomment_vim.git'
+""NeoBundle 'gregsexton/gitv'
+NeoBundle 'bling/vim-airline'
+""NeoBundle 'mattn/webapi-vim'
+""NeoBundle 'mattn/gist-vim'
+" NeoBundle 'mattn/sonictemplate-vim'
+NeoBundle 'mattn/emmet-vim'
+NeoBundle 'osyo-manga/vim-over'
+""NeoBundle 'itchyny/calendar.vim'
+" NeoBundle 'rbtnn/rabbit-ui.vim'
+NeoBundle 'Shougo/vimfiler'
+NeoBundle "AndrewRadev/switch.vim"
 
-filetype plugin indent on
-
-" Common -------------------------------
-set t_Co=256
-set nocompatible
-colorscheme mrkn256
-
-" set t_Co=256
-set cursorline
-hi CursorLine   term=reverse cterm=none ctermbg=242
+filetype plugin on
+filetype indent on
 
 "カーソルキーで行末／行頭の移動可能に設定。
 set whichwrap=b,s,[,],<,>
 nnoremap h <Left>
 nnoremap l <Right>
-
-"insertモードでのカーソル形状変更"
-let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 
 " 検索を循環させない
 set nowrapscan
@@ -89,24 +89,22 @@ set matchtime=3
 " 行番号表示
 set number
 
-" leader設定
-let mapleader = ";"
-
 " 見た目で行移動
 nnoremap j gj
 nnoremap k gk
 
 " 削除でレジスタに格納しない(ビジュアルモードでの選択後は格納する)
-
+nnoremap x "_x
+""nnoremap dd "_dd
 nnoremap diw "_diw
 nnoremap dw "_dw
-nnoremap D "_D
 
 "タブを空白で入力する
 set expandtab
 
-set tabstop=2
-set softtabstop=2
+"標準タブは2
+" set tabstop=2
+" set softtabstop=2
 
 "自動的にインデントする
 set autoindent
@@ -114,7 +112,7 @@ set autoindent
 "インクリメンタルサーチを行う
 set incsearch
 
-"検索に大文字小文字区別しない
+"検索大文字小文字区別なし
 set ic
 
 " 文字コード関連
@@ -125,10 +123,7 @@ set fileencodings=utf-8,cp932,euc-jp
 set encoding=utf-8
 
 " ヤンクをクリップボードへ送り込む
-set clipboard+=unnamed
-
-"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%04l,%04v][%p%%]\ [LEN=%L]
-set statusline=%<%f\ %m%r%h%w%{'['.(&fenc!=''?&fenc:&enc).']['.&ff.']'}%=%l,%c%V%8P
+"set clipboard+=unnamed
 
 "ルーラーを表示
 set ruler
@@ -137,18 +132,19 @@ set title
 " 矩形選択で行末を超えてブロックを選択できるようにする
 set virtualedit+=block
 
-set hlsearch
 "escでハイライトをオフ
-nnoremap <silent> <ESC> <ESC>:noh<CR>
+nnoremap <ESC><ESC> :noh<CR>
+
 " ノーマルモード中でもエンターキーで改行挿入でノーマルモードに戻る
 "noremap <CR> i<CR><ESC>
 
-"insertモードでBackspaceを効かす
-set backspace=indent,eol,start
+"enabled backspace
+set backspace=start,eol,indent
 
+"inoremap { {}<LEFT><CR><ESC>O<Tab>
+inoremap { {}<LEFT>
 inoremap [ []<LEFT>
 inoremap ( ()<LEFT>
-inoremap { {}<LEFT>
 inoremap " ""<LEFT>
 inoremap ' ''<LEFT>
 vnoremap { "zdi^V{<C-R>z}<ESC>
@@ -156,167 +152,198 @@ vnoremap [ "zdi^V[<C-R>z]<ESC>
 vnoremap ( "zdi^V(<C-R>z)<ESC>
 vnoremap " "zdi^V"<C-R>z^V"<ESC>
 vnoremap ' "zdi'<C-R>z'<ESC>
-vnoremap v $h
-
 
 "入力モード時、ステータスラインのカラーを変更
 augroup InsertHook
 autocmd!
 autocmd InsertEnter * highlight StatusLine guifg=#ccdc90 guibg=#2E4340
-autocmd InsertLeave * highlight StatusLine guifg=#000099 guibg=#ccdc90
+autocmd InsertLeave * highlight StatusLine guifg=#2E4340 guibg=#ccdc90
 augroup END
 
-"ウィンドウ移動
+" gvim用
+"nmap <M-h> <C-w><C-h>
+""nmap <d-j> <C-w><C-j>
 nmap <C-n> <C-w><C-j>
 nmap <C-p> <C-w><C-k>
+nmap <d-n> :bn<CR>
+nmap <d-p> :bN<CR>
 
-"nmap > $a{
-"nmap > $a;<CR>
 nmap > $a
 nmap , 0
 
-"VimShell Setting
-let g:vimshell_interactive_update_time = 10
-nnoremap <silent> vs :VimShell<CR>
+" hilight cursor line
+" autocmd WinEnter *  setlocal cursorline
+" autocmd WinLeave *  setlocal nocursorline
+" set cursorline
+set ttyfast
+set lazyredraw
+set synmaxcol=200
 
-nnoremap <Leader>t :VTreeExplore<CR>
-"nnoremap <Leader>q :q!<CR>
-nnoremap <Leader>vi vipy
-nnoremap <Leader>s :%s/
-nnoremap <Leader>gr :vimgrep // **/*.php \|cw<LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT><LEFT>
-"nnoremap <Leader>pri iprint_r($);exit();<CR><ESC>k<RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT><RIGHT>a
-nnoremap <Leader>v vep
-nnoremap <Leader>aa ggVGx
-nnoremap <Leader>c :bd<CR>
-nnoremap <Leader>w :w<CR>
+"ウィンドウ位置
+":winpos 318 1
+
+"変更中のファイルでも、保存しないで他のファイルを表示
+"set hidden
+
+"独自キーバインド
+cnoremap <C-k> <Esc>
+inoremap <C-k> <Esc>
+vnoremap <C-k> <Esc>
 nnoremap <Leader>e :w<CR>
-inoremap <Leader>w <Esc>:w<CR>
-inoremap <Leader>e <Esc>:w<CR>
-nnoremap <Leader>, i<% %><Left><Left><Left>
-inoremap <M-,> <% %><Left><Left><Left>
+" nnoremap <leader>t :VTreeExplore<CR>
+nnoremap <leader>t :VimFiler<CR>
+nnoremap <leader>q :q!<CR>
+nnoremap <leader>vi vipy
+nnoremap <leader>v vep
+noremap  <leader>s :%s/
+nnoremap <leader>gr :vimgrep //j **/*rb |cw
+nnoremap <leader>/ /<C-r>*<CR>
+nnoremap <leader>d :Perldoc 
+nnoremap <leader>3 0i#<ESC>
+nnoremap <leader>@ :bd<CR>
+nnoremap <leader>r :w<CR>:!ruby %<CR>
+" nnoremap <leader>ss :w<CR>:!bundle exec rspec -fd -c %<CR>
+nnoremap <leader>ss :w<CR>:!spec -cfs %<CR>
+nnoremap <leader>x :!perl %<CR>
+nnoremap <leader>g :w<CR>:!go run %<CR>
+nnoremap <leader>f :Switch<CR>
+
+inoremap <leader>r <ESC>:w<CR>:!ruby %<CR>
+inoremap <Leader>e <ESC>:w<CR>
+inoremap <leader>g <ESC>:w<CR>:!go run %<CR>
+inoremap <<Tab> <% %><Left><Left><Left>
 inoremap b<Tab> <br /><Esc> 
-nnoremap <Leader>/ /<C-r>*<CR>
 inoremap ><Tab> <Space>=><Space>
-inoremap .<Tab> ->
-inoremap <C-h> <BS>
+inoremap =0 <Space>=<Space>
 nnoremap <C-m>m :Unite file_mru<CR>
 nnoremap <C-l> :Unite buffer<CR>
-map <Leader>x !python -m BeautifulSoup<CR>
-nnoremap <Leader>q :TComment<CR>
-vnoremap <Leader>q :TComment<CR>
+nnoremap <C-]> g<C-]>
+
+inoremap bi<Tab> require 'pry'; binding.pry<ESC>
+inoremap de<Tab> debugger<ESC>
 
 let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 200
+let g:unite_cursor_line_highlight = "TabLineSel"
 
-nnoremap <Leader>r :!ruby %<CR>
-inoremap <C-k> <ESC>
+let g:neocomplcache_enable_at_startup = 1
 
+nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
+nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
+nnoremap <Leader>q :TComment<CR>
+vnoremap <Leader>q :TComment<CR>
+
+"ステータスラインを表示
+set laststatus=2
+
+"":au BufEnter *.php,*.ctp,*.m,*.h execute ":lcd " . expand("%:p:h")
 "neocomplcache
-let g:NeoComplCache_EnableAtStartup               = 1 
+"let g:NeoComplCache_EnableAtStartup               = 1 
 let g:NeoComplCache_MaxList                       = 20
+""let g:NeoComplCache_KeywordCompletionStartLength  = 2 
 let g:NeoComplCache_MinKeywordLength              = 2 
 let g:NeoComplCache_MinSyntaxLength               = 2 
 let g:NeoComplCache_SmartCase                     = 1 
 let g:NeoComplCache_EnableCamelCaseCompletion     = 1
 let g:NeoComplCache_EnableUnderbarCompletion      = 1
-let g:neocomplcache_enable_at_startup = 1
 
+" neocon keybindings
+"------------------
+" <TAB> completion.
+""inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+
+" snippets expand key
 imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
 smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
 
-let g:unite_cursor_line_highlight = 'TabLineSel'
+" au FileType javascript set ts=2 sw=2 expandtab
+" au BufNewFile *.js set ft=javascript fenc=utf-8
+autocmd BufNewFile,BufRead *.psgi set filetype=perl fenc=utf-8
+auto BufWritePre *.go Fmt
 
-" ------------------
-" NERDTree
-" ------------------
-nmap <silent> <C-e>      :NERDTreeToggle<CR>
-vmap <silent> <C-e> <Esc>:NERDTreeToggle<CR>
-omap <silent> <C-e>      :NERDTreeToggle<CR>
-imap <silent> <C-e> <Esc>:NERDTreeToggle<CR>
-let g:NERDTreeShowHidden=1
-let g:NERDTreeMinimalUI=1
-let g:NERDTreeDirArrows=1
-let g:NERDTreeMouseMode=3
+""if has('gui_macvim') && has('kaoriya')
+""  let s:ruby_libdir = system("ruby -rrbconfig -e 'print Config::CONFIG[\"libdir\"]'")
+""  let s:ruby_libruby = s:ruby_libdir . '/libruby.dylib'
+""  if filereadable(s:ruby_libruby)
+""    let $RUBY_DLL = s:ruby_libruby
+""  endif
+""endif
 
-" Inspired by ujihisa's vimrc
-function! s:GitLogViewer()
-  " vnewだとコミットメッセージが切れてしまうのでnew
-  new
-  VimProcRead git log -u 'ORIG_HEAD..HEAD'
-  set filetype=git-log.git-diff
-  setlocal foldmethod=expr
-  setlocal foldexpr=getline(v:lnum)=~'^commit'?'>1':getline(v:lnum+1)=~'^commit'?'<1':'='
-  setlocal foldtext=FoldTextOfGitLog()
+"preview interpreter's output(Tip #1244)
+function! Ruby_eval_vsplit() range
+    if &filetype == "ruby"
+        let src = tempname()
+        let dst = "Ruby Output"
+        " put current buffer's content in a temp file
+        silent execute ": " . a:firstline . "," . a:lastline . "w " . src
+        " open the preview window
+        silent execute ":pedit! " . dst
+        " change to preview window
+        wincmd P
+        " set options
+        setlocal buftype=nofile
+        setlocal noswapfile
+        setlocal syntax=none
+        setlocal bufhidden=delete
+        " replace current buffer with ruby's output
+        silent execute ":%! ruby " . src . " 2>&1 "
+        " change back to the source buffer
+        wincmd p
+    endif
 endfunction
-command! GitLogViewer call s:GitLogViewer()
+"<F10>でバッファのRubyスクリプトを実行し、結果をプレビュー表示
+vmap <silent> <F10> :call Ruby_eval_vsplit()<CR>
+nmap <silent> <F10> mzggVG<F10>`z
+map  <silent> <S-F10> :pc<CR>
 
-" git log表示時の折りたたみ用
-function! FoldTextOfGitLog()
-  let month_map = {
-        \ 'Jan' : '01',
-        \ 'Feb' : '02',
-        \ 'Mar' : '03',
-        \ 'Apr' : '04',
-        \ 'May' : '05',
-        \ 'Jun' : '06',
-        \ 'Jul' : '07',
-        \ 'Aug' : '08',
-        \ 'Sep' : '09',
-        \ 'Oct' : '10',
-        \ 'Nov' : '11',
-        \ 'Dec' : '12',
+colorscheme mrkn256
+
+"powerline
+let g:Powerline_symbols = 'fancy'
+set t_Co=256
+
+"VTreeExplore
+let g:treeExplHidden = 1
+
+"Neocomplete
+let g:acp_enableAtStartup = 0
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
+" Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
         \ }
 
-  if getline(v:foldstart) !~ '^commit'
-    return getline(v:foldstart)
-  endif
+" Define keyword.
+if !exists('g:neocomplete#keyword_patterns')
+      let g:neocomplete#keyword_patterns = {}
+    endif
+    let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+    
+    " Plugin key-mappings.
+    inoremap <expr><C-g>     neocomplete#undo_completion()
+    inoremap <expr><C-l>     neocomplete#complete_common_string()
 
-  if getline(v:foldstart + 1) =~ '^Author:'
-    let author_lnum = v:foldstart + 1
-  elseif getline(v:foldstart + 2) =~ '^Author:'
-    " commitの次の行がMerge:の場合があるので
-    let author_lnum = v:foldstart + 2
-  else
-    " commitの下2行がどちらもAuthor:で始まらなければ諦めて終了
-    return getline(v:foldstart)
-  endif
-
-  let date_lnum = author_lnum + 1
-  let message_lnum = date_lnum + 2
-
-  let author = matchstr(getline(author_lnum), '^Author: \zs.*\ze <.\{-}>')
-  let date = matchlist(getline(date_lnum), ' \(\a\{3}\) \(\d\{1,2}\) \(\d\{2}:\d\{2}:\d\{2}\) \(\d\{4}\)')
-  let message = getline(message_lnum)
-
-  let month = date[1]
-  let day = printf('%02s', date[2])
-  let time = date[3]
-  let year = date[4]
-
-  let datestr = join([year, month_map[month], day], '-')
-
-  return join([datestr, time, author, message], ' ')
+"rbtnn/rabbit-ui.vim
+function! s:edit_csv(path)
+  call writefile(map(rabbit_ui#gridview(map(readfile(a:path),'split(v:val,",",1)')), "join(v:val, ',')"), a:path)
 endfunction
 
-" Gitv設定
-autocmd FileType gitv call s:my_gitv_settings()
-function! s:my_gitv_settings()
-  setlocal iskeyword+=/,-,.
-  nnoremap <silent><buffer> C :<C-u>Git checkout <C-r><C-w><CR> 
-  nnoremap <buffer> <Space>rb :<C-u>Git rebase <C-r>=GitvGetCurrentHash()<CR><Space>
-  nnoremap <buffer> <Space>R :<C-u>Git revert <C-r>=GitvGetCurrentHash()<CR><CR>
-  nnoremap <buffer> <Space>h :<C-u>Git cherry-pick <C-r>=GitvGetCurrentHash()<CR><CR>
-  nnoremap <buffer> <Space>rh :<C-u>Git reset --hard <C-r>=GitvGetCurrentHash()<CR>
-  nnoremap <silent><buffer> t :<C-u>windo call <SID>toggle_git_folding()<CR>1<C-w>w
-endfunction
+command! -nargs=1 EditCSV  :call <sid>edit_csv(<q-args>)
 
-function! s:gitv_get_current_hash()
-  return matchstr(getline('.'), '\[\zs.\{7\}\ze\]$')
-endfunction
+"TwitVim
+let twitvim_browser_cmd = 'open'
+let twitvim_force_ssl = 1
+let twitvim_count = 40
 
-autocmd FileType git setlocal nofoldenable foldlevel=0
-function! s:toggle_git_folding()
-  if &filetype ==# 'git'
-    setlocal foldenable!
-  endif
-endfunction
+if filereadable(expand('~/.vimrc.sw'))
+  source ~/.vimrc.sw
+endif
