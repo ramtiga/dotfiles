@@ -17,7 +17,6 @@ set nocompatible
 filetype off
 if has('vim_starting')
   set runtimepath+=~/.vim/bundle/neobundle.vim
-"  call neobundle#rc(expand('~/.vim/bundle/'))
    call neobundle#begin(expand('~/.vim/bundle/'))
    NeoBundleFetch 'Shougo/neobundle.vim'
    call neobundle#end()
@@ -28,16 +27,13 @@ NeoBundle 'gmarik/vundle'
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'Shougo/unite.vim'
 NeoBundle 'Shougo/neocomplete'
-"NeoBundle 'Shougo/vimproc.git'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'rails.vim'
 NeoBundle 'snipMate'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'thinca/vim-quickrun'
 NeoBundle 'ref.vim'
-NeoBundle 'vtreeexplorer'
 NeoBundle 'scrooloose/nerdcommenter.git'
-" NeoBundle 'Lokaltog/vim-powerline'
 NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'nanotech/jellybeans.vim'
 NeoBundle 'w0ng/vim-hybrid'
@@ -51,17 +47,12 @@ NeoBundle 'vim-scripts/rdark'
 NeoBundle 'mrkn256/mrkn256.vim'
 NeoBundle 'ujihisa/unite-colorscheme'
 NeoBundle 'tomtom/tcomment_vim.git'
-""NeoBundle 'gregsexton/gitv'
 NeoBundle 'bling/vim-airline'
-""NeoBundle 'mattn/webapi-vim'
-""NeoBundle 'mattn/gist-vim'
-" NeoBundle 'mattn/sonictemplate-vim'
 NeoBundle 'mattn/emmet-vim'
 NeoBundle 'osyo-manga/vim-over'
-""NeoBundle 'itchyny/calendar.vim'
-" NeoBundle 'rbtnn/rabbit-ui.vim'
 NeoBundle 'Shougo/vimfiler'
 NeoBundle "AndrewRadev/switch.vim"
+NeoBundle 'scrooloose/nerdtree'
 
 filetype plugin on
 filetype indent on
@@ -111,6 +102,7 @@ set autoindent
 
 "インクリメンタルサーチを行う
 set incsearch
+set hlsearch
 
 "検索大文字小文字区別なし
 set ic
@@ -134,6 +126,7 @@ set virtualedit+=block
 
 "escでハイライトをオフ
 nnoremap <ESC><ESC> :noh<CR>
+nnoremap <C-k><C-k> :noh<CR>
 
 " ノーマルモード中でもエンターキーで改行挿入でノーマルモードに戻る
 "noremap <CR> i<CR><ESC>
@@ -296,6 +289,7 @@ vmap <silent> <F10> :call Ruby_eval_vsplit()<CR>
 nmap <silent> <F10> mzggVG<F10>`z
 map  <silent> <S-F10> :pc<CR>
 
+autocmd ColorScheme * highlight Search term=reverse cterm=reverse ctermfg=66 ctermbg=222 gui=reverse guifg=#708090 guibg=#f0e68c
 colorscheme mrkn256
 
 "powerline
@@ -347,3 +341,7 @@ let twitvim_count = 40
 if filereadable(expand('~/.vimrc.sw'))
   source ~/.vimrc.sw
 endif
+
+"NERDdTree
+nnoremap <silent><C-e> :NERDTreeToggle<CR>
+nnoremap <silent> ,,f :<C-u>NERDTreeFind<CR>
