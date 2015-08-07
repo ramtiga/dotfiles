@@ -16,17 +16,23 @@ set nocompatible
 
 filetype off
 if has('vim_starting')
-  set runtimepath+=~/.vim/bundle/neobundle.vim
-   call neobundle#begin(expand('~/.vim/bundle/'))
-   NeoBundleFetch 'Shougo/neobundle.vim'
-   call neobundle#end()
+  if &compatible
+    set nocompatible               " Be iMproved
+  endif
+
+  " Required:
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
+
+" Required:
+call neobundle#begin(expand('~/.vim/bundle/'))
+
  
 "" 利用中のプラグインをBundle
 NeoBundle 'gmarik/vundle'
 NeoBundle 'tpope/vim-rails'
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neocomplete'
+NeoBundle 'Shougo/neocomplete.vim'
 NeoBundle 'Shougo/neomru.vim'
 NeoBundle 'rails.vim'
 NeoBundle 'snipMate'
@@ -53,6 +59,8 @@ NeoBundle 'osyo-manga/vim-over'
 NeoBundle 'Shougo/vimfiler'
 NeoBundle "AndrewRadev/switch.vim"
 NeoBundle 'scrooloose/nerdtree'
+
+call neobundle#end()
 
 filetype plugin on
 filetype indent on
@@ -219,7 +227,7 @@ let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 200
 let g:unite_cursor_line_highlight = "TabLineSel"
 
-let g:neocomplcache_enable_at_startup = 1
+" let g:neocomplcache_enable_at_startup = 1
 
 nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
@@ -232,13 +240,13 @@ set laststatus=2
 "":au BufEnter *.php,*.ctp,*.m,*.h execute ":lcd " . expand("%:p:h")
 "neocomplcache
 "let g:NeoComplCache_EnableAtStartup               = 1 
-let g:NeoComplCache_MaxList                       = 20
-""let g:NeoComplCache_KeywordCompletionStartLength  = 2 
-let g:NeoComplCache_MinKeywordLength              = 2 
-let g:NeoComplCache_MinSyntaxLength               = 2 
-let g:NeoComplCache_SmartCase                     = 1 
-let g:NeoComplCache_EnableCamelCaseCompletion     = 1
-let g:NeoComplCache_EnableUnderbarCompletion      = 1
+" let g:NeoComplCache_MaxList                       = 20
+" ""let g:NeoComplCache_KeywordCompletionStartLength  = 2 
+" let g:NeoComplCache_MinKeywordLength              = 2 
+" let g:NeoComplCache_MinSyntaxLength               = 2 
+" let g:NeoComplCache_SmartCase                     = 1 
+" let g:NeoComplCache_EnableCamelCaseCompletion     = 1
+" let g:NeoComplCache_EnableUnderbarCompletion      = 1
 
 " neocon keybindings
 "------------------
@@ -246,8 +254,8 @@ let g:NeoComplCache_EnableUnderbarCompletion      = 1
 ""inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 
 " snippets expand key
-imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
-smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
+" imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
+" smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
 
 " au FileType javascript set ts=2 sw=2 expandtab
 " au BufNewFile *.js set ft=javascript fenc=utf-8
@@ -299,13 +307,10 @@ set t_Co=256
 "VTreeExplore
 let g:treeExplHidden = 1
 
-"Neocomplete
+"neocomplete.vim
 let g:acp_enableAtStartup = 0
-" Use neocomplete.
 let g:neocomplete#enable_at_startup = 1
-" Use smartcase.
 let g:neocomplete#enable_smart_case = 1
-" Set minimum syntax keyword length.
 let g:neocomplete#sources#syntax#min_keyword_length = 3
 let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
 
@@ -345,3 +350,4 @@ endif
 "NERDdTree
 nnoremap <silent><C-e> :NERDTreeToggle<CR>
 nnoremap <silent> ,,f :<C-u>NERDTreeFind<CR>
+
