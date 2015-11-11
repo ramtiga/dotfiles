@@ -59,6 +59,7 @@ NeoBundle 'osyo-manga/vim-over'
 NeoBundle 'Shougo/vimfiler'
 NeoBundle "AndrewRadev/switch.vim"
 NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'vim-scripts/ruby-matchit'
 
 call neobundle#end()
 
@@ -221,7 +222,7 @@ nnoremap <C-l> :Unite buffer<CR>
 nnoremap <C-]> g<C-]>
 
 inoremap bi<Tab> require 'pry'; binding.pry<ESC>
-inoremap de<Tab> debugger<ESC>
+inoremap de<Tab> require 'ruby-debug'; debugger<ESC>
 
 let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 200
@@ -351,3 +352,7 @@ endif
 nnoremap <silent><C-e> :NERDTreeToggle<CR>
 nnoremap <silent> ,,f :<C-u>NERDTreeFind<CR>
 
+if !exists('loaded_matchit')
+" matchitを有効化
+  runtime macros/matchit.vim
+endif
