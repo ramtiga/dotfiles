@@ -57,9 +57,9 @@ NeoBundle 'bling/vim-airline'
 NeoBundle 'mattn/emmet-vim'
 NeoBundle 'osyo-manga/vim-over'
 NeoBundle 'Shougo/vimfiler'
-NeoBundle "AndrewRadev/switch.vim"
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'vim-scripts/ruby-matchit'
+NeoBundle 'kmnk/vim-unite-giti.git'
 
 call neobundle#end()
 
@@ -208,7 +208,6 @@ nnoremap <leader>r :w<CR>:!ruby %<CR>
 nnoremap <leader>ss :w<CR>:!spec -cfs %<CR>
 nnoremap <leader>x :!perl %<CR>
 nnoremap <leader>g :w<CR>:!go run %<CR>
-nnoremap <leader>f :Switch<CR>
 
 inoremap <leader>r <ESC>:w<CR>:!ruby %<CR>
 inoremap <Leader>e <ESC>:w<CR>
@@ -223,6 +222,13 @@ nnoremap <C-]> g<C-]>
 
 inoremap bi<Tab> require 'pry'; binding.pry<ESC>
 inoremap de<Tab> require 'ruby-debug'; debugger<ESC>
+
+" vim-unite-giti
+nnoremap gl :Unite giti/log<CR>
+nnoremap gP :Unite giti/pull_request/base<CR>
+nnoremap gs :Unite giti/status<CR>
+nnoremap gh :Unite giti/branch_all<CR>
+nnoremap gb :Unite giti/branch<CR>
 
 let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 200
@@ -356,3 +362,4 @@ if !exists('loaded_matchit')
 " matchitを有効化
   runtime macros/matchit.vim
 endif
+
