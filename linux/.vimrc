@@ -363,3 +363,61 @@ if !exists('loaded_matchit')
   runtime macros/matchit.vim
 endif
 
+" ----------------------------------------
+" Uniteの設定
+" Uniteは要素の絞り込み、要素へのアクションができるプラグインです
+" 例えば`:Unite file`ではファイルへ操作を行うことができます
+" 詳しい使い方については下記を参照してください
+" http://d.hatena.ne.jp/osyo-manga/20130307/1362621589
+let g:giti_git_command = executable('hub') ? 'hub' : 'git'
+nnoremap <silent>gm :Gcommit<CR>
+nnoremap <silent>gM :Gcommit --amend<CR>
+nnoremap <silent>gb :Gblame<CR>
+nnoremap <silent>gB :Gbrowse<CR>
+
+let g:fugitive_git_executable = executable('hub') ? 'hub' : 'git'
+nnoremap <silent>gs :Unite giti/status -horizontal<CR>
+nnoremap <silent>gl :Unite giti/log -horizontal<CR>
+nnoremap <silent>gs :Unite giti/status -no-start-insert -horizontal<CR>
+nnoremap <silent>gh :Unite giti/branch_all<CR>
+
+" vim-unite-giti {{{
+" `:Unite giti/status`, `:Unite giti/branch`, ` :Unite giti/log`などを起動した
+" 後に、各コマンドに合わせた設定を反映します
+augroup UniteCommand
+  autocmd!
+  autocmd FileType unite call <SID>unite_settings()
+augroup END
+
+function! s:unite_settings() "{{{
+  for source in unite#get_current_unite().sources
+    let source_name = substitute(source.name, '[-/]', '_', 'g')
+    if !empty(source_name) && has_key(s:unite_hooks, source_name)
+      call s:unite_hooks[source_name]()
+    endif
+  endfor
+endfunction"}}}
+
+let s:unite_hooks = {}
+
+function! s:unite_hooks.giti_status() "{{{
+  nnoremap <silent><buffer><expr>gM unite#do_action('ammend')
+  nnoremap <silent><buffer><expr>gm unite#do_action('commit')
+  nnoremap <silent><buffer><expr>ga unite#do_action('stage')
+  nnoremap <silent><buffer><expr>gc unite#do_action('checkout')
+  nnoremap <silent><buffer><expr>gd unite#do_action('diff')
+  nnoremap <silent><buffer><expr>gD unite#do_action('diff_cached')
+  nnoremap <silent><buffer><expr>gu unite#do_action('unstage')
+endfunction"}}}
+
+function! s:unite_hooks.giti_branch() "{{{
+  nnoremap <silent><buffer><expr>d unite#do_action('delete')
+  nnoremap <silent><buffer><expr>D unite#do_action('delete_force')
+  nnoremap <silent><buffer><expr>rd unite#do_action('delete_remote')
+  nnoremap <silent><buffer><expr>rD unite#do_action('delete_remote_force')
+endfunction"}}}
+
+function! s:unite_hooks.giti_branch_all() "{{{
+  call self.giti_branch()
+endfunction"}}}
+"}}}
