@@ -378,7 +378,7 @@ nnoremap <silent>gB :Gbrowse<CR>
 let g:fugitive_git_executable = executable('hub') ? 'hub' : 'git'
 nnoremap <silent>gs :Unite giti/status -horizontal<CR>
 nnoremap <silent>gl :Unite giti/log -horizontal<CR>
-nnoremap <silent>gs :Unite giti/status -horizontal<CR>
+nnoremap <silent>gs :Unite giti/status -no-start-insert -horizontal<CR>
 nnoremap <silent>gh :Unite giti/branch_all<CR>
 
 " vim-unite-giti {{{
@@ -406,6 +406,7 @@ function! s:unite_hooks.giti_status() "{{{
   nnoremap <silent><buffer><expr>ga unite#do_action('stage')
   nnoremap <silent><buffer><expr>gc unite#do_action('checkout')
   nnoremap <silent><buffer><expr>gd unite#do_action('diff')
+  nnoremap <silent><buffer><expr>gD unite#do_action('diff_cached')
   nnoremap <silent><buffer><expr>gu unite#do_action('unstage')
 endfunction"}}}
 
