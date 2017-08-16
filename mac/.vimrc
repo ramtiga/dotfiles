@@ -21,50 +21,111 @@ if has('vim_starting')
   endif
 
   " Required:
-  set runtimepath+=~/.vim/bundle/neobundle.vim/
+  "  set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
 
 " Required:
-call neobundle#begin(expand('~/.vim/bundle/'))
+"call neobundle#begin(expand('~/.vim/bundle/'))
 
- 
-"" 利用中のプラグインをBundle
-NeoBundle 'gmarik/vundle'
-NeoBundle 'tpope/vim-rails'
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neocomplete.vim'
-NeoBundle 'Shougo/neomru.vim'
-NeoBundle 'rails.vim'
-NeoBundle 'snipMate'
-NeoBundle 'thinca/vim-ref'
-NeoBundle 'thinca/vim-quickrun'
-NeoBundle 'ref.vim'
-NeoBundle 'scrooloose/nerdcommenter.git'
-NeoBundle 'tpope/vim-fugitive'
-NeoBundle 'nanotech/jellybeans.vim'
-NeoBundle 'w0ng/vim-hybrid'
-NeoBundle 'vim-scripts/twilight'
-NeoBundle 'jonathanfilip/vim-lucius'
-NeoBundle 'jpo/vim-railscasts-theme'
-NeoBundle 'altercation/vim-colors-solarized'
-NeoBundle 'vim-scripts/Wombat'
-NeoBundle 'tomasr/molokai'
-NeoBundle 'vim-scripts/rdark'
-NeoBundle 'mrkn256/mrkn256.vim'
-NeoBundle 'ujihisa/unite-colorscheme'
-NeoBundle 'tomtom/tcomment_vim.git'
-NeoBundle 'bling/vim-airline'
-NeoBundle 'mattn/emmet-vim'
-NeoBundle 'osyo-manga/vim-over'
-NeoBundle 'Shougo/vimfiler'
-NeoBundle 'scrooloose/nerdtree'
-NeoBundle 'vim-scripts/ruby-matchit'
-NeoBundle 'kmnk/vim-unite-giti.git'
+" dein
+" Vim起動完了時にインストール
+augroup PluginInstall
+  autocmd!
+  autocmd VimEnter * if dein#check_install() | call dein#install() | endif
+augroup END
 
-call neobundle#end()
+if &compatible
+  set nocompatible
+endif
+set runtimepath+=~/.vim/dein/repos/github.com/Shougo/dein.vim
+
+" 各プラグインをインストールするディレクトリ
+let s:plugin_dir = expand('~/.vim/')
+
+" dein.vimをインストールするディレクトリをランタイムパスへ追加
+let s:dein_dir = s:plugin_dir . 'repos/github.com/Shougo/dein.vim'
+execute 'set runtimepath+=' . s:dein_dir
+
+"dein plugin settings
+if dein#load_state(s:plugin_dir)
+  call dein#begin(s:plugin_dir)
+endif
+
+"利用中のプラグインをBundle
+" call dein#begin(expand('~/.vim/dein'))
+call dein#add('Shougo/dein.vim')
+call dein#add('Shougo/vimproc.vim', {'build': 'make'})
+
+"call dein#add('Shougo/neomru.vim')
+"call dein#add('Shougo/neosnippet')
+call dein#add('gmarik/vundle')
+call dein#add('tpope/vim-rails')
+call dein#add('Shougo/unite.vim')
+call dein#add('Shougo/neocomplete.vim')
+call dein#add('Shougo/neomru.vim')
+"call dein#add('rails.vim')
+"call dein#add('snipMate')
+call dein#add('thinca/vim-ref')
+call dein#add('thinca/vim-quickrun')
+"call dein#add('ref.vim')
+call dein#add('scrooloose/nerdcommenter.git')
+call dein#add('tpope/vim-fugitive')
+call dein#add('nanotech/jellybeans.vim')
+call dein#add('w0ng/vim-hybrid')
+call dein#add('vim-scripts/twilight')
+call dein#add('jonathanfilip/vim-lucius')
+call dein#add('jpo/vim-railscasts-theme')
+call dein#add('altercation/vim-colors-solarized')
+call dein#add('vim-scripts/Wombat')
+call dein#add('tomasr/molokai')
+call dein#add('vim-scripts/rdark')
+call dein#add('mrkn/mrkn256.vim')
+call dein#add('ujihisa/unite-colorscheme')
+call dein#add('tomtom/tcomment_vim.git')
+call dein#add('bling/vim-airline')
+call dein#add('mattn/emmet-vim')
+call dein#add('osyo-manga/vim-over')
+call dein#add('Shougo/vimfiler')
+call dein#add('scrooloose/nerdtree')
+call dein#add('vim-scripts/ruby-matchit')
+call dein#add('kmnk/vim-unite-giti.git')
+call dein#add('Shougo/neocomplcache.vim')
+call dein#add('Shougo/neocomplcache-rsense.vim')
+call dein#add('tpope/vim-endwise')
+
+" call dein#end()
+"neocomplete.vim
+let g:acp_enableAtStartup = 0
+let g:neocomplcache_enable_at_startup = 1
+" Use smartcase.
+let g:neocomplcache_enable_smart_case = 1
+
+" Set minimum syntax keyword length.
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+
+let g:neocomplcache_enable_camel_case_completion = 1
+let g:neocomplcache_enable_underbar_completion = 1
+
+" Rsense用の設定
+if !exists('g:neocomplcache_omni_patterns')
+  let g:neocomplcache_omni_patterns = {}
+endif
+let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+
+"rsenseのインストールフォルダがデフォルトと異なるので設定
+let g:rsenseHome = expand("/Users/dhane31/.rbenv/shims/rsense")
+let g:rsenseUseOmniFunc = 1
+
+
 
 filetype plugin on
 filetype indent on
+
+" if dein#check_install()
+"   call dein#install()
+" endif
 
 "カーソルキーで行末／行頭の移動可能に設定。
 set whichwrap=b,s,[,],<,>
@@ -200,7 +261,7 @@ nnoremap <leader>v vep
 noremap  <leader>s :%s/
 nnoremap <leader>gr :vimgrep //j **/*rb |cw
 nnoremap <leader>/ /<C-r>*<CR>
-nnoremap <leader>d :Perldoc 
+nnoremap <leader>d :Perldoc
 nnoremap <leader>3 0i#<ESC>
 nnoremap <leader>@ :bd<CR>
 nnoremap <leader>r :w<CR>:!ruby %<CR>
@@ -213,7 +274,7 @@ inoremap <leader>r <ESC>:w<CR>:!ruby %<CR>
 inoremap <Leader>e <ESC>:w<CR>
 inoremap <leader>g <ESC>:w<CR>:!go run %<CR>
 inoremap <<Tab> <% %><Left><Left><Left>
-inoremap b<Tab> <br /><Esc> 
+inoremap b<Tab> <br /><Esc>
 inoremap ><Tab> <Space>=><Space>
 inoremap =0 <Space>=<Space>
 nnoremap <C-m>m :Unite file_mru<CR>
@@ -234,7 +295,6 @@ let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 200
 let g:unite_cursor_line_highlight = "TabLineSel"
 
-" let g:neocomplcache_enable_at_startup = 1
 
 nnoremap <silent> ciy ciw<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
 nnoremap <silent> cy   ce<C-r>0<ESC>:let@/=@1<CR>:noh<CR>
@@ -246,12 +306,12 @@ set laststatus=2
 
 "":au BufEnter *.php,*.ctp,*.m,*.h execute ":lcd " . expand("%:p:h")
 "neocomplcache
-"let g:NeoComplCache_EnableAtStartup               = 1 
+"let g:NeoComplCache_EnableAtStartup               = 1
 " let g:NeoComplCache_MaxList                       = 20
-" ""let g:NeoComplCache_KeywordCompletionStartLength  = 2 
-" let g:NeoComplCache_MinKeywordLength              = 2 
-" let g:NeoComplCache_MinSyntaxLength               = 2 
-" let g:NeoComplCache_SmartCase                     = 1 
+" ""let g:NeoComplCache_KeywordCompletionStartLength  = 2
+" let g:NeoComplCache_MinKeywordLength              = 2
+" let g:NeoComplCache_MinSyntaxLength               = 2
+" let g:NeoComplCache_SmartCase                     = 1
 " let g:NeoComplCache_EnableCamelCaseCompletion     = 1
 " let g:NeoComplCache_EnableUnderbarCompletion      = 1
 
@@ -314,12 +374,7 @@ set t_Co=256
 "VTreeExplore
 let g:treeExplHidden = 1
 
-"neocomplete.vim
-let g:acp_enableAtStartup = 0
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
 
 " Define dictionary.
 let g:neocomplete#sources#dictionary#dictionaries = {
@@ -333,7 +388,7 @@ if !exists('g:neocomplete#keyword_patterns')
       let g:neocomplete#keyword_patterns = {}
     endif
     let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-    
+
     " Plugin key-mappings.
     inoremap <expr><C-g>     neocomplete#undo_completion()
     inoremap <expr><C-l>     neocomplete#complete_common_string()
@@ -378,7 +433,7 @@ nnoremap <silent>gB :Gbrowse<CR>
 let g:fugitive_git_executable = executable('hub') ? 'hub' : 'git'
 nnoremap <silent>gs :Unite giti/status -horizontal<CR>
 nnoremap <silent>gl :Unite giti/log -horizontal<CR>
-nnoremap <silent>gs :Unite giti/status -no-start-insert -horizontal<CR>
+nnoremap <silent>gs :Unite giti/status -horizontal<CR>
 nnoremap <silent>gh :Unite giti/branch_all<CR>
 
 " vim-unite-giti {{{
@@ -406,7 +461,6 @@ function! s:unite_hooks.giti_status() "{{{
   nnoremap <silent><buffer><expr>ga unite#do_action('stage')
   nnoremap <silent><buffer><expr>gc unite#do_action('checkout')
   nnoremap <silent><buffer><expr>gd unite#do_action('diff')
-  nnoremap <silent><buffer><expr>gD unite#do_action('diff_cached')
   nnoremap <silent><buffer><expr>gu unite#do_action('unstage')
 endfunction"}}}
 
@@ -421,3 +475,6 @@ function! s:unite_hooks.giti_branch_all() "{{{
   call self.giti_branch()
 endfunction"}}}
 "}}}
+"
+autocmd BufWritePre * :%s/\s\+$//ge
+
