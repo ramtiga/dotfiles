@@ -12,10 +12,10 @@ autoload colors
 colors
 
 PROMPT="
- %{${fg[yellow]}%}%~%{${reset_color}%} 
+ %{${fg[yellow]}%}%~%{${reset_color}%}
 [%n]$ "
 
-PROMPT2='[%n]> ' 
+PROMPT2='[%n]> '
 
 #履歴
 #履歴を保存するファイル指定
@@ -39,7 +39,7 @@ autoload history-search-end
 zle -N history-beginning-search-backward-end history-search-end
 zle -N history-beginning-search-forward-end history-search-end
 bindkey "^P" history-beginning-search-backward-end
-bindkey "^N" history-beginning-search-forward-end 
+bindkey "^N" history-beginning-search-forward-end
 
 #cdの設定
 #ディレクトリ名だけで移動する。
@@ -58,7 +58,7 @@ kterm*|xterm)
         echo -ne "\033]0;${USER}@${HOST}\007"
     }
     ;;
-esac 
+esac
 
 #色の設定
 export LSCOLORS=gxfxxxxxcxxxxxxxxxgxgx
@@ -91,6 +91,12 @@ alias gl='git log'
 alias gd='git diff'
 alias gb='git branch'
 
+# svn
+alias sb='svnbr'
+alias sl='svnbr log'
+
+
+
 #w3mでALC検索
 function alc() {
   if [ $# != 0 ]; then
@@ -118,8 +124,9 @@ unsetopt promptcr
 
 autoload -Uz select-word-style
 select-word-style bash
-export PATH=/usr/local/bin:/usr/local/share:/Users/dhanegm731/.rbenv/bin:$PATH
-# eval "$(rbenv init -)"
+export PATH=/usr/local/bin:/usr/local/share:/Users/dhane31/.rbenv/bin:$PATH
+export PATH=$HOME/.nodebrew/current/bin:$PATH
+ eval "$(rbenv init -)"
 
 alias php4=/usr/local/lib/php-4.4.9/bin/php
 # ADDED BY npm FOR NVM
@@ -128,22 +135,22 @@ alias php4=/usr/local/lib/php-4.4.9/bin/php
 #. ~/.nvm/nvm.sh
 #nvm use v0.6.7
 
-source $HOME/perl5/perlbrew/etc/bashrc
+#source $HOME/perl5/perlbrew/etc/bashrc
 #source $HOME/perl5/perlbrew/etc/zshrc
 #export PERL5LIB=$HOME/perl5/lib/perl5
 
 #source .zsh/plugin/incr*.zsh
 
-function cpanv (){
-  perl -M$1 -le "print \$$1::VERSION"
-}
+#function cpanv (){
+#  perl -M$1 -le "print \$$1::VERSION"
+#}
 
 export GISTY_DIR="$HOME/dev/gists"
 
-export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
+#export EDITOR=/Applications/MacVim.app/Contents/MacOS/Vim
 # alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 # alias vim='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-alias vi='/usr/local/bin/vim'
+#alias vi='/usr/local/bin/vim'
 
 # VCS settings
 autoload -Uz vcs_info
@@ -193,13 +200,18 @@ stty -ixon
 bindkey '^s' peco-src
 
 ### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
+#export PATH="/usr/local/heroku/bin:$PATH"
+#
+#if which pyenv > /dev/null; then
+#    export PYENV_ROOT="${HOME}/.pyenv"
+#    export PATH=${PYENV_ROOT}/shims:${PATH}
+#    eval "$(pyenv init -)";
+#fi
 
-if which pyenv > /dev/null; then
-    export PYENV_ROOT="${HOME}/.pyenv"
-    export PATH=${PYENV_ROOT}/shims:${PATH}
-    eval "$(pyenv init -)";
-fi
+#export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
+#pyenv virtualenvwrapper
 
-export PYENV_VIRTUALENVWRAPPER_PREFER_PYVENV="true"
-pyenv virtualenvwrapper
+alias ctags="`brew --prefix`/bin/ctags"
+
+alias rs='rails server'
+alias rc='rails console'
