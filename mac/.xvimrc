@@ -1,0 +1,87 @@
+syntax on
+
+"leader 設定
+let mapleader = ';'
+
+
+"vi互換の動きにしない
+set nocompatible
+
+"カーソルキーで行末／行頭の移動可能に設定。
+" set whichwrap=b,s,[,],<,>
+set whichwrap+=h,l,<,>,[,],b,s
+nnoremap h <Left>
+nnoremap l <Right>
+
+" 検索を循環させない
+set nowrapscan
+
+"インデント
+set shiftwidth=2
+
+" 対応括弧の瞬間強調時間
+set matchtime=3
+
+" 見た目で行移動
+nnoremap j gj
+nnoremap k gk
+
+" 削除でレジスタに格納しない(ビジュアルモードでの選択後は格納する)
+nnoremap x "_x
+nnoremap diw "_diw
+nnoremap dw "_dw
+
+"タブを空白で入力する
+set expandtab
+
+"自動的にインデントする
+set autoindent
+
+"インクリメンタルサーチを行う
+set incsearch
+set hlsearch
+
+"検索大文字小文字区別なし
+set ic
+
+" 矩形選択で行末を超えてブロックを選択できるようにする
+set virtualedit+=block
+
+"escでハイライトをオフ
+nnoremap <ESC><ESC> :noh<CR>
+nnoremap <C-k><C-k> :noh<CR>
+
+"enabled backspace
+set backspace=start,eol,indent
+
+inoremap { {}<LEFT>
+inoremap [ []<LEFT>
+inoremap ( ()<LEFT>
+inoremap " ""<LEFT>
+inoremap ' ''<LEFT>
+vnoremap { "zdi^V{<C-R>z}<ESC>
+vnoremap [ "zdi^V[<C-R>z]<ESC>
+vnoremap ( "zdi^V(<C-R>z)<ESC>
+vnoremap " "zdi^V"<C-R>z^V"<ESC>
+vnoremap ' "zdi'<C-R>z'<ESC>
+
+
+nmap > $a
+nmap , 0
+
+"独自キーバインド
+cnoremap <C-k> <Esc>
+inoremap <C-k> <Esc>
+vnoremap <C-k> <Esc>
+nnoremap <Leader>e :w<CR>
+nnoremap <leader>q :q!<CR>
+nnoremap <leader>v vep
+noremap  <leader>s :%s/
+nnoremap <leader>gr :vimgrep //j **/*rb |cw
+nnoremap <leader>/ /<C-r>*<CR>
+nnoremap <leader>3 0i#<ESC>
+nnoremap <leader>@ :bd<CR>
+
+inoremap <Leader>e <ESC>:w<CR>
+inoremap =0 <Space>=<Space>
+nnoremap <C-]> g<C-]>
