@@ -56,18 +56,13 @@ endif
 call dein#add('Shougo/dein.vim')
 call dein#add('Shougo/vimproc.vim', {'build': 'make'})
 
-"call dein#add('Shougo/neomru.vim')
-"call dein#add('Shougo/neosnippet')
 call dein#add('gmarik/vundle')
 call dein#add('tpope/vim-rails')
 call dein#add('Shougo/unite.vim')
 call dein#add('Shougo/neocomplete.vim')
 call dein#add('Shougo/neomru.vim')
-"call dein#add('rails.vim')
-"call dein#add('snipMate')
 call dein#add('thinca/vim-ref')
 call dein#add('thinca/vim-quickrun')
-"call dein#add('ref.vim')
 call dein#add('scrooloose/nerdcommenter.git')
 call dein#add('tpope/vim-fugitive')
 call dein#add('nanotech/jellybeans.vim')
@@ -92,6 +87,26 @@ call dein#add('kmnk/vim-unite-giti.git')
 call dein#add('Shougo/neocomplcache.vim')
 call dein#add('Shougo/neocomplcache-rsense.vim')
 call dein#add('tpope/vim-endwise')
+call dein#add('alvan/vim-closetag')
+
+call dein#add('Shougo/deoplete.nvim')
+if !has('nvim')
+  call dein#add('roxma/nvim-yarp')
+  call dein#add('roxma/vim-hug-neovim-rpc')
+endif
+let g:deoplete#enable_at_startup = 1
+
+call dein#add('Shougo/neosnippet.vim')
+call dein#add('Shougo/neosnippet-snippets')
+
+let g:closetag_filenames = '*.html,*.xhtml,*.php'
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
+let g:closetag_filetypes = 'html,xhtml,php'
+let g:closetag_xhtml_filetypes = 'xhtml,jsx'
+
+let g:closetag_emptyTags_caseSensitive = 1
+let g:closetag_shortcut = '>'
+let g:closetag_close_shortcut = '<leader>>'
 
 " call dein#end()
 "neocomplete.vim
