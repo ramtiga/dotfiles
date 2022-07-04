@@ -178,9 +178,9 @@ nnoremap dw "_dw
 "タブを空白で入力する
 set expandtab
 
-"標準タブは2
-" set tabstop=2
-" set softtabstop=2
+"タブ設定
+set tabstop=2
+set softtabstop=2
 
 "自動的にインデントする
 set autoindent
@@ -292,6 +292,7 @@ inoremap <leader>g <ESC>:w<CR>:!go run %<CR>
 inoremap <<Tab> <% %><Left><Left><Left>
 inoremap b<Tab> <br /><Esc>
 inoremap ><Tab> <Space>=><Space>
+inoremap .<Tab> ->
 inoremap =0 <Space>=<Space>
 nnoremap <C-m>m :Unite file_mru<CR>
 nnoremap <C-l> :Unite buffer<CR>
@@ -299,6 +300,7 @@ nnoremap <C-]> g<C-]>
 
 inoremap bi<Tab> require 'pry'; binding.pry<ESC>
 inoremap de<Tab> require 'ruby-debug'; debugger<ESC>
+inoremap <leader>a <ESC>$a;<ESC>
 
 " vim-unite-giti
 " nnoremap gl :Unite giti/log<CR>
@@ -494,3 +496,5 @@ endfunction"}}}
 "
 autocmd BufWritePre * :%s/\s\+$//ge
 
+set backupskip=/tmp/*,/private/tmp/*
+set noundofile

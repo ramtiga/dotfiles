@@ -114,7 +114,7 @@ bindkey -e
 setopt nobeep
 
 #エディタ
-export EDITOR=vi
+export EDITOR=/usr/bin/vim
 
 #改行のない出力をプロンプトで上書きするのを防ぐ
 unsetopt promptcr
@@ -215,3 +215,49 @@ alias ctags="`brew --prefix`/bin/ctags"
 
 alias rs='rails server'
 alias rc='rails console'
+export PATH="/usr/local/opt/php@7.2/bin:$PATH"
+export PATH="/usr/local/opt/php@7.2/sbin:$PATH"
+export PATH="/Users/dhane31/opt/anaconda3/bin:$PATH"
+export PATH="/Users/dhane31/Library/Android/sdk/platform-tools:$PATH"
+export PATH="/Users/dhane31/flutter/flutter/bin:$PATH"
+
+export PATH="/usr/local/opt/php@7.3/bin:$PATH"
+export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
+export LDFLAGS="-L/usr/local/opt/php@7.3/lib"
+export CPPFLAGS="-I/usr/local/opt/php@7.3/include"
+export PATH="/usr/local/opt/openssl@1.0/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/openssl@1.0/lib"
+export CPPFLAGS="-I/usr/local/opt/openssl@1.0/include"
+export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.0/lib/pkgconfig"
+export PATH="/usr/local/opt/apr-util/bin:$PATH"
+export PATH="/usr/local/opt/openldap/bin:$PATH"
+export PATH="/usr/local/opt/openldap/sbin:$PATH"
+export LDFLAGS="-L/usr/local/opt/openldap/lib"
+export CPPFLAGS="-I/usr/local/opt/openldap/include"
+
+export PATH="/usr/local/opt/curl-openssl/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/curl-openssl/lib"
+export CPPFLAGS="-I/usr/local/opt/curl-openssl/include"
+export PKG_CONFIG_PATH="/usr/local/opt/curl-openssl/lib/pkgconfig"
+
+export LDFLAGS="-L/usr/local/opt/readline/lib"
+export CPPFLAGS="-I/usr/local/opt/readline/include"
+export PKG_CONFIG_PATH="/usr/local/opt/readline/lib/pkgconfig"
+export PATH="/usr/local/opt/sqlite/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/sqlite/lib"
+export CPPFLAGS="-I/usr/local/opt/sqlite/include"
+export PKG_CONFIG_PATH="/usr/local/opt/sqlite/lib/pkgconfig"
+
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+export LDFLAGS="-L/usr/local/opt/libpq/lib"
+export CPPFLAGS="-I/usr/local/opt/libpq/include"
+export PKG_CONFIG_PATH="/usr/local/opt/libpq/lib/pkgconfig"
+
+export PATH="$PATH":"$HOME/.pub-cache/bin"
+
+PATH="/Users/dhane31/.phpenv/bin:$PATH"
+eval "$(phpenv init -)"
+export PATH="/usr/local/opt/bzip2/bin:$PATH"
+export PATH="/usr/local/opt/zlib/bin:$PATH"
+# export PATH="/Users/dhane31/.nodebrew/node/v16.13.2/bin:$PATH"
+
