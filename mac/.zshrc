@@ -124,11 +124,11 @@ unsetopt promptcr
 
 autoload -Uz select-word-style
 select-word-style bash
-export PATH=/usr/local/bin:/usr/local/share:/Users/dhane31/.rbenv/bin:$PATH
-export PATH=$HOME/.nodebrew/current/bin:$PATH
- eval "$(rbenv init -)"
+#export PATH=/usr/local/bin:/usr/local/share:/Users/dhane31/.rbenv/bin:$PATH
+#export PATH=$HOME/.nodebrew/current/bin:$PATH
+# eval "$(rbenv init -)"
 
-alias php4=/usr/local/lib/php-4.4.9/bin/php
+#alias php4=/usr/local/lib/php-4.4.9/bin/php
 # ADDED BY npm FOR NVM
 #. /usr/local/lib/node/.npm/nvm/0.1.0/package/nvm.sh
 # END ADDED BY npm FOR NVM
@@ -215,49 +215,122 @@ alias ctags="`brew --prefix`/bin/ctags"
 
 alias rs='rails server'
 alias rc='rails console'
-export PATH="/usr/local/opt/php@7.2/bin:$PATH"
-export PATH="/usr/local/opt/php@7.2/sbin:$PATH"
-export PATH="/Users/dhane31/opt/anaconda3/bin:$PATH"
-export PATH="/Users/dhane31/Library/Android/sdk/platform-tools:$PATH"
-export PATH="/Users/dhane31/flutter/flutter/bin:$PATH"
+#export PATH="/usr/local/opt/php@7.2/bin:$PATH"
+#export PATH="/usr/local/opt/php@7.2/sbin:$PATH"
+#export PATH="/Users/dhane31/opt/anaconda3/bin:$PATH"
+#export PATH="/Users/dhane31/Library/Android/sdk/platform-tools:$PATH"
+#export PATH="/Users/dhane31/flutter/flutter/bin:$PATH"
+#
+#export PATH="/usr/local/opt/php@7.3/bin:$PATH"
+#export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
+#export LDFLAGS="-L/usr/local/opt/php@7.3/lib"
+#export CPPFLAGS="-I/usr/local/opt/php@7.3/include"
+#export PATH="/usr/local/opt/openssl@1.0/bin:$PATH"
+#export LDFLAGS="-L/usr/local/opt/openssl@1.0/lib"
+#export CPPFLAGS="-I/usr/local/opt/openssl@1.0/include"
+#export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.0/lib/pkgconfig"
+#export PATH="/usr/local/opt/apr-util/bin:$PATH"
+#export PATH="/usr/local/opt/openldap/bin:$PATH"
+#export PATH="/usr/local/opt/openldap/sbin:$PATH"
+#export LDFLAGS="-L/usr/local/opt/openldap/lib"
+#export CPPFLAGS="-I/usr/local/opt/openldap/include"
+#
+#export PATH="/usr/local/opt/curl-openssl/bin:$PATH"
+#export LDFLAGS="-L/usr/local/opt/curl-openssl/lib"
+#export CPPFLAGS="-I/usr/local/opt/curl-openssl/include"
+#export PKG_CONFIG_PATH="/usr/local/opt/curl-openssl/lib/pkgconfig"
+#
+#export LDFLAGS="-L/usr/local/opt/readline/lib"
+#export CPPFLAGS="-I/usr/local/opt/readline/include"
+#export PKG_CONFIG_PATH="/usr/local/opt/readline/lib/pkgconfig"
+#export PATH="/usr/local/opt/sqlite/bin:$PATH"
+#export LDFLAGS="-L/usr/local/opt/sqlite/lib"
+#export CPPFLAGS="-I/usr/local/opt/sqlite/include"
+#export PKG_CONFIG_PATH="/usr/local/opt/sqlite/lib/pkgconfig"
+#
+#export PATH="/usr/local/opt/libpq/bin:$PATH"
+#export LDFLAGS="-L/usr/local/opt/libpq/lib"
+#export CPPFLAGS="-I/usr/local/opt/libpq/include"
+#export PKG_CONFIG_PATH="/usr/local/opt/libpq/lib/pkgconfig"
+#
+#export PATH="$PATH":"$HOME/.pub-cache/bin"
+# export PATH="/Users/dhane31/.nodebrew/node/v16.13.2/bin:$PATH"
 
-export PATH="/usr/local/opt/php@7.3/bin:$PATH"
-export PATH="/usr/local/opt/php@7.3/sbin:$PATH"
-export LDFLAGS="-L/usr/local/opt/php@7.3/lib"
-export CPPFLAGS="-I/usr/local/opt/php@7.3/include"
-export PATH="/usr/local/opt/openssl@1.0/bin:$PATH"
-export LDFLAGS="-L/usr/local/opt/openssl@1.0/lib"
-export CPPFLAGS="-I/usr/local/opt/openssl@1.0/include"
-export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.0/lib/pkgconfig"
-export PATH="/usr/local/opt/apr-util/bin:$PATH"
-export PATH="/usr/local/opt/openldap/bin:$PATH"
-export PATH="/usr/local/opt/openldap/sbin:$PATH"
-export LDFLAGS="-L/usr/local/opt/openldap/lib"
-export CPPFLAGS="-I/usr/local/opt/openldap/include"
-
-export PATH="/usr/local/opt/curl-openssl/bin:$PATH"
-export LDFLAGS="-L/usr/local/opt/curl-openssl/lib"
-export CPPFLAGS="-I/usr/local/opt/curl-openssl/include"
-export PKG_CONFIG_PATH="/usr/local/opt/curl-openssl/lib/pkgconfig"
-
-export LDFLAGS="-L/usr/local/opt/readline/lib"
-export CPPFLAGS="-I/usr/local/opt/readline/include"
-export PKG_CONFIG_PATH="/usr/local/opt/readline/lib/pkgconfig"
-export PATH="/usr/local/opt/sqlite/bin:$PATH"
-export LDFLAGS="-L/usr/local/opt/sqlite/lib"
-export CPPFLAGS="-I/usr/local/opt/sqlite/include"
-export PKG_CONFIG_PATH="/usr/local/opt/sqlite/lib/pkgconfig"
-
-export PATH="/usr/local/opt/libpq/bin:$PATH"
-export LDFLAGS="-L/usr/local/opt/libpq/lib"
-export CPPFLAGS="-I/usr/local/opt/libpq/include"
-export PKG_CONFIG_PATH="/usr/local/opt/libpq/lib/pkgconfig"
-
-export PATH="$PATH":"$HOME/.pub-cache/bin"
+#eval "$(anyenv init -)"
 
 PATH="/Users/dhane31/.phpenv/bin:$PATH"
 eval "$(phpenv init -)"
-export PATH="/usr/local/opt/bzip2/bin:$PATH"
-export PATH="/usr/local/opt/zlib/bin:$PATH"
-# export PATH="/Users/dhane31/.nodebrew/node/v16.13.2/bin:$PATH"
 
+#export PATH="/opt/homebrew/opt/bzip2/bin:$PATH"
+#export LDFLAGS="-L/opt/homebrew/opt/bzip2/lib"
+#export CPPFLAGS="-I/opt/homebrew/opt/bzip2/include"
+
+#export PATH="/opt/homebrew/opt/bison/bin:$PATH"
+#export PATH="/opt/homebrew/opt/libxml2/bin:$PATH"
+#export PATH="/opt/homebrew/opt/bzip2/bin:$PATH"
+#export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+#export PATH="/opt/homebrew/opt/libiconv/bin:$PATH"
+#export PATH="/opt/homebrew/opt/krb5/bin:$PATH"
+#export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
+#export PATH="/opt/homebrew/opt/icu4c/bin:$PATH"
+#export PATH="/opt/homebrew/opt/tidy-html5/lib:$PATH"
+#
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/krb5/lib/pkgconfig:$PKG_CONFIG_PATH"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/icu4c/lib/pkgconfig:$PKG_CONFIG_PATH"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/libedit/lib/pkgconfig:$PKG_CONFIG_PATH"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/libjpeg/lib/pkgconfig:$PKG_CONFIG_PATH"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/libpng/lib/pkgconfig:$PKG_CONFIG_PATH"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/libxml2/lib/pkgconfig:$PKG_CONFIG_PATH"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/libzip/lib/pkgconfig:$PKG_CONFIG_PATH"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/oniguruma/lib/pkgconfig:$PKG_CONFIG_PATH"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig:$PKG_CONFIG_PATH"
+#export PKG_CONFIG_PATH="/opt/homebrew/opt/tidy-html5/lib/pkgconfig:$PKG_CONFIG_PATH"
+#
+#export PHP_RPATHS="/opt/homebrew/opt/zlib/lib /opt/homebrew/opt/bzip2/lib /opt/homebrew/opt/curl/lib /opt/homebrew/opt/libiconv/lib /opt/homebrew/opt/libedit/lib"
+#
+#PHP_BUILD_CONFIGURE_OPTS="--with-bz2=$(brew --prefix bzip2) --with-iconv=$(brew --prefix libiconv) --with-tidy=$(brew --prefix tidy-html5) --with-external-pcre=$(brew --prefix pcre2) --with-zip --enable-intl --with-pear"
+
+export PATH="/opt/homebrew/opt/icu4c/bin:$PATH"
+export PATH="/opt/homebrew/opt/icu4c/sbin:$PATH"
+export PATH="/opt/homebrew/opt/openssl@1.1/bin:$PATH"
+
+export PKG_CONFIG_PATH="/opt/homebrew/opt/krb5/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/icu4c/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/libedit/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/libjpeg/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/libpng/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/libxml2/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/libzip/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/oniguruma/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@1.1/lib/pkgconfig:$PKG_CONFIG_PATH"
+export PKG_CONFIG_PATH="/opt/homebrew/opt/tidy-html5/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+export OPENSSL_CFLAGS=-I/opt/homebrew/opt/openssl@1.1/include
+export OPENSSL_LIBS=-L/opt/homebrew/opt/openssl@1.1/lib
+
+export PHP_RPATHS="/opt/homebrew/opt/zlib/lib /opt/homebrew/opt/bzip2/lib /opt/homebrew/opt/curl/lib /opt/homebrew/opt/libiconv/lib /opt/homebrew/opt/libedit/lib"
+#export PHP_BUILD_CONFIGURE_OPTS="--with-bz2=$(brew --prefix bzip2) --with-iconv=$(brew --prefix libiconv) --with-tidy=$(brew --prefix tidy-html5) --with-external-pcre=$(brew --prefix pcre2) --with-zip --enable-intl --with-pear"
+
+#export PHP_BUILD_CONFIGURE_OPTS="--with-bz2=$(brew --prefix bzip2) --with-iconv=$(brew --prefix libiconv) --with-openssl=$(brew --prefix openssl@1.1) --with-tidy=$(brew --prefix tidy-html5) --with-external-pcre=$(brew --prefix pcre2) --with-zip --enable-intl --with-pear" PKG_CONFIG_PATH="$(brew --prefix icu4c)/lib/pkgconfig"
+export PHP_BUILD_CONFIGURE_OPTS="--with-bz2=$(brew --prefix bzip2) --with-iconv=$(brew --prefix libiconv) --with-openssl=$(brew --prefix openssl@1.1) --with-tidy=$(brew --prefix tidy-html5) --with-external-pcre=$(brew --prefix pcre2) --with-zip --enable-intl --with-pear"
+
+
+
+alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
+
+export PATH="/Users/dhane31/php/Mutual-Aid-Association/vendor/phpunit/phpunit:$PATH"
+
+eval "$(nodenv init -)"
+
+
+export PATH="/opt/homebrew/opt/php/bin:$PATH"
+export PATH="/opt/homebrew/opt/php/sbin:$PATH"
+
+
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+export ZSH_HIGHLIGHT_HIGHLIGHTERS_DIR=/opt/homebrew/share/zsh-syntax-highlighting/highlighters
+export PATH=~/.npm-global/bin:$PATH
+
+cd ~/php/Mutual-Aid-Association
