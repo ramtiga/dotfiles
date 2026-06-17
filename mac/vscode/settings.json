@@ -1,0 +1,169 @@
+{
+  "vim.whichwrap": "h,l,<,>,[,]",
+  "files.trimTrailingWhitespace": true,
+  // システムのclipboardにコピー
+  "vim.useSystemClipboard": true,
+  // 検索に:を入れる
+  "vim.cmdLineInitialColon": true,
+  "vim.hlsearch": true,
+  // 言わずもがなeasymotion
+  "vim.easymotion": true,
+  // カーソル上にあるワードを"*"で検索
+  "vim.visualstar": true,
+  // 諸々のctrlキーを使った操作が有効になる
+  "vim.useCtrlKeys": true,
+  "vim.leader": ";",
+  "editor.formatOnType": true,
+  "dart.debugExternalLibraries": true,
+  "dart.debugSdkLibraries": false,
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["<C-k>"],
+      "after": ["<Esc>"]
+    },
+    {
+      "before": ["<leader>", "e"],
+      "after": ["<Esc>"],
+      "commands": [":wq"]
+    }
+  ],
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<leader>", "e"],
+      "commands": [":wq"]
+    },
+    {
+      "before": [">"],
+      "after": ["$", "a"]
+    }
+  ],
+  "vim.visualModeKeyBindingsNonRecursive": [
+    {
+      "before": ["<C-k>"],
+      "after": ["<Esc>"]
+    }
+  ],
+  "explorer.confirmDelete": false,
+  "bracket-pair-colorizer-2.showVerticalScopeLine": false,
+  "bracket-pair-colorizer-2.showHorizontalScopeLine": false,
+  "editor.detectIndentation": false,
+  "editor.wordWrap": "on",
+  "diffEditor.ignoreTrimWhitespace": false,
+  "liveServer.settings.donotShowInfoMsg": true,
+  "kite.showWelcomeNotificationOnStartup": false,
+  "dart.previewFlutterUiGuides": true,
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [80],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/.rvm/**": true,
+    "**/node_modules/**": true,
+    "**/GoogleDrive/**": true,
+    "**/Dropbox/**": true,
+    "**/Pictures/**": true
+  },
+  "dart.flutterSdkPaths": [".fvm/flutter_sdk"],
+  "editor.minimap.enabled": false,
+  "editor.minimap.maxColumn": 0,
+  "editor.codeLens": false,
+  "editor.comments.ignoreEmptyLines": false,
+  "editor.comments.insertSpace": false,
+  "npm.fetchOnlinePackageInfo": false,
+  "editor.hover.sticky": false,
+  "bracket-pair-colorizer-2.depreciation-notice": false,
+  "bracketPairColorizer.depreciation-notice": false,
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "editor.fontSize": 16,
+  "editor.find.loop": false,
+  "php.suggest.basic": false,
+  "editor.wordSeparators": "`~!@#%$^&*()-=+[{]}\\|;:'\",.<>/?",
+  "git.confirmSync": false,
+  "html.format.indentInnerHtml": true,
+  "[vue]": {
+    "editor.defaultFormatter": "octref.vetur"
+  },
+  "yaml.schemas": {
+    "file:///Users/dhane31/.vscode/extensions/atlassian.atlascode-2.10.12/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+  },
+  "atlascode.bitbucket.enabled": true,
+  "atlascode.jira.enabled": false,
+  "redhat.telemetry.enabled": true,
+  "explorer.confirmDragAndDrop": false,
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "workbench.iconTheme": "material-icon-theme",
+  "php-cs-fixer.executablePath": "${extensionPath}/php-cs-fixer.phar",
+  "[php]": {
+    "editor.defaultFormatter": "junstyle.php-cs-fixer",
+    "editor.fontSize": 14
+  },
+  "php-cs-fixer.lastDownload": 1749204827426,
+  "php-cs-fixer.onsave": true,
+  "editor.formatOnSave": true,
+  "[blade]": {
+    "editor.defaultFormatter": "shufo.vscode-blade-formatter"
+  },
+  "code-runner.executorMap": {
+    "javascript": "clear; node",
+    "typescript": "clear; ts-node",
+    //"php": "if [[ $file == *Test.php ]]; then cd /Users/dhane31/php/Mutual-Aid-Association && ./vendor/bin/phpunit $file; else php $file; fi"
+  },
+  "editor.formatOnPaste": true,
+  "blade.format.enable": true,
+  "workbench.colorTheme": "Night Owl",
+  "php.debug.executablePath": "",
+  "terminal.integrated.fontSize": 14,
+  "editor.mouseWheelZoom": true,
+  "[typescript]": {
+    "editor.tabSize": 2,
+    "editor.fontSize": 14,
+	"editor.insertSpaces": true
+  },
+  "[typescriptreact]": {
+	"editor.tabSize": 2,
+	"editor.insertSpaces": true
+  },
+  "prettier.printWidth": 120,
+  "gopls": {},
+  "tabnine.experimentalAutoImports": true,
+  "[go]": {
+      "editor.defaultFormatter": "golang.go",
+      "editor.formatOnSave": true
+},
+"go.toolsManagement.autoUpdate": true,
+"php.validate.executablePath": "/opt/homebrew/opt/php@8.2/bin/php",
+"phpunit.executablePath": "${workspaceFolder}/vendor/bin/phpunit",
+"phpunit.php": "/opt/homebrew/opt/php@8.2/bin/php",
+"phpunit.args": [],
+"phpunit.colors": true,
+"phpunit.paths": {
+    "${workspaceFolder}": "${workspaceFolder}"
+},
+//"github.copilot.nextEditSuggestions.enabled": true,
+//"github.copilot.agent.enabled": true,
+//"github.copilot.agent.experimentalFeatures": true,
+"editor.tabSize": 2,
+"workbench.editor.enablePreview": false,
+"github.copilot.enable": {
+  "typescript": false,
+  "typescriptreact": false
+}
+}
