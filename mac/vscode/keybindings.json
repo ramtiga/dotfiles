@@ -1,0 +1,117 @@
+// 既定値を上書きするには、このファイル内にキー バインドを挿入しますauto[]
+[
+  {
+    "key": "ctrl+cmd+p",
+    "command": "workbench.action.focusAboveGroup"
+  },
+  {
+    "key": "cmd+k cmd+up",
+    "command": "-workbench.action.focusAboveGroup"
+  },
+  {
+    "key": "ctrl+cmd+n",
+    "command": "workbench.action.focusBelowGroup"
+  },
+  {
+    "key": "cmd+k cmd+down",
+    "command": "-workbench.action.focusBelowGroup"
+  },
+  {
+    "key": "shift+cmd+]",
+    "command": "-workbench.action.terminal.focusNext",
+    "when": "terminalFocus && terminalHasBeenCreated && !terminalEditorFocus || terminalFocus && terminalProcessSupported && !terminalEditorFocus"
+  },
+  {
+    "key": "shift+cmd+[",
+    "command": "-workbench.action.terminal.focusPrevious",
+    "when": "terminalFocus && terminalHasBeenCreated && !terminalEditorFocus || terminalFocus && terminalProcessSupported && !terminalEditorFocus"
+  },
+{
+    "key": "cmd+k alt+cmd+right",
+    "command": "-workbench.action.nextEditorInGroup"
+  },
+  {
+    "key": "shift+cmd+[BracketLeft]",
+    "command": "workbench.action.previousEditorInGroup"
+  },
+  {
+    "key": "cmd+k alt+cmd+left",
+    "command": "-workbench.action.previousEditorInGroup"
+  },
+  {
+    "key": "ctrl+l",
+    "command": "workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup"
+  },
+  {
+    "key": "ctrl+tab",
+    "command": "-workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup"
+},
+{
+    "key": "ctrl+r",
+    "command": "workbench.action.debug.run",
+    "when": "debuggersAvailable && debugState != 'initializing'"
+},
+{
+    "key": "ctrl+f5",
+    "command": "-workbench.action.debug.run",
+    "when": "debuggersAvailable && debugState != 'initializing'"
+},
+{
+    "key": "shift+enter",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": {
+        "text": "\\\r\n"
+    },
+    "when": "terminalFocus"
+},
+{
+    "key": "shift+alt+c",
+    "command": "copyRelativeFilePath",
+    "when": "!editorFocus"
+},
+{
+    "key": "shift+alt+cmd+c",
+    "command": "-copyRelativeFilePath",
+    "when": "!editorFocus"
+},
+{
+  "key": "ctrl+cmd+1",
+  "command": "workbench.action.terminal.focus",
+  "when": "accessibilityModeEnabled && accessibleViewOnLastLine && terminalHasBeenCreated && accessibleViewCurrentProviderId == 'terminal' || accessibilityModeEnabled && accessibleViewOnLastLine && terminalProcessSupported && accessibleViewCurrentProviderId == 'terminal'"
+},
+{
+  "key": "cmd+down",
+  "command": "-workbench.action.terminal.focus",
+  "when": "accessibilityModeEnabled && accessibleViewOnLastLine && terminalHasBeenCreated && accessibleViewCurrentProviderId == 'terminal' || accessibilityModeEnabled && accessibleViewOnLastLine && terminalProcessSupported && accessibleViewCurrentProviderId == 'terminal'"
+},
+{
+  "key": "ctrl+cmd+1",
+  "command": "workbench.action.terminal.toggleTerminal",
+  "when": "terminal.active"
+},
+{
+  "key": "ctrl+`",
+  "command": "-workbench.action.terminal.toggleTerminal",
+  "when": "terminal.active"
+},
+{
+  "key": "ctrl+cmd+c",
+  "command": "copyFilePath",
+  "when": "editorFocus"
+},
+{
+  "key": "cmd+k alt+cmd+c",
+  "command": "-copyFilePath",
+  "when": "editorFocus"
+},
+{
+  "key": "ctrl+cmd+c",
+  "command": "copyRelativeFilePath",
+  "when": "editorFocus"
+},
+{
+  "key": "cmd+k shift+alt+cmd+c",
+  "command": "-copyRelativeFilePath",
+  "when": "editorFocus"
+}
+]
