@@ -1,5 +1,3 @@
- -- HANDLE SCROLLING
-
 local deferred = false
 
 overrideRightMouseDown = hs.eventtap.new({ hs.eventtap.event.types.rightMouseDown }, function(e)
@@ -34,7 +32,8 @@ dragRightToScroll = hs.eventtap.new({ hs.eventtap.event.types.rightMouseDragged 
 
     local dx = e:getProperty(hs.eventtap.event.properties['mouseEventDeltaX'])
     local dy = e:getProperty(hs.eventtap.event.properties['mouseEventDeltaY'])
-    local scroll = hs.eventtap.event.newScrollEvent({dx * scrollmult, dy * scrollmult},{},'pixel')
+--    local scroll = hs.eventtap.event.newScrollEvent({dx * scrollmult, dy * scrollmult},{},'pixel')
+    local scroll = hs.eventtap.event.newScrollEvent({dx * scrollmult, -dy * scrollmult},{},'pixel')
 
     -- put the mouse back
     hs.mouse.setAbsolutePosition(oldmousepos)
@@ -45,3 +44,4 @@ end)
 overrideRightMouseDown:start()
 overrideRightMouseUp:start()
 dragRightToScroll:start()
+
