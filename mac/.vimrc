@@ -3,101 +3,58 @@ syntax on
 "leader 設定
 let mapleader = ';'
 
-set runtimepath+=$VIMRUNTIME/after
+""set runtimepath+=$VIMRUNTIME/after
 
-if $GOROOT != ''
-  set rtp+=$GOROOT/misc/vim
-endif
-
-exe "set rtp+=".globpath($GOPATH, "src/github.com/nsf/gocode/vim")
+""if $GOROOT != ''
+""  set rtp+=$GOROOT/misc/vim
+""endif
 
 "vi互換の動きにしない
 set nocompatible
 
 filetype off
-if has('vim_starting')
-  if &compatible
-    set nocompatible               " Be iMproved
-  endif
 
-  " Required:
-  "  set runtimepath+=~/.vim/bundle/neobundle.vim/
-endif
 
-" Required:
-"call neobundle#begin(expand('~/.vim/bundle/'))
-
-" dein
-" Vim起動完了時にインストール
-augroup PluginInstall
-  autocmd!
-  autocmd VimEnter * if dein#check_install() | call dein#install() | endif
-augroup END
-
-if &compatible
-  set nocompatible
-endif
-set runtimepath+=~/.vim/dein/repos/github.com/Shougo/dein.vim
 
 " 各プラグインをインストールするディレクトリ
 let s:plugin_dir = expand('~/.vim/')
 
 " dein.vimをインストールするディレクトリをランタイムパスへ追加
-let s:dein_dir = s:plugin_dir . 'repos/github.com/Shougo/dein.vim'
-execute 'set runtimepath+=' . s:dein_dir
+""let s:dein_dir = s:plugin_dir . 'repos/github.com/Shougo/dein.vim'
+""execute 'set runtimepath+=' . s:dein_dir
 
-"dein plugin settings
-if dein#load_state(s:plugin_dir)
-  call dein#begin(s:plugin_dir)
-endif
 
+
+
+call plug#begin('~/.vim/plugged')
+Plug 'Shougo/unite.vim'
+Plug 'Shougo/neomru.vim'
+Plug 'Shougo/vimfiler'
+Plug 'mrkn/mrkn256.vim'
+call plug#end()
 "利用中のプラグインをBundle
-" call dein#begin(expand('~/.vim/dein'))
-call dein#add('Shougo/dein.vim')
-call dein#add('Shougo/vimproc.vim', {'build': 'make'})
+""call dein#add('Shougo/unite.vim')
+""call dein#add('Shougo/neocomplete.vim')
+""call dein#add('Shougo/neomru.vim')
+""call dein#add('scrooloose/nerdcommenter.git')
+""call dein#add('tpope/vim-fugitive')
+""call dein#add('nanotech/jellybeans.vim')
+""call dein#add('w0ng/vim-hybrid')
+""call dein#add('jonathanfilip/vim-lucius')
+""call dein#add('jpo/vim-railscasts-theme')
+""call dein#add('altercation/vim-colors-solarized')
+""call dein#add('vim-scripts/Wombat')
+""call dein#add('tomasr/molokai')
+""call dein#add('vim-scripts/rdark')
+""call dein#add('mrkn/mrkn256.vim')
+""call dein#add('ujihisa/unite-colorscheme')
+""call dein#add('tomtom/tcomment_vim.git')
+""call dein#add('bling/vim-airline')
+""call dein#add('mattn/emmet-vim')
+""call dein#add('osyo-manga/vim-over')
+""call dein#add('Shougo/vimfiler')
 
-call dein#add('gmarik/vundle')
-call dein#add('tpope/vim-rails')
-call dein#add('Shougo/unite.vim')
-call dein#add('Shougo/neocomplete.vim')
-call dein#add('Shougo/neomru.vim')
-call dein#add('thinca/vim-ref')
-call dein#add('thinca/vim-quickrun')
-call dein#add('scrooloose/nerdcommenter.git')
-call dein#add('tpope/vim-fugitive')
-call dein#add('nanotech/jellybeans.vim')
-call dein#add('w0ng/vim-hybrid')
-call dein#add('vim-scripts/twilight')
-call dein#add('jonathanfilip/vim-lucius')
-call dein#add('jpo/vim-railscasts-theme')
-call dein#add('altercation/vim-colors-solarized')
-call dein#add('vim-scripts/Wombat')
-call dein#add('tomasr/molokai')
-call dein#add('vim-scripts/rdark')
-call dein#add('mrkn/mrkn256.vim')
-call dein#add('ujihisa/unite-colorscheme')
-call dein#add('tomtom/tcomment_vim.git')
-call dein#add('bling/vim-airline')
-call dein#add('mattn/emmet-vim')
-call dein#add('osyo-manga/vim-over')
-call dein#add('Shougo/vimfiler')
-call dein#add('scrooloose/nerdtree')
-call dein#add('vim-scripts/ruby-matchit')
-call dein#add('kmnk/vim-unite-giti.git')
-call dein#add('Shougo/neocomplcache.vim')
-call dein#add('Shougo/neocomplcache-rsense.vim')
-call dein#add('tpope/vim-endwise')
-call dein#add('alvan/vim-closetag')
-
-call dein#add('Shougo/deoplete.nvim')
-if !has('nvim')
-  call dein#add('roxma/nvim-yarp')
-  call dein#add('roxma/vim-hug-neovim-rpc')
-endif
 let g:deoplete#enable_at_startup = 1
-
-call dein#add('Shougo/neosnippet.vim')
-call dein#add('Shougo/neosnippet-snippets')
 
 let g:closetag_filenames = '*.html,*.xhtml,*.php'
 let g:closetag_xhtml_filenames = '*.xhtml,*.jsx'
@@ -108,39 +65,20 @@ let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_shortcut = '>'
 let g:closetag_close_shortcut = '<leader>>'
 
-" call dein#end()
-"neocomplete.vim
 let g:acp_enableAtStartup = 0
 let g:neocomplcache_enable_at_startup = 1
-" Use smartcase.
 let g:neocomplcache_enable_smart_case = 1
 
-" Set minimum syntax keyword length.
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
 let g:neocomplcache_enable_camel_case_completion = 1
 let g:neocomplcache_enable_underbar_completion = 1
 
-" Rsense用の設定
-if !exists('g:neocomplcache_omni_patterns')
-  let g:neocomplcache_omni_patterns = {}
-endif
-let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
-
-"rsenseのインストールフォルダがデフォルトと異なるので設定
-let g:rsenseHome = expand("/Users/dhane31/.rbenv/shims/rsense")
-let g:rsenseUseOmniFunc = 1
-
-
 
 filetype plugin on
 filetype indent on
 
-" if dein#check_install()
-"   call dein#install()
-" endif
 
 "カーソルキーで行末／行頭の移動可能に設定。
 set whichwrap=b,s,[,],<,>
@@ -213,13 +151,8 @@ set virtualedit+=block
 nnoremap <ESC><ESC> :noh<CR>
 nnoremap <C-k><C-k> :noh<CR>
 
-" ノーマルモード中でもエンターキーで改行挿入でノーマルモードに戻る
-"noremap <CR> i<CR><ESC>
-
-"enabled backspace
 set backspace=start,eol,indent
 
-"inoremap { {}<LEFT><CR><ESC>O<Tab>
 inoremap { {}<LEFT>
 inoremap [ []<LEFT>
 inoremap ( ()<LEFT>
@@ -239,8 +172,6 @@ autocmd InsertLeave * highlight StatusLine guifg=#2E4340 guibg=#ccdc90
 augroup END
 
 " gvim用
-"nmap <M-h> <C-w><C-h>
-""nmap <d-j> <C-w><C-j>
 nmap <C-n> <C-w><C-j>
 nmap <C-p> <C-w><C-k>
 nmap <d-n> :bn<CR>
@@ -249,19 +180,12 @@ nmap <d-p> :bN<CR>
 nmap > $a
 nmap , 0
 
-" hilight cursor line
-" autocmd WinEnter *  setlocal cursorline
-" autocmd WinLeave *  setlocal nocursorline
-" set cursorline
 set ttyfast
 set lazyredraw
 set synmaxcol=200
 
 "ウィンドウ位置
 ":winpos 318 1
-
-"変更中のファイルでも、保存しないで他のファイルを表示
-"set hidden
 
 "独自キーバインド
 cnoremap <C-k> <Esc>
@@ -302,13 +226,6 @@ inoremap bi<Tab> require 'pry'; binding.pry<ESC>
 inoremap de<Tab> require 'ruby-debug'; debugger<ESC>
 inoremap <leader>a <ESC>$a;<ESC>
 
-" vim-unite-giti
-" nnoremap gl :Unite giti/log<CR>
-" nnoremap gP :Unite giti/pull_request/base<CR>
-" nnoremap gs :Unite giti/status -no-start-insert -horizontal<CR>
-" nnoremap gh :Unite giti/branch_all<CR>
-" nnoremap gb :Unite giti/branch<CR>
-
 let g:unite_enable_start_insert = 1
 let g:unite_source_file_mru_limit = 200
 let g:unite_cursor_line_highlight = "TabLineSel"
@@ -322,65 +239,8 @@ vnoremap <Leader>q :TComment<CR>
 "ステータスラインを表示
 set laststatus=2
 
-"":au BufEnter *.php,*.ctp,*.m,*.h execute ":lcd " . expand("%:p:h")
-"neocomplcache
-"let g:NeoComplCache_EnableAtStartup               = 1
-" let g:NeoComplCache_MaxList                       = 20
-" ""let g:NeoComplCache_KeywordCompletionStartLength  = 2
-" let g:NeoComplCache_MinKeywordLength              = 2
-" let g:NeoComplCache_MinSyntaxLength               = 2
-" let g:NeoComplCache_SmartCase                     = 1
-" let g:NeoComplCache_EnableCamelCaseCompletion     = 1
-" let g:NeoComplCache_EnableUnderbarCompletion      = 1
-
-" neocon keybindings
-"------------------
-" <TAB> completion.
-""inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-
-" snippets expand key
-" imap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
-" smap <silent> <C-i> <Plug>(neocomplcache_snippets_expand)
-
-" au FileType javascript set ts=2 sw=2 expandtab
-" au BufNewFile *.js set ft=javascript fenc=utf-8
 autocmd BufNewFile,BufRead *.psgi set filetype=perl fenc=utf-8
 auto BufWritePre *.go Fmt
-
-""if has('gui_macvim') && has('kaoriya')
-""  let s:ruby_libdir = system("ruby -rrbconfig -e 'print Config::CONFIG[\"libdir\"]'")
-""  let s:ruby_libruby = s:ruby_libdir . '/libruby.dylib'
-""  if filereadable(s:ruby_libruby)
-""    let $RUBY_DLL = s:ruby_libruby
-""  endif
-""endif
-
-"preview interpreter's output(Tip #1244)
-function! Ruby_eval_vsplit() range
-    if &filetype == "ruby"
-        let src = tempname()
-        let dst = "Ruby Output"
-        " put current buffer's content in a temp file
-        silent execute ": " . a:firstline . "," . a:lastline . "w " . src
-        " open the preview window
-        silent execute ":pedit! " . dst
-        " change to preview window
-        wincmd P
-        " set options
-        setlocal buftype=nofile
-        setlocal noswapfile
-        setlocal syntax=none
-        setlocal bufhidden=delete
-        " replace current buffer with ruby's output
-        silent execute ":%! ruby " . src . " 2>&1 "
-        " change back to the source buffer
-        wincmd p
-    endif
-endfunction
-"<F10>でバッファのRubyスクリプトを実行し、結果をプレビュー表示
-vmap <silent> <F10> :call Ruby_eval_vsplit()<CR>
-nmap <silent> <F10> mzggVG<F10>`z
-map  <silent> <S-F10> :pc<CR>
 
 autocmd ColorScheme * highlight Search term=reverse cterm=reverse ctermfg=66 ctermbg=222 gui=reverse guifg=#708090 guibg=#f0e68c
 colorscheme mrkn256
@@ -391,7 +251,6 @@ set t_Co=256
 
 "VTreeExplore
 let g:treeExplHidden = 1
-
 
 
 " Define dictionary.
