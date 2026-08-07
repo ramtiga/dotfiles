@@ -1,0 +1,16 @@
+<application>
+  <component name="github-copilot">
+    <option name="signinNotificationShown" value="true" />
+    <option name="enableNextEditSuggestions" value="true" />
+    <option name="nesDefaultAppliedForFreePlan" value="true" />
+    <option name="nesDefaultAppliedForCopilotNesExp" value="true" />
+    <languageAllowList>
+      <map>
+        <entry key="*" value="true" />
+      </map>
+    </languageAllowList>
+    <option name="showIdeCompletions" value="true" />
+    <option name="terminalRulesVersion" value="1" />
+    <option name="legacyXdgConfigMigrated" value="true" />
+  </component>
+</application>

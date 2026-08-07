@@ -1,0 +1,7 @@
+<application>
+  <component name="MarkdownExtensionsSettings">
+    <enabledExtensions>
+      <entry key="PlantUMLLanguageExtension" value="false" />
+    </enabledExtensions>
+  </component>
+</application>

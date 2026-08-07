@@ -1,0 +1,12 @@
+<application>
+  <component name="Full Line Inline Third Parties">
+    <thirdParties>
+      <entry id="com.github.copilot" is-enabled="true" />
+    </thirdParties>
+  </component>
+  <component name="MLServerCompletionSettings">
+    <LangState language_id="PHP">
+      <option name="enabled" value="false" />
+    </LangState>
+  </component>
+</application>

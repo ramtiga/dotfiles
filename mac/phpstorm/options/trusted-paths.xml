@@ -1,0 +1,16 @@
+<application>
+  <component name="Trusted.Paths">
+    <option name="TRUSTED_PROJECT_PATHS">
+      <map>
+        <entry key="$USER_HOME$/PhpstormProjects/untitled" value="true" />
+        <entry key="$USER_HOME$/php/Mutual-Aid-Association" value="true" />
+        <entry key="$USER_HOME$/php/Mutual-Aid-Association-demo" value="true" />
+        <entry key="$USER_HOME$/php/hotelpms" value="true" />
+        <entry key="$USER_HOME$/php/mutual_aid_money" value="true" />
+        <entry key="$USER_HOME$/php/sample_v13" value="true" />
+        <entry key="$USER_HOME$/php/study/pandawa" value="true" />
+        <entry key="$USER_HOME$/php/study/todo_formatter" value="true" />
+      </map>
+    </option>
+  </component>
+</application>

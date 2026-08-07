@@ -1,0 +1,10 @@
+<application>
+  <component name="PhpSmartKeysConfiguration">
+    <option name="selectVariableNameWithoutDollar" value="true" />
+  </component>
+  <component name="PhpStan">
+    <PhpStan_settings>
+      <phpstan_by_interpreter interpreter_id="125ac2c0-9c11-41ab-91d4-c193511ffef6" tool_path="$USER_HOME$/php/Mutual-Aid-Association/vendor/bin/phpstan" timeout="60000" />
+    </PhpStan_settings>
+  </component>
+</application>

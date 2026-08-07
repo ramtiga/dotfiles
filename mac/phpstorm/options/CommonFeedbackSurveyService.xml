@@ -1,0 +1,10 @@
+<application>
+  <component name="CommonFeedbackSurveyService"><![CDATA[{
+  "feedbackSurveyToNumberNotificationShows": {
+    "startup_feedback": 1
+  },
+  "feedbackSurveyToNumberDisableActionInvoked": {
+    "startup_feedback": 1
+  }
+}]]></component>
+</application>

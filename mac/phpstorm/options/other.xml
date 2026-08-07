@@ -1,0 +1,199 @@
+<application>
+  <component name="AILicenseTypeStorage">
+    <option name="selectedType" value="PRO" />
+  </component>
+  <component name="ActionHistoryManager">
+    <ids>
+      <option value="ChangePHPInterpreter" />
+    </ids>
+  </component>
+  <component name="FileEditorProviderManager">{
+  &quot;selectedProviders&quot;: {
+    &quot;csv-table-editor,csv-text-editor&quot;: &quot;csv-text-editor&quot;,
+    &quot;csv-table-editor,csv-text-editor,csv-data-editor&quot;: &quot;csv-data-editor&quot;
+  }
+}</component>
+  <component name="NotRoamableUiSettings">
+    <option name="fontSize" value="13.0" />
+    <option name="presentationModeIdeScale" value="1.75" />
+  </component>
+  <component name="PropertyService"><![CDATA[{
+  "keyToString": {
+    "AIHubNotificationManager.lastUsedLicenseType": "NONE",
+    "ActionMacroConfigurationPanel.SPLITTER_PROPORTION": "0.5",
+    "CUSTOMIZE_ACTIONS": "パス",
+    "CWM_LOGGING_VERSION": "1",
+    "ColorChooser.RecentColors": "135-203-215-255,,,64-54-24-255",
+    "ExpandBeforeRunStepsPanel": "true",
+    "ExternalToolDialog.advanced.expanded": "true",
+    "FileTemplates.SelectedTemplate": "HTML File",
+    "FindSplitterProportion": "0.32970768",
+    "INSPECTION_FILTER_HISTORY": "php\nphp blace\nphp cur\nphp gene",
+    "IdeErrorsDialog.LAST_OK_ACTION": "REPORT_AND_CLEAR_ALL",
+    "InstalledPluginsSearchHistory": "vim\nvi\nゔぃ\nゔぃｍ\nclaude",
+    "KEYMAP": "vim\n実行\nパス\nexplain\ncopilot",
+    "LAST_CALCULATED_COLOR_INDEX_KEY": "8",
+    "LAST_EXTRACTOR_SCRIPTS_CLEANUP_VERSION/data/aggregators": "PS-231.9225.18",
+    "LayoutCode.optimizeImports": "false",
+    "LayoutCode.rearrangeEntriesPHP": "false",
+    "MarketplacePluginsSearchHistory": "mermaid\nmer\nme\nmermai\nclaude",
+    "MemberChooser.copyJavadoc": "false",
+    "MemberChooser.showClasses": "true",
+    "NewWatcherDialog.advanced.open": "true",
+    "NextRunPlatformUpdateBuild": "PS-252.28539.101",
+    "NextRunPlatformUpdateSelfBuild": "PS-252.28539.9",
+    "NextRunPlatformUpdateVersion": "2025.2.6.2",
+    "NonModalCommitCustomization.IsApplied": "true",
+    "Notification.DisplayName-DoNotAsk-PHP External Quality Tools": "PHP 外部品質ツール",
+    "Notification.DoNotAsk-PHP External Quality Tools": "true",
+    "PhpNewProjectWizard.phpUseComposer": "true",
+    "PhpStorm.InitialConfiguration": "true",
+    "PluginConfigurable.selectionTab": "1",
+    "ProjectStructure.SecondLevelElements": "0.31875",
+    "RunOnceActivity.PHP.Completion.Ranking.Disable.RunOnce": "true",
+    "RunOnceActivity.Run Grazie Token Refresher": "true",
+    "RunOnceActivity.TerminalFontSettingsService.fixStoredNonMonospacedFonts": "true",
+    "RunOnceActivity.TerminalOptionsProvider.migration.2025.1.1": "true",
+    "RunOnceActivity.VFSInitializationConditionsToFusReporter": "true",
+    "RunOnceActivity.git.modal.commit.deprecation.notification": "true",
+    "RunOnceActivity.git.modal.commit.toggle": "true",
+    "RunOnceActivity.llm.onboarding.window.launcher.v7": "true",
+    "RunOnceActivity.llm.show.ai.promotion.window.on.start": "true",
+    "RunOnceActivity.reset.auto.reparse.settings.to.default": "true",
+    "RunOnceActivity.se.text.search": "true",
+    "RunOnceActivity.zielu.gittoolbox.worktree.promo.1": "true",
+    "SettingsSearchHistory": "フォント\ncopilot\nexplain\n仕様\n仕様の内容",
+    "TextEditorWithPreview.SplitterProportionKey": "0.3262978",
+    "TextEditorWithPreviewLayout": "Editor only",
+    "WelcomeFeature.SHORT_WELCOME_GUIDE_SHOWN": "true",
+    "ai.assistant.toolwindow.shown.at.start": "true",
+    "ai.promo.window.was.actually.shown": "true",
+    "appcds.runOnSecondStart": "PS-231.9225.18-43676193589fc91a5cb6c2c4e4591a37af4c78d0fc612b01d2e4ddafe1a97666",
+    "ask.about.ctrl.y.shortcut.v2": "true",
+    "bundled.plugins.list.saved.version": "PS-233.15026.12",
+    "clt.was.used.run.anything.ui": "true",
+    "com.xliic.openapi.settings.audit.runtime": "platform",
+    "com.xliic.openapi.settings.cli.ast.directory.override": "",
+    "com.xliic.openapi.settings.cli.ast.repository": "https://repo.42crunch.com/downloads",
+    "com.xliic.openapi.settings.internal.disable.log.redaction": "false",
+    "com.xliic.openapi.settings.internal.features": "false",
+    "com.xliic.openapi.settings.internal.register.mcp": "false",
+    "com.xliic.openapi.settings.internal.use.dev.endpoints": "false",
+    "com.xliic.openapi.settings.network.settings.connection.timeout": "10",
+    "com.xliic.openapi.settings.platform.auth-type": "anond-token",
+    "com.xliic.openapi.settings.platform.collection.naming.convention": "",
+    "com.xliic.openapi.settings.platform.dictionary.pre-audit": "Ask",
+    "com.xliic.openapi.settings.platform.mandatory.tags": "",
+    "com.xliic.openapi.settings.platform.scan.docker.replace.localhost": "true",
+    "com.xliic.openapi.settings.platform.scan.docker.use.host.network": "true",
+    "com.xliic.openapi.settings.platform.scan.image": "42crunch/scand-agent:v2.0.0",
+    "com.xliic.openapi.settings.platform.scan.runtime": "docker",
+    "com.xliic.openapi.settings.platform.scan.scand.auth": "none",
+    "com.xliic.openapi.settings.platform.scan.scand.timeout": "300",
+    "com.xliic.openapi.settings.platform.scan.scand.url": "",
+    "com.xliic.openapi.settings.platform.scan.services": "",
+    "com.xliic.openapi.settings.platform.temp.collection.name": "IDE Temp Collection",
+    "com.xliic.openapi.settings.platform.url": "https://platform.42crunch.com",
+    "com.xliic.openapi.settings.plugin.version": "5.8",
+    "com.xliic.openapi.settings.preview.port": "61112",
+    "com.xliic.openapi.settings.preview.renderer": "Swagger UI",
+    "com.xliic.openapi.settings.snake.yaml.settings.code.point.limit": "20",
+    "com.xliic.openapi.settings.sort.abc": "true",
+    "enter_selection_count": "4",
+    "evlsprt.231": "18a4c1bb980",
+    "evlsprt3.231": "26",
+    "evlsprt3.233": "5",
+    "evlsprt3.241": "6",
+    "evlsprt3.242": "6",
+    "evlsprt3.243": "6",
+    "evlsprt3.251": "4",
+    "evlsprt3.252": "3",
+    "experimental.ui.first.promotion.localdate": "2023-08-03",
+    "experimental.ui.on.first.startup": "false",
+    "experimental.ui.onboarding.proposed.version": "242.20224.361",
+    "experimental.ui.used.version": "252.28539.9",
+    "file.gist.reindex.count": "444",
+    "fileTypeChangedCounter": "6",
+    "find.popup.splitter": "0.5",
+    "fontSizeToResetConsole": "15.0",
+    "fontSizeToResetEditor": "15.0",
+    "full.line.logs.sending.asked": "true",
+    "got.it.tooltip.3v4l.org で実行": "1",
+    "got.it.tooltip.Debug Validation": "1",
+    "got.it.tooltip.builtin.web.server.reload.on.save": "1",
+    "got.it.tooltip.copilot.inlayGotIt": "1",
+    "got.it.tooltip.copilot.inlayPartialGotIt": "1",
+    "got.it.tooltip.database.schema.control.got.it": "1",
+    "got.it.tooltip.github.copilot.inline.diffable.response": "1",
+    "got.it.tooltip.php.terminal.customization": "1",
+    "got.it.tooltip.reader.mode.got.it": "1",
+    "got.it.tooltip.web.preview.reload.on.save": "1",
+    "got.it.tooltip.プラグインの自動更新": "1",
+    "got.it.tooltip.検証のデバッグ": "1",
+    "gotit.previous.run": "PS-231.9225.18",
+    "ide.memory.adjusted": "true",
+    "ideavim.statistics.timestamp": "1751065971829",
+    "llm.installer.auto.activation.executed": "true",
+    "llm.installer.last.toolwindow.state": "AI_ASSISTANT",
+    "migrated.non.roamable.values.from.general.settings": "true",
+    "openapi.generate.token.base64.key": "",
+    "openapi.show.key": "false",
+    "previousColorScheme": "_@user_Dark purple",
+    "registry.to.advanced.settings.migration.build": "PS-252.28539.9",
+    "selected.color.option.type": "REASSIGNED_LOCAL_VARIABLE_ATTRIBUTES",
+    "settings.code.style.selected.tab.PHP": "折り返しと波括弧",
+    "settings.code.style.selected.tab.csv": "Spaces",
+    "tab_selection_count": "1",
+    "tasks.pass.word.conversion.enforced": "true",
+    "terminal.gen.one.option.visible": "false",
+    "trial.state.last.state": "EXPIRED",
+    "ts.lib.d.ts.version": "5.7.3",
+    "vcs.branch.view.splitter.proportion": "0.18225293",
+    "whats.new.last.shown.version": "2025-2.5-28238-823e0871ad9a4fc878b9a9d464bad6d1ba56552a",
+    "zielu.gittoolbox.app.config.selected.tab.id": "zielu.gittoolbox.config.shared.autoFetch"
+  },
+  "keyToStringList": {
+    "AIHubNotificationManager.lastAllNotifications": [],
+    "AIHubNotificationManager.notifications": [
+      "LicenseExpired(PRO_TRIAL)"
+    ],
+    "AIHubNotificationManager.seenNotifications": [],
+    "file.chooser.recent.files": [
+      "/Users/dhane31/php/Mutual-Aid-Association"
+    ],
+    "fileTypeDetectors": [
+      "com.intellij.ide.scratch.ScratchFileServiceImpl$Detector",
+      "com.intellij.docker.dockerFile.DockerFileTypeDetector",
+      "com.intellij.javascript.debugger.sourcemap.SourceMapFileType$MyFileTypeDetector",
+      "com.intellij.database.vfs.DbStorageFileType$Detector",
+      "com.jetbrains.nodejs.util.NodeFileTypeDetector$JavaScriptFileTypeDetector",
+      "com.jetbrains.nodejs.util.NodeFileTypeDetector$TypeScriptFileTypeDetector",
+      "org.jetbrains.plugins.textmate.TextMateFileType$TextMateFileDetector"
+    ],
+    "muted.system.shortcut.conflicts.actions": [
+      "Vcs.CombinedDiff.ToggleCollapseBlock"
+    ]
+  }
+}]]></component>
+  <component name="SessionTemplates">
+    <option name="panelTemplate">
+      <template>
+        <option name="modeId" value="Agent" />
+        <option name="model">
+          <model>
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+          </model>
+        </option>
+        <option name="targetType" value="BACKGROUND" />
+      </template>
+    </option>
+  </component>
+  <component name="ShownTips">{
+  &quot;shownTips&quot;: {
+    &quot;Rename&quot;: 1691297155878,
+    &quot;SpeedSearch&quot;: 1691061167548,
+    &quot;SearchEverywhere&quot;: 1691203871284
+  }
+}</component>
+</application>

@@ -1,0 +1,9 @@
+<application>
+  <component name="UpdatesConfigurable">
+    <option name="LAST_BUILD_CHECKED" value="PS-252.28539.9" />
+    <option name="LAST_TIME_CHECKED" value="1786036503499" />
+    <option name="OBSOLETE_CUSTOM_REPOSITORIES_CLEAN_NEEDED" value="false" />
+    <option name="PLUGINS_AUTO_UPDATE" value="true" />
+    <option name="THIRD_PARTY_PLUGINS_ALLOWED" value="true" />
+  </component>
+</application>

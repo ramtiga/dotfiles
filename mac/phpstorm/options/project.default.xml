@@ -1,0 +1,26 @@
+<application>
+  <component name="ProjectManager">
+    <defaultProject>
+      <component name="ComposerSettings">
+        <execution />
+      </component>
+      <component name="ProjectViewState">
+        <option name="autoscrollFromSource" value="true" />
+        <option name="autoscrollToSource" value="true" />
+        <option name="hideEmptyMiddlePackages" value="true" />
+        <option name="showLibraryContents" value="true" />
+      </component>
+      <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  }
+}</component>
+      <component name="WindowStateProjectService">
+        <state x="262" y="179" key="SettingsEditor" timestamp="1691045957289">
+          <screen x="0" y="44" width="1800" height="1125" />
+        </state>
+        <state x="262" y="179" key="SettingsEditor/0.44.1800.1125" timestamp="1691045957289" />
+      </component>
+    </defaultProject>
+  </component>
+</application>

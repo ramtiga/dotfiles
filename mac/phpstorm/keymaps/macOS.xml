@@ -1,0 +1,64 @@
+<keymap version="1" name="macOS コピー" parent="Mac OS X 10.5+">
+  <action id="ActivateTerminalToolWindow">
+    <keyboard-shortcut first-keystroke="alt t" />
+  </action>
+  <action id="CollapseSelection" />
+  <action id="Console.TableResult.AddColumn" />
+  <action id="Console.TableResult.CompareCells" />
+  <action id="CopyPathFromRepositoryRootProvider">
+    <keyboard-shortcut first-keystroke="ctrl meta c" />
+  </action>
+  <action id="Debug">
+    <keyboard-shortcut first-keystroke="shift meta d" />
+  </action>
+  <action id="Diff.ShowSettingsPopup" />
+  <action id="EditorToggleColumnMode" />
+  <action id="HippieCompletion" />
+  <action id="Images.Editor.ToggleGrid" />
+  <action id="JavaScript.ShowComponentUsages" />
+  <action id="NextSplitter">
+    <keyboard-shortcut first-keystroke="ctrl meta n" />
+  </action>
+  <action id="NextTab">
+    <keyboard-shortcut first-keystroke="ctrl meta close_bracket" />
+  </action>
+  <action id="OpenInlineChatAction">
+    <keyboard-shortcut first-keystroke="shift ctrl g" />
+  </action>
+  <action id="PhpGeneratePhpDocBlocks">
+    <keyboard-shortcut first-keystroke="meta quote" />
+  </action>
+  <action id="PrevSplitter">
+    <keyboard-shortcut first-keystroke="ctrl meta p" />
+  </action>
+  <action id="PreviousTab">
+    <keyboard-shortcut first-keystroke="ctrl meta open_bracket" />
+  </action>
+  <action id="RecentLocations" />
+  <action id="Resume">
+    <keyboard-shortcut first-keystroke="f9" />
+    <keyboard-shortcut first-keystroke="shift meta e" />
+  </action>
+  <action id="StepOver">
+    <keyboard-shortcut first-keystroke="f8" />
+    <keyboard-shortcut first-keystroke="shift meta 1" />
+  </action>
+  <action id="Stop">
+    <keyboard-shortcut first-keystroke="shift meta 2" />
+  </action>
+  <action id="SwEditorReloadPageAction">
+    <keyboard-shortcut first-keystroke="shift meta 0" />
+  </action>
+  <action id="Terminal.OpenInTerminal">
+    <keyboard-shortcut first-keystroke="ctrl meta t" />
+  </action>
+  <action id="Tool_External Tools_php-cs-fixer">
+    <keyboard-shortcut first-keystroke="ctrl meta o" />
+  </action>
+  <action id="Uml.ShowDiff" />
+  <action id="copilot.disposeInlays" />
+  <action id="copilot.requestCompletions">
+    <keyboard-shortcut first-keystroke="alt back_slash" />
+    <keyboard-shortcut first-keystroke="alt slash" />
+  </action>
+</keymap>
