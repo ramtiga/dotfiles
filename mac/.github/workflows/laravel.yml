@@ -1,0 +1,77 @@
+name: Github Actions CI
+on: push
+jobs:
+  Github-Actions-CI:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0.19
+        ports:
+          - 3306:3306
+        options: --health-cmd "mysqladmin ping -h localhost" --health-interval 20s --health-timeout 10s --health-retries 10
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: aaaa_testing
+
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: aaaa_testing
+      DB_USERNAME: root
+      DB_PASSWORD: password
+
+    steps:
+      - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+        with:
+          php-version: '8.2'
+      - uses: actions/checkout@v4
+      - name: Create .env
+        run: |
+          cat > .env << EOF
+          APP_NAME="test"
+          APP_ENV=testing
+          APP_KEY=base64:aaaa
+          APP_DEBUG=true
+          APP_DOMAIN=localhost
+          APP_URL=http://localhost:8000
+          APP_BUSINESS_URL=http://business.localhost:8000
+
+          LOG_CHANNEL=stack
+
+          DB_CONNECTION=mysql
+          DB_HOST=127.0.0.1
+          DB_PORT=3306
+          DB_DATABASE=mutual_aid_association_testing
+          DB_USERNAME=root
+          DB_PASSWORD=password
+
+          EOF
+      - name: composer install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: composer install
+      - name: composer dump autoload
+        run: composer dump-autoload
+      - name: PHP-CS-Fixer (dry-run)
+        run: ./vendor/bin/php-cs-fixer fix --dry-run --diff
+      - name: Directory Permissions
+        run: chmod -R 777 storage bootstrap/cache
+      - name: mkdir
+        run: |
+          chmod -R 777 storage
+      - name: migrate
+        run: php artisan migrate
+      # PHPUnitの実行
+      - name: Clear cache before tests
+        run: |
+          php artisan config:clear
+          php artisan cache:clear
+      - name: Run Tests
+        run: ./vendor/bin/phpunit tests/
+      - name: Run Feature Tests
+
+      - name: view laravel.log
+        run: |
+          cat storage/logs/laravel.log
+        if: ${{ failure() }}
