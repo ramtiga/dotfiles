@@ -75,7 +75,7 @@ app/
 │       └── Department/
 │           ├── ListUseCase.php
 │           ├── SaveUseCase.php
-│           ├── DestroyUseCase.php
+│           ├── DeleteUseCase.php
 │           └── Input/
 │               ├── SaveInput.php
 │               └── RowInput.php
@@ -162,18 +162,85 @@ Route::middleware(['auth', 'feature:master-department'])
 
 ### React Router側
 
+`main.tsx`（エントリーポイント）:
+
+```tsx
+// main.tsx
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { App } from './App'
+import './lib/axios'
+import './main.css'
+
+const root_element = document.getElementById('app')
+
+if (root_element === null) {
+    throw new Error('#app element not found')
+}
+
+createRoot(root_element).render(
+    <StrictMode>
+        <App />
+    </StrictMode>
+)
+```
+
+- `document.getElementById('app')`で`spa.blade.php`の`<div id="app"></div>`を取得する。戻り値は`HTMLElement | null`型のためnullチェックが必須
+- `./lib/axios`は副作用目的でimportする（axiosのデフォルト設定を行うだけで、返り値は使わない）だけなので値を受け取らない
+- CSSは`main.css`（Tailwind CSSのエントリーファイル）をインポートする
+
+`lib/axios.ts`（CSRFトークン設定済みaxiosインスタンス、共通）:
+
+```tsx
+// lib/axios.ts
+import axios from 'axios'
+
+const csrf_token = document
+    .querySelector('meta[name="csrf-token"]')
+    ?.getAttribute('content')
+
+axios.defaults.headers.common['X-CSRF-TOKEN'] = csrf_token ?? ''
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+
+export default axios
+```
+
+- `spa.blade.php`の`<meta name="csrf-token" content="{{ csrf_token() }}">`から値を読み取り、axiosの共通ヘッダーに設定する
+- `main.tsx`で副作用目的にimportすることでアプリ起動時に1度だけ設定される。API呼び出し側（`hooks/departments/useDepartments.ts`等）はこのファイルから`export default axios`されたインスタンスをimportして使う
+
+`App.tsx`（ルート定義）:
+
 ```tsx
 // App.tsx
-<BrowserRouter basename="/master">
-    <Routes>
-        <Route element={<AppLayout />}>
-            <Route index element={<Navigate to="departments" />} />
-            <Route path="departments" element={<DepartmentIndexPage />} />
-            <Route path="xxx" element={<XxxIndexPage />} />
-        </Route>
-    </Routes>
-</BrowserRouter>
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AppLayout } from './components/layout/AppLayout'
+import { DepartmentIndexPage } from './pages/departments/DepartmentIndexPage'
+
+declare global {
+    interface Window {
+        __AVAILABLE_FEATURES__: string[]
+    }
+}
+
+export function App() {
+    return (
+        <BrowserRouter basename="/master">
+            <Routes>
+                <Route element={<AppLayout />}>
+                    <Route index element={<Navigate to="departments" replace />} />
+                    <Route path="departments" element={<DepartmentIndexPage />} />
+                    {/* 機能追加のたび、ここに1行追加していく */}
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    )
+}
 ```
+
+- `basename="/master"`: `SpaController`が`/master/{any?}`で受けているルートに合わせ、React Router側のベースパスを揃える
+- `<Navigate to="departments" replace />`: `/master`（インデックス）アクセス時に最初のマスタメンテナンス機能へリダイレクトする。`replace`でブラウザ履歴に無駄なエントリを残さない
+- `<Route element={<AppLayout />}>`でラップし、その子要素として各ページを並べることで`Sidebar`を含む共通レイアウトを全ページで共有する（React Routerのネストルーティング）
+- `declare global { interface Window { ... } }`は`window.__AVAILABLE_FEATURES__`をTypeScriptに認識させる型定義。`Sidebar.tsx`側でも同じ宣言を重複させない（`App.tsx`に集約する）
 
 ## 6. SpaControllerの実装
 
@@ -376,7 +443,7 @@ public function save(SaveRequest $request)
 ```php
 public function destroy(int $id)
 {
-    $this->destroy_use_case->execute($id);
+    $this->delete_use_case->execute($id);
 
     return response()->json(null, 204);
 }
@@ -384,12 +451,12 @@ public function destroy(int $id)
 
 削除成功時は `204 No Content`（ボディなし）がREST的な定石。
 
-`DestroyUseCase` の実装例:
+`DeleteUseCase` の実装例:
 
 ```php
 namespace App\UseCase\Master\Department;
 
-class DestroyUseCase
+class DeleteUseCase
 {
     public function __construct(
         private DepartmentRepositoryInterface $department_repository,
@@ -517,7 +584,7 @@ return [
 ```php
 public function destroy(int $id)
 {
-    $this->destroy_use_case->execute($id);   // ここで例外が飛んでも…
+    $this->delete_use_case->execute($id);   // ここで例外が飛んでも…
 
     return response()->json(null, 204);       // このreturnまで到達せず、例外ハンドラが横取りする
 }
@@ -727,16 +794,11 @@ React側の表示制御は見た目だけであり、URLを直接叩けば権限
 
 ```tsx
 // components/layout/Sidebar.tsx
+// window.__AVAILABLE_FEATURES__ の型定義は App.tsx に集約済み（declare globalの重複回避）
 const menuItems = [
     { label: '部署', path: 'departments', feature_code: 'master-department' },
     { label: 'Xxx', path: 'xxx', feature_code: 'master-xxx' },
 ]
-
-declare global {
-    interface Window {
-        __AVAILABLE_FEATURES__: string[]
-    }
-}
 
 export function Sidebar() {
     const available_features = window.__AVAILABLE_FEATURES__ ?? []
