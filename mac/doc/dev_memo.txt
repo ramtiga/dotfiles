@@ -1,0 +1,193 @@
+開発メモ
+
+  CSS_FILE=$(ls public/build/assets/app-*.css)
+  echo "file: $CSS_FILE"
+  grep -o "disabled\\\\:cursor-not-allowed" "$CSS_FILE" | wc -l
+  grep -o "disabled\\\\:opacity-50" "$CSS_FILE" | wc -l
+
+
+<?php
+
+namespace Tests\Feature\Controllers\Master;
+
+use App\Entity\Department;
+use Tests\DoctrineTestCase;
+
+class DepartmentControllerIndexTest extends DoctrineTestCase
+{
+    public function test_課の一覧が取得できること(): void
+    {
+        $department = new Department('経理部', '本社', 0);
+        $this->entity_manager->persist($department);
+        $this->entity_manager->flush();
+
+        $response = $this->getJson(route('api.master.departments.index'));
+
+        $response->assertOk();
+        $response->assertJsonStructure([
+            'data' => [
+                ['id', 'name', 'memo', 'sort_order'],
+            ],
+        ]);
+        $response->assertJsonFragment([
+            'name' => '経理部',
+            'memo' => '本社',
+            'sort_order' => 0,
+        ]);
+    }
+
+    public function test_複数の課がsort_order順で返ること(): void
+    {
+        $second = new Department('総務部', null, 1);
+        $first = new Department('経理部', null, 0);
+        $this->entity_manager->persist($second);
+        $this->entity_manager->persist($first);
+        $this->entity_manager->flush();
+
+        $response = $this->getJson(route('api.master.departments.index'));
+
+        $response->assertOk();
+        $response->assertJson([
+            'data' => [
+                ['name' => '経理部', 'sort_order' => 0],
+                ['name' => '総務部', 'sort_order' => 1],
+            ],
+        ]);
+    }
+
+    public function test_課が1件もない場合は空配列が返ること(): void
+    {
+        $response = $this->getJson(route('api.master.departments.index'));
+
+        $response->assertOk();
+        $response->assertExactJson(['data' => []]);
+    }
+}
+
+
+<?php
+
+namespace Tests\Unit\UseCase\Master\Department;
+
+use App\Entity\Department;
+use App\Exceptions\NotFoundException;
+use App\UseCase\Master\Department\Input\RowInput;
+use App\UseCase\Master\Department\Input\SaveInput;
+use App\UseCase\Master\Department\SaveUseCase;
+use Tests\DoctrineTestCase;
+
+class SaveUseCaseTest extends DoctrineTestCase
+{
+    public function test_新規行を作成できること(): void
+    {
+        $save_use_case = $this->app->make(SaveUseCase::class);
+
+        $input = new SaveInput([
+            new RowInput(id: null, name: '経理部', memo: '本社', sort_order: 0),
+        ]);
+
+        $save_use_case->execute($input);
+
+        $this->entity_manager->clear();
+
+        $department = $this->entity_manager
+            ->getRepository(Department::class)
+            ->findOneBy(['name' => '経理部']);
+
+        $this->assertNotNull($department);
+        $this->assertSame('本社', $department->getMemo());
+        $this->assertSame(0, $department->getSortOrder());
+    }
+
+    public function test_複数行を同時に新規作成できること(): void
+    {
+        $save_use_case = $this->app->make(SaveUseCase::class);
+
+        $input = new SaveInput([
+            new RowInput(id: null, name: '経理部', memo: null, sort_order: 0),
+            new RowInput(id: null, name: '総務部', memo: null, sort_order: 1),
+        ]);
+
+        $save_use_case->execute($input);
+
+        $this->entity_manager->clear();
+
+        $departments = $this->entity_manager
+            ->getRepository(Department::class)
+            ->findBy([], ['sort_order' => 'ASC']);
+
+        $this->assertCount(2, $departments);
+        $this->assertSame('経理部', $departments[0]->getName());
+        $this->assertSame('総務部', $departments[1]->getName());
+    }
+
+    public function test_既存行を更新できること(): void
+    {
+        $department = new Department('経理部', '本社', 0);
+        $this->entity_manager->persist($department);
+        $this->entity_manager->flush();
+        $department_id = $department->getId();
+
+        $save_use_case = $this->app->make(SaveUseCase::class);
+
+        $input = new SaveInput([
+            new RowInput(id: $department_id, name: '経理部（改称）', memo: '支社', sort_order: 3),
+        ]);
+
+        $save_use_case->execute($input);
+
+        $this->entity_manager->clear();
+
+        $updated = $this->entity_manager->find(Department::class, $department_id);
+
+        $this->assertNotNull($updated);
+        $this->assertSame('経理部（改称）', $updated->getName());
+        $this->assertSame('支社', $updated->getMemo());
+        $this->assertSame(3, $updated->getSortOrder());
+    }
+
+    public function test_新規作成と更新を同時に行えること(): void
+    {
+        $existing = new Department('経理部', null, 0);
+        $this->entity_manager->persist($existing);
+        $this->entity_manager->flush();
+        $existing_id = $existing->getId();
+
+        $save_use_case = $this->app->make(SaveUseCase::class);
+
+        $input = new SaveInput([
+            new RowInput(id: $existing_id, name: '経理部', memo: null, sort_order: 1),
+            new RowInput(id: null, name: '総務部', memo: null, sort_order: 0),
+        ]);
+
+        $save_use_case->execute($input);
+
+        $this->entity_manager->clear();
+
+        $departments = $this->entity_manager
+            ->getRepository(Department::class)
+            ->findBy([], ['sort_order' => 'ASC']);
+
+        $this->assertCount(2, $departments);
+        $this->assertSame('総務部', $departments[0]->getName());
+        $this->assertSame('経理部', $departments[1]->getName());
+    }
+
+    public function test_存在しないidを指定して更新しようとすると例外が発生すること(): void
+    {
+        $save_use_case = $this->app->make(SaveUseCase::class);
+
+        $input = new SaveInput([
+            new RowInput(id: 999999, name: '経理部', memo: null, sort_order: 0),
+        ]);
+
+        $this->expectException(NotFoundException::class);
+
+        $save_use_case->execute($input);
+    }
+}
+
+
+
+
+
