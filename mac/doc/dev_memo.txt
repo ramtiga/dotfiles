@@ -5,7 +5,7 @@
   grep -o "disabled\\\\:cursor-not-allowed" "$CSS_FILE" | wc -l
   grep -o "disabled\\\\:opacity-50" "$CSS_FILE" | wc -l
 
-  grep -o 'href="[^"]*app-[^"]*\.css"' /Users/dhane31/php/work/src/public/build/manifest.json 2>&1
+  grep -o 'href="[^"]*app-[^"]*\.css"' /Users/xxxxx/php/work/src/public/build/manifest.json 2>&1
   cat public/build/manifest.json | grep -A2 "app.css"
 
 <?php
