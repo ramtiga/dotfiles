@@ -10,9 +10,9 @@
 
 <?php
 
-namespace Tests\Unit\Http\Requests\Master\Department;
+namespace Tests\Unit\Http\Requests\Master\Doctor;
 
-use App\Http\Requests\Master\Department\SaveRequest;
+use App\Http\Requests\Master\Doctor\SaveRequest;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
@@ -27,41 +27,20 @@ class SaveRequestTest extends TestCase
     public static function passesDataProvider(): array
     {
         return [
-            '正常なデータ（複数行、idあり/なし混在）' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => '経理部', 'memo' => '本社', 'sort_order' => 0],
-                        ['id' => 1, 'name' => '総務部', 'memo' => null, 'sort_order' => 1],
-                    ],
-                ],
+            '正常なデータ（type=1）' => [
+                ['doctor_code' => 'D001', 'name' => '山田太郎', 'type' => 1, 'memo' => '内科'],
             ],
-            'idはnullを許容する' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => '経理部', 'memo' => null, 'sort_order' => 0],
-                    ],
-                ],
-            ],
-            'nameが255文字ちょうど' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => str_repeat('あ', 255), 'memo' => null, 'sort_order' => 0],
-                    ],
-                ],
+            '正常なデータ（type=2）' => [
+                ['doctor_code' => 'D002', 'name' => '鈴木花子', 'type' => 2, 'memo' => '外科'],
             ],
             'memoはnullを許容する' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => '経理部', 'memo' => null, 'sort_order' => 0],
-                    ],
-                ],
+                ['doctor_code' => 'D001', 'name' => '山田太郎', 'type' => 1, 'memo' => null],
             ],
-            'memoが1000文字ちょうど' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => '経理部', 'memo' => str_repeat('あ', 1000), 'sort_order' => 0],
-                    ],
-                ],
+            'doctor_codeが255文字ちょうど' => [
+                ['doctor_code' => str_repeat('a', 255), 'name' => '山田太郎', 'type' => 1, 'memo' => null],
+            ],
+            'nameが255文字ちょうど' => [
+                ['doctor_code' => 'D001', 'name' => str_repeat('あ', 255), 'type' => 1, 'memo' => null],
             ],
         ];
     }
@@ -77,65 +56,41 @@ class SaveRequestTest extends TestCase
     public static function failsDataProvider(): array
     {
         return [
-            'departmentsが存在しない' => [
-                [],
-                'departments',
+            'doctor_codeが存在しない' => [
+                ['name' => '山田太郎', 'type' => 1, 'memo' => null],
+                'doctor_code',
             ],
-            'departmentsが空配列' => [
-                ['departments' => []],
-                'departments',
+            'doctor_codeが空' => [
+                ['doctor_code' => '', 'name' => '山田太郎', 'type' => 1, 'memo' => null],
+                'doctor_code',
             ],
-            'departmentsが配列でない' => [
-                ['departments' => '経理部'],
-                'departments',
+            'doctor_codeが256文字以上' => [
+                ['doctor_code' => str_repeat('a', 256), 'name' => '山田太郎', 'type' => 1, 'memo' => null],
+                'doctor_code',
             ],
-            'idが整数でない' => [
-                [
-                    'departments' => [
-                        ['id' => 'abc', 'name' => '経理部', 'memo' => null, 'sort_order' => 0],
-                    ],
-                ],
-                'departments.0.id',
+            'nameが存在しない' => [
+                ['doctor_code' => 'D001', 'type' => 1, 'memo' => null],
+                'name',
             ],
             'nameが空' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => '', 'memo' => null, 'sort_order' => 0],
-                    ],
-                ],
-                'departments.0.name',
+                ['doctor_code' => 'D001', 'name' => '', 'type' => 1, 'memo' => null],
+                'name',
             ],
             'nameが256文字以上' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => str_repeat('あ', 256), 'memo' => null, 'sort_order' => 0],
-                    ],
-                ],
-                'departments.0.name',
+                ['doctor_code' => 'D001', 'name' => str_repeat('あ', 256), 'type' => 1, 'memo' => null],
+                'name',
             ],
-            'memoが1001文字以上' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => '経理部', 'memo' => str_repeat('あ', 1001), 'sort_order' => 0],
-                    ],
-                ],
-                'departments.0.memo',
+            'typeが存在しない' => [
+                ['doctor_code' => 'D001', 'name' => '山田太郎', 'memo' => null],
+                'type',
             ],
-            'sort_orderが存在しない' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => '経理部', 'memo' => null],
-                    ],
-                ],
-                'departments.0.sort_order',
+            'typeがEnumに存在しない値' => [
+                ['doctor_code' => 'D001', 'name' => '山田太郎', 'type' => 3, 'memo' => null],
+                'type',
             ],
-            'sort_orderが整数でない' => [
-                [
-                    'departments' => [
-                        ['id' => null, 'name' => '経理部', 'memo' => null, 'sort_order' => 'abc'],
-                    ],
-                ],
-                'departments.0.sort_order',
+            'typeが文字列' => [
+                ['doctor_code' => 'D001', 'name' => '山田太郎', 'type' => 'abc', 'memo' => null],
+                'type',
             ],
         ];
     }
@@ -148,21 +103,91 @@ class SaveRequestTest extends TestCase
         $this->assertTrue($validator->fails());
         $this->assertArrayHasKey($expected_error_key, $validator->errors()->toArray());
     }
+}
 
-    public function test_複数行のうち一部だけ不正な場合そのインデックスのみエラーになること(): void
+
+<?php
+
+namespace Tests\Unit\Http\Requests\Master\Doctor;
+
+use App\Http\Requests\Master\Doctor\UpdateRequest;
+use Illuminate\Support\Facades\Validator;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\TestCase;
+
+class UpdateRequestTest extends TestCase
+{
+    private function rules(): array
     {
-        $validator = Validator::make([
-            'departments' => [
-                ['id' => null, 'name' => '経理部', 'memo' => null, 'sort_order' => 0],
-                ['id' => null, 'name' => '', 'memo' => null, 'sort_order' => 1],
-            ],
-        ], $this->rules());
+        return (new UpdateRequest())->rules();
+    }
 
-        $errors = $validator->errors()->toArray();
+    public static function passesDataProvider(): array
+    {
+        return [
+            '正常なデータ' => [
+                ['doctor_code' => 'D001', 'name' => '山田太郎', 'memo' => '内科'],
+            ],
+            'memoはnullを許容する' => [
+                ['doctor_code' => 'D001', 'name' => '山田太郎', 'memo' => null],
+            ],
+            'doctor_codeが255文字ちょうど' => [
+                ['doctor_code' => str_repeat('a', 255), 'name' => '山田太郎', 'memo' => null],
+            ],
+            'nameが255文字ちょうど' => [
+                ['doctor_code' => 'D001', 'name' => str_repeat('あ', 255), 'memo' => null],
+            ],
+            'typeを含んでいても無視されて通過する' => [
+                ['doctor_code' => 'D001', 'name' => '山田太郎', 'memo' => null, 'type' => 999],
+            ],
+        ];
+    }
+
+    #[DataProvider('passesDataProvider')]
+    public function test_バリデーションを通過すること(array $data): void
+    {
+        $validator = Validator::make($data, $this->rules());
+
+        $this->assertTrue($validator->passes());
+    }
+
+    public static function failsDataProvider(): array
+    {
+        return [
+            'doctor_codeが存在しない' => [
+                ['name' => '山田太郎', 'memo' => null],
+                'doctor_code',
+            ],
+            'doctor_codeが空' => [
+                ['doctor_code' => '', 'name' => '山田太郎', 'memo' => null],
+                'doctor_code',
+            ],
+            'doctor_codeが256文字以上' => [
+                ['doctor_code' => str_repeat('a', 256), 'name' => '山田太郎', 'memo' => null],
+                'doctor_code',
+            ],
+            'nameが存在しない' => [
+                ['doctor_code' => 'D001', 'memo' => null],
+                'name',
+            ],
+            'nameが空' => [
+                ['doctor_code' => 'D001', 'name' => '', 'memo' => null],
+                'name',
+            ],
+            'nameが256文字以上' => [
+                ['doctor_code' => 'D001', 'name' => str_repeat('あ', 256), 'memo' => null],
+                'name',
+            ],
+        ];
+    }
+
+    #[DataProvider('failsDataProvider')]
+    public function test_バリデーションエラーになること(array $data, string $expected_error_key): void
+    {
+        $validator = Validator::make($data, $this->rules());
 
         $this->assertTrue($validator->fails());
-        $this->assertArrayNotHasKey('departments.0.name', $errors);
-        $this->assertArrayHasKey('departments.1.name', $errors);
+        $this->assertArrayHasKey($expected_error_key, $validator->errors()->toArray());
     }
 }
 
