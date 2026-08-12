@@ -6,188 +6,29 @@
   grep -o "disabled\\\\:opacity-50" "$CSS_FILE" | wc -l
 
   grep -o 'href="[^"]*app-[^"]*\.css"' /Users/xxxxx/php/work/src/public/build/manifest.json 2>&1
-  cat public/build/manifest.json | grep -A2 "app.css"
-
-<?php
-
-namespace Tests\Unit\Http\Requests\Master\Doctor;
-
-use App\Http\Requests\Master\Doctor\SaveRequest;
-use Illuminate\Support\Facades\Validator;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Tests\TestCase;
-
-class SaveRequestTest extends TestCase
-{
-    private function rules(): array
-    {
-        return (new SaveRequest())->rules();
-    }
-
-    public static function passesDataProvider(): array
-    {
-        return [
-            '正常なデータ（type=1）' => [
-                ['doctor_code' => 'D001', 'name' => '山田太郎', 'type' => 1, 'memo' => '内科'],
-            ],
-            '正常なデータ（type=2）' => [
-                ['doctor_code' => 'D002', 'name' => '鈴木花子', 'type' => 2, 'memo' => '外科'],
-            ],
-            'memoはnullを許容する' => [
-                ['doctor_code' => 'D001', 'name' => '山田太郎', 'type' => 1, 'memo' => null],
-            ],
-            'doctor_codeが255文字ちょうど' => [
-                ['doctor_code' => str_repeat('a', 255), 'name' => '山田太郎', 'type' => 1, 'memo' => null],
-            ],
-            'nameが255文字ちょうど' => [
-                ['doctor_code' => 'D001', 'name' => str_repeat('あ', 255), 'type' => 1, 'memo' => null],
-            ],
-        ];
-    }
-
-    #[DataProvider('passesDataProvider')]
-    public function test_バリデーションを通過すること(array $data): void
-    {
-        $validator = Validator::make($data, $this->rules());
-
-        $this->assertTrue($validator->passes());
-    }
-
-    public static function failsDataProvider(): array
-    {
-        return [
-            'doctor_codeが存在しない' => [
-                ['name' => '山田太郎', 'type' => 1, 'memo' => null],
-                'doctor_code',
-            ],
-            'doctor_codeが空' => [
-                ['doctor_code' => '', 'name' => '山田太郎', 'type' => 1, 'memo' => null],
-                'doctor_code',
-            ],
-            'doctor_codeが256文字以上' => [
-                ['doctor_code' => str_repeat('a', 256), 'name' => '山田太郎', 'type' => 1, 'memo' => null],
-                'doctor_code',
-            ],
-            'nameが存在しない' => [
-                ['doctor_code' => 'D001', 'type' => 1, 'memo' => null],
-                'name',
-            ],
-            'nameが空' => [
-                ['doctor_code' => 'D001', 'name' => '', 'type' => 1, 'memo' => null],
-                'name',
-            ],
-            'nameが256文字以上' => [
-                ['doctor_code' => 'D001', 'name' => str_repeat('あ', 256), 'type' => 1, 'memo' => null],
-                'name',
-            ],
-            'typeが存在しない' => [
-                ['doctor_code' => 'D001', 'name' => '山田太郎', 'memo' => null],
-                'type',
-            ],
-            'typeがEnumに存在しない値' => [
-                ['doctor_code' => 'D001', 'name' => '山田太郎', 'type' => 3, 'memo' => null],
-                'type',
-            ],
-            'typeが文字列' => [
-                ['doctor_code' => 'D001', 'name' => '山田太郎', 'type' => 'abc', 'memo' => null],
-                'type',
-            ],
-        ];
-    }
-
-    #[DataProvider('failsDataProvider')]
-    public function test_バリデーションエラーになること(array $data, string $expected_error_key): void
-    {
-        $validator = Validator::make($data, $this->rules());
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey($expected_error_key, $validator->errors()->toArray());
-    }
-}
+  cat public/build/manifest.json | grep -A2 "app.cssいi
 
 
-<?php
+ 開発環境の場合（データを消してよいなら、最もシンプル）
 
-namespace Tests\Unit\Http\Requests\Master\Doctor;
+  php artisan doctrine:migrations:migrate first --no-interaction
 
-use App\Http\Requests\Master\Doctor\UpdateRequest;
-use Illuminate\Support\Facades\Validator;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Tests\TestCase;
+  これで一旦マイグレーション0件の状態（全テーブル未作成）まで巻き戻し、その後：
 
-class UpdateRequestTest extends TestCase
-{
-    private function rules(): array
-    {
-        return (new UpdateRequest())->rules();
-    }
+  php artisan doctrine:migrations:migrate --no-interaction
 
-    public static function passesDataProvider(): array
-    {
-        return [
-            '正常なデータ' => [
-                ['doctor_code' => 'D001', 'name' => '山田太郎', 'memo' => '内科'],
-            ],
-            'memoはnullを許容する' => [
-                ['doctor_code' => 'D001', 'name' => '山田太郎', 'memo' => null],
-            ],
-            'doctor_codeが255文字ちょうど' => [
-                ['doctor_code' => str_repeat('a', 255), 'name' => '山田太郎', 'memo' => null],
-            ],
-            'nameが255文字ちょうど' => [
-                ['doctor_code' => 'D001', 'name' => str_repeat('あ', 255), 'memo' => null],
-            ],
-            'typeを含んでいても無視されて通過する' => [
-                ['doctor_code' => 'D001', 'name' => '山田太郎', 'memo' => null, 'type' => 999],
-            ],
-        ];
-    }
+  で1〜5番のマイグレーションを最初から実行し直します。ただし、この方法は巻き戻し時にdown()が正しく
+  書かれている前提で、かつ既存の全データが消えます。
 
-    #[DataProvider('passesDataProvider')]
-    public function test_バリデーションを通過すること(array $data): void
-    {
-        $validator = Validator::make($data, $this->rules());
+  特定のマイグレーションだけをやり直したい場合
 
-        $this->assertTrue($validator->passes());
-    }
+  Doctrineマイグレーションは基本的に「順番に適用していく」設計なので、途中の1本だけを差し替えて再
+  実行する標準的な方法はありません。もし2番のマイグレーションだけをやり直したいなら、以下の手順に
+  なります。
 
-    public static function failsDataProvider(): array
-    {
-        return [
-            'doctor_codeが存在しない' => [
-                ['name' => '山田太郎', 'memo' => null],
-                'doctor_code',
-            ],
-            'doctor_codeが空' => [
-                ['doctor_code' => '', 'name' => '山田太郎', 'memo' => null],
-                'doctor_code',
-            ],
-            'doctor_codeが256文字以上' => [
-                ['doctor_code' => str_repeat('a', 256), 'name' => '山田太郎', 'memo' => null],
-                'doctor_code',
-            ],
-            'nameが存在しない' => [
-                ['doctor_code' => 'D001', 'memo' => null],
-                'name',
-            ],
-            'nameが空' => [
-                ['doctor_code' => 'D001', 'name' => '', 'memo' => null],
-                'name',
-            ],
-            'nameが256文字以上' => [
-                ['doctor_code' => 'D001', 'name' => str_repeat('あ', 256), 'memo' => null],
-                'name',
-            ],
-        ];
-    }
-
-    #[DataProvider('failsDataProvider')]
-    public function test_バリデーションエラーになること(array $data, string $expected_error_key): void
-    {
-        $validator = Validator::make($data, $this->rules());
-
-        $this->assertTrue($validator->fails());
-        $this->assertArrayHasKey($expected_error_key, $validator->errors()->toArray());
-    }
-}
+  1.
+  マイグレーション履歴テーブル（doctrine_migration_versions）から、2番以降のバージョン記録を削除
+  2. t_doctorsを含む、2番以降で作られたテーブルを手動でDROP
+  3. 2番のファイルを修正
+  4. php artisan doctrine:migrations:migrateで再実行
 
