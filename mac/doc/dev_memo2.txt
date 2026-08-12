@@ -1,0 +1,341 @@
+import { useDoctors } from '@/hooks/master/doctors/useDoctors'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { ErrorMessage } from '@/components/ui/ErrorMessage'
+import { SuccessMessage } from '@/components/ui/SuccessMessage'
+import { Button } from '@/components/ui/Button'
+import { DOCTOR_TYPE_FULL_TIME, DOCTOR_TYPE_PART_TIME } from '@/types/doctor'
+
+export function DoctorIndexPage() {
+  const {
+    type,
+    doctors,
+    new_doctor_form,
+    is_loading,
+    is_saving,
+    error_message,
+    success_message,
+    changeType,
+    updateNewDoctorForm,
+    updateRow,
+    save,
+    updateDoctor,
+    destroyDoctor,
+  } = useDoctors()
+
+  const can_save =
+    new_doctor_form.doctor_code.trim() !== '' && new_doctor_form.name.trim() !== ''
+
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-end">
+        <div className="flex gap-2">
+          <Button
+            variant={type === DOCTOR_TYPE_FULL_TIME ? 'primary' : 'secondary'}
+            onClick={() => changeType(DOCTOR_TYPE_FULL_TIME)}
+          >
+            aaaa
+          </Button>
+          <Button
+            variant={type === DOCTOR_TYPE_PART_TIME ? 'primary' : 'secondary'}
+            onClick={() => changeType(DOCTOR_TYPE_PART_TIME)}
+          >
+            bbbb
+          </Button>
+        </div>
+      </div>
+
+      {error_message && (
+        <div className="mb-4">
+          <ErrorMessage message={error_message} />
+        </div>
+      )}
+
+      {success_message && (
+        <div className="mb-4">
+          <SuccessMessage message={success_message} />
+        </div>
+      )}
+
+      <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
+        <div className="grid grid-cols-[1fr_1fr_2fr_auto] items-end gap-3">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-500">
+              ID
+            </label>
+            <input
+              type="text"
+              value={new_doctor_form.doctor_code}
+              onChange={(event) =>
+                updateNewDoctorForm('doctor_code', event.target.value)
+              }
+              className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-500">
+              氏名
+            </label>
+            <input
+              type="text"
+              value={new_doctor_form.name}
+              onChange={(event) => updateNewDoctorForm('name', event.target.value)}
+              className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-slate-500">
+              備考
+            </label>
+            <input
+              type="text"
+              value={new_doctor_form.memo}
+              onChange={(event) => updateNewDoctorForm('memo', event.target.value)}
+              className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+            />
+          </div>
+          <div>
+            <Button onClick={save} disabled={is_saving || !can_save}>
+              {is_saving ? '保存中...' : '保存'}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {is_loading ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+          <table className="w-full text-sm">
+            <thead className="border-b border-slate-200 bg-slate-50">
+              <tr>
+                <th className="px-4 py-3 text-left font-medium text-slate-600">
+                  ID
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-slate-600">
+                  氏名
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-slate-600">
+                  備考
+                </th>
+                <th className="w-40 px-4 py-3 text-left font-medium text-slate-600">
+                  操作
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {doctors.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={4}
+                    className="px-4 py-8 text-center text-slate-400"
+                  >
+                    テーブル内にデータはありません
+                  </td>
+                </tr>
+              ) : (
+                doctors.map((row, index) => (
+                  <tr
+                    key={row.id}
+                    className="border-b border-slate-100 last:border-b-0"
+                  >
+                    <td className="px-4 py-2">
+                      <input
+                        type="text"
+                        value={row.doctor_code}
+                        onChange={(event) =>
+                          updateRow(index, 'doctor_code', event.target.value)
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+                      />
+                    </td>
+                    <td className="px-4 py-2">
+                      <input
+                        type="text"
+                        value={row.name}
+                        onChange={(event) =>
+                          updateRow(index, 'name', event.target.value)
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+                      />
+                    </td>
+                    <td className="px-4 py-2">
+                      <input
+                        type="text"
+                        value={row.memo ?? ''}
+                        onChange={(event) =>
+                          updateRow(index, 'memo', event.target.value)
+                        }
+                        className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+                      />
+                    </td>
+                    <td className="px-4 py-2">
+                      <div className="flex gap-2">
+                        <Button
+                          variant="secondary"
+                          onClick={() => updateDoctor(index)}
+                        >
+                          更新
+                        </Button>
+                        <Button
+                          variant="danger"
+                          onClick={() => destroyDoctor(index)}
+                        >
+                          削除
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
+
+
+import { useCallback, useEffect, useState } from 'react'
+import axios from '@/lib/axios'
+import type { Doctor, DoctorType } from '@/types/doctor'
+import { DOCTOR_TYPE_FULL_TIME } from '@/types/doctor'
+
+type NewDoctorForm = {
+  doctor_code: string
+  name: string
+  memo: string
+}
+
+const empty_form: NewDoctorForm = {
+  doctor_code: '',
+  name: '',
+  memo: '',
+}
+
+export function useDoctors() {
+  const [type, setType] = useState<DoctorType>(DOCTOR_TYPE_FULL_TIME)
+  const [doctors, setDoctors] = useState<Doctor[]>([])
+  const [new_doctor_form, setNewDoctorForm] = useState<NewDoctorForm>(empty_form)
+  const [is_loading, setIsLoading] = useState(true)
+  const [is_saving, setIsSaving] = useState(false)
+  const [error_message, setErrorMessage] = useState<string | null>(null)
+  const [success_message, setSuccessMessage] = useState<string | null>(null)
+
+  const fetchDoctors = useCallback(async (target_type: DoctorType) => {
+    setIsLoading(true)
+    setErrorMessage(null)
+
+    try {
+      const response = await axios.get<{ data: Doctor[] }>('/api/master/doctors', {
+        params: { type: target_type },
+      })
+      setDoctors(response.data.data)
+    } catch (error) {
+      setErrorMessage('一覧の取得に失敗しました')
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchDoctors(type)
+  }, [type, fetchDoctors])
+
+  function changeType(next_type: DoctorType) {
+    setType(next_type)
+  }
+
+  function updateNewDoctorForm(field: keyof NewDoctorForm, value: string) {
+    setNewDoctorForm((prev) => ({ ...prev, [field]: value }))
+  }
+
+  function updateRow(index: number, field: 'doctor_code' | 'name' | 'memo', value: string) {
+    setDoctors((prev) =>
+      prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)),
+    )
+  }
+
+  async function save() {
+    setIsSaving(true)
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      await axios.post('/api/master/doctors/save', {
+        doctor_code: new_doctor_form.doctor_code,
+        name: new_doctor_form.name,
+        memo: new_doctor_form.memo || null,
+        type,
+      })
+      setNewDoctorForm(empty_form)
+      await fetchDoctors(type)
+      setSuccessMessage('登録しました')
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setErrorMessage(error.response.data.message ?? '登録に失敗しました')
+      } else {
+        setErrorMessage('通信エラーが発生しました')
+      }
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function updateDoctor(index: number) {
+    const target = doctors[index]
+
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      await axios.put(`/api/master/doctors/${target.id}`, {
+        doctor_code: target.doctor_code,
+        name: target.name,
+        memo: target.memo,
+      })
+      setSuccessMessage('更新しました')
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setErrorMessage(error.response.data.message ?? '更新に失敗しました')
+      } else {
+        setErrorMessage('通信エラーが発生しました')
+      }
+    }
+  }
+
+  async function destroyDoctor(index: number) {
+    const target = doctors[index]
+
+    setErrorMessage(null)
+    setSuccessMessage(null)
+
+    try {
+      await axios.delete(`/api/master/doctors/${target.id}`)
+      setDoctors((prev) => prev.filter((_, i) => i !== index))
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setErrorMessage(error.response.data.message ?? '削除に失敗しました')
+      } else {
+        setErrorMessage('通信エラーが発生しました')
+      }
+    }
+  }
+
+  return {
+    type,
+    doctors,
+    new_doctor_form,
+    is_loading,
+    is_saving,
+    error_message,
+    success_message,
+    changeType,
+    updateNewDoctorForm,
+    updateRow,
+    save,
+    updateDoctor,
+    destroyDoctor,
+  }
+}
+
