@@ -1364,6 +1364,10 @@ type DraftUser = {
   type: UserType
 }
 
+export type UserRow =
+  | { kind: 'user'; id: number }
+  | { kind: 'draft'; id: number }
+
 let draft_id_sequence = -1
 
 export type UserFormValues = {
@@ -1395,8 +1399,11 @@ export function useUsers() {
   const [selected_type, setSelectedType] = useState<UserType>(USER_TYPE_STAFF)
   const [users, setUsers] = useState<UserListItem[]>([])
   const [draft_users, setDraftUsers] = useState<DraftUser[]>([])
+  const [row_order, setRowOrder] = useState<UserRow[]>([])
   const [selected_user_id, setSelectedUserId] = useState<number | null>(null)
+  const [selected_draft_id, setSelectedDraftId] = useState<number | null>(null)
   const [form, setForm] = useState<UserFormValues | null>(null)
+  const [has_password, setHasPassword] = useState(false)
   const [is_loading, setIsLoading] = useState(true)
   const [is_users_loading, setIsUsersLoading] = useState(true)
   const [is_saving, setIsSaving] = useState(false)
@@ -1444,8 +1451,22 @@ export function useUsers() {
         params: { department_id, type },
       })
       setUsers(response.data.data)
+
+      let next_row_order: UserRow[] = []
+      setRowOrder((prev) => {
+        const draft_rows = prev.filter((row) => row.kind === 'draft')
+        const user_rows: UserRow[] = response.data.data.map((user) => ({
+          kind: 'user',
+          id: user.id,
+        }))
+        next_row_order = [...user_rows, ...draft_rows]
+        return next_row_order
+      })
+
+      return next_row_order
     } catch (error) {
       setErrorMessage('一覧の取得に失敗しました')
+      return null
     } finally {
       setIsUsersLoading(false)
     }
@@ -1456,6 +1477,8 @@ export function useUsers() {
       return
     }
     setDraftUsers([])
+    setSelectedDraftId(null)
+    setRowOrder((prev) => prev.filter((row) => row.kind !== 'draft'))
     fetchUsers(selected_department_id, selected_type)
   }, [selected_department_id, selected_type, fetchUsers])
 
@@ -1474,8 +1497,27 @@ export function useUsers() {
   function addDraftUser() {
     const draft_id = draft_id_sequence--
     setDraftUsers((prev) => [...prev, { draft_id, type: selected_type }])
+    setRowOrder((prev) => [...prev, { kind: 'draft', id: draft_id }])
     setSelectedUserId(null)
+    setSelectedDraftId(draft_id)
     setForm(emptyForm(selected_department_id, selected_type))
+    setHasPassword(false)
+    setFieldErrors({})
+    setErrorMessage(null)
+    setSuccessMessage(null)
+  }
+
+  function selectDraftUser(draft_id: number) {
+    const draft = draft_users.find((d) => d.draft_id === draft_id)
+
+    if (draft === undefined) {
+      return
+    }
+
+    setSelectedUserId(null)
+    setSelectedDraftId(draft_id)
+    setForm(emptyForm(selected_department_id, draft.type))
+    setHasPassword(false)
     setFieldErrors({})
     setErrorMessage(null)
     setSuccessMessage(null)
@@ -1483,7 +1525,9 @@ export function useUsers() {
 
   async function selectUser(user_id: number) {
     setSelectedUserId(user_id)
+    setSelectedDraftId(null)
     setForm(null)
+    setHasPassword(false)
     setFieldErrors({})
     setErrorMessage(null)
     setSuccessMessage(null)
@@ -1500,6 +1544,7 @@ export function useUsers() {
         password: '',
         permission_ids: detail.permission_ids,
       })
+      setHasPassword(detail.has_password)
     } catch (error) {
       setErrorMessage('ユーザー詳細の取得に失敗しました')
       setSelectedUserId(null)
@@ -1547,18 +1592,44 @@ export function useUsers() {
 
     try {
       if (selected_user_id === null) {
+        const saved_draft_id = selected_draft_id
         const response = await axios.post<{ data: { id: number } }>(
           '/api/master/users/save',
           payload,
         )
+        const new_user_id = response.data.data.id
+
         setDraftUsers([])
-        setSelectedUserId(response.data.data.id)
+        setSelectedDraftId(null)
+        setSelectedUserId(new_user_id)
+
+        const fetched_row_order =
+          selected_department_id !== null
+            ? await fetchUsers(selected_department_id, selected_type)
+            : null
+
+        if (saved_draft_id !== null && fetched_row_order !== null) {
+          const without_new_user = fetched_row_order.filter(
+            (row) => !(row.kind === 'user' && row.id === new_user_id),
+          )
+          const insert_at = without_new_user.findIndex(
+            (row) => row.kind === 'draft' && row.id === saved_draft_id,
+          )
+          const without_draft = without_new_user.filter(
+            (row) => !(row.kind === 'draft' && row.id === saved_draft_id),
+          )
+          const target_index = insert_at === -1 ? without_draft.length : insert_at
+          without_draft.splice(target_index, 0, { kind: 'user', id: new_user_id })
+
+          setRowOrder(without_draft)
+          await persistRowOrder(without_draft)
+        }
       } else {
         await axios.put(`/api/master/users/${selected_user_id}`, payload)
-      }
 
-      if (selected_department_id !== null) {
-        await fetchUsers(selected_department_id, selected_type)
+        if (selected_department_id !== null) {
+          await fetchUsers(selected_department_id, selected_type)
+        }
       }
 
       setSuccessMessage('保存しました')
@@ -1578,21 +1649,14 @@ export function useUsers() {
     }
   }
 
-  async function reorderUsers(from_index: number, to_index: number) {
-    if (from_index === to_index) {
-      return
-    }
-
-    const reordered = [...users]
-    const [moved] = reordered.splice(from_index, 1)
-    reordered.splice(to_index, 0, moved)
-
-    setUsers(reordered)
+  async function persistRowOrder(order: UserRow[]) {
     setErrorMessage(null)
+
+    const user_ids = order.filter((row) => row.kind === 'user').map((row) => row.id)
 
     try {
       await axios.put('/api/master/users/sort-order', {
-        ids: reordered.map((row) => row.id),
+        ids: user_ids,
       })
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -1601,6 +1665,20 @@ export function useUsers() {
         setErrorMessage('通信エラーが発生しました')
       }
     }
+  }
+
+  async function reorderRows(from_index: number, to_index: number) {
+    if (from_index === to_index) {
+      return
+    }
+
+    const reordered = [...row_order]
+    const [moved] = reordered.splice(from_index, 1)
+    reordered.splice(to_index, 0, moved)
+
+    setRowOrder(reordered)
+
+    await persistRowOrder(reordered)
   }
 
   async function destroyUser() {
@@ -1643,8 +1721,11 @@ export function useUsers() {
     selected_type,
     users,
     draft_users,
+    row_order,
     selected_user_id,
+    selected_draft_id,
     form,
+    has_password,
     is_loading,
     is_users_loading,
     is_saving,
@@ -1654,14 +1735,26 @@ export function useUsers() {
     changeType,
     addDraftUser,
     selectUser,
+    selectDraftUser,
     updateForm,
     togglePermission,
     save,
-    reorderUsers,
+    reorderRows,
     destroyUser,
     getFieldError,
   }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 import { useRef, useState } from 'react'
 import { useUsers } from '@/hooks/master/users/useUsers'
@@ -1957,6 +2050,352 @@ export function UserManagementPage() {
                       {getFieldError('password')}
                     </span>
                   )}
+import { useRef, useState } from 'react'
+import { useUsers } from '@/hooks/master/users/useUsers'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { ErrorMessage } from '@/components/ui/ErrorMessage'
+import { SuccessMessage } from '@/components/ui/SuccessMessage'
+import { Button } from '@/components/ui/Button'
+import { USER_TYPE_EXTERNAL_STAFF, USER_TYPE_STAFF } from '@/types/user'
+import type { UserType } from '@/types/user'
+
+const type_labels: Record<UserType, string> = {
+  [USER_TYPE_STAFF]: 'スタッフ',
+  [USER_TYPE_EXTERNAL_STAFF]: '外部スタッフ',
+}
+
+export function UserManagementPage() {
+  const {
+    departments,
+    permissions,
+    selected_department_id,
+    selected_type,
+    users,
+    draft_users,
+    row_order,
+    selected_user_id,
+    selected_draft_id,
+    form,
+    has_password,
+    is_loading,
+    is_users_loading,
+    is_saving,
+    error_message,
+    success_message,
+    changeDepartment,
+    changeType,
+    addDraftUser,
+    selectUser,
+    selectDraftUser,
+    updateForm,
+    togglePermission,
+    save,
+    reorderRows,
+    destroyUser,
+    getFieldError,
+  } = useUsers()
+
+  const users_by_id = new Map(users.map((user) => [user.id, user]))
+  const draft_users_by_id = new Map(draft_users.map((draft) => [draft.draft_id, draft]))
+
+  const [drag_over_index, setDragOverIndex] = useState<number | null>(null)
+  const drag_index_ref = useRef<number | null>(null)
+
+  function handleDragStart(index: number) {
+    drag_index_ref.current = index
+  }
+
+  function handleDragOver(event: React.DragEvent, index: number) {
+    event.preventDefault()
+    setDragOverIndex(index)
+  }
+
+  function handleDrop(index: number) {
+    const from_index = drag_index_ref.current
+    drag_index_ref.current = null
+    setDragOverIndex(null)
+
+    if (from_index === null) {
+      return
+    }
+
+    reorderRows(from_index, index)
+  }
+
+  function handleDragEnd() {
+    drag_index_ref.current = null
+    setDragOverIndex(null)
+  }
+
+  if (is_loading) {
+    return <LoadingSpinner />
+  }
+
+  return (
+    <div>
+      {error_message && (
+        <div className="mb-4">
+          <ErrorMessage message={error_message} />
+        </div>
+      )}
+
+      {success_message && (
+        <div className="mb-4">
+          <SuccessMessage message={success_message} />
+        </div>
+      )}
+
+      <div className="flex gap-6">
+        <div className="w-96 shrink-0">
+          <select
+            value={selected_department_id ?? ''}
+            onChange={(event) => changeDepartment(Number(event.target.value))}
+            className="w-full rounded-md border border-slate-300 px-2 py-2 text-sm focus:border-slate-500 focus:outline-none"
+          >
+            {departments.map((department) => (
+              <option key={department.id} value={department.id ?? ''}>
+                {department.name}
+              </option>
+            ))}
+          </select>
+
+          <div className="mt-3 flex gap-2">
+            <Button
+              variant={selected_type === USER_TYPE_STAFF ? 'primary' : 'secondary'}
+              onClick={() => changeType(USER_TYPE_STAFF)}
+              className="flex-1"
+            >
+              スタッフ
+            </Button>
+            <Button
+              variant={selected_type === USER_TYPE_EXTERNAL_STAFF ? 'primary' : 'secondary'}
+              onClick={() => changeType(USER_TYPE_EXTERNAL_STAFF)}
+              className="flex-1"
+            >
+              外部スタッフ
+            </Button>
+          </div>
+
+          <div className="mt-3">
+            <Button variant="secondary" onClick={addDraftUser} className="w-full">
+              スタッフ追加
+            </Button>
+          </div>
+
+          <div className="mt-4 overflow-hidden rounded-lg border border-slate-200 bg-white">
+            {is_users_loading ? (
+              <LoadingSpinner />
+            ) : row_order.length === 0 ? (
+              <p className="px-4 py-8 text-center text-sm text-slate-400">
+                選択中の課にスタッフは登録されていません
+              </p>
+            ) : (
+              <ul className="divide-y divide-slate-100">
+                {row_order.map((row, index) => {
+                  const key = `${row.kind}-${row.id}`
+
+                  if (row.kind === 'user') {
+                    const user = users_by_id.get(row.id)
+
+                    if (user === undefined) {
+                      return null
+                    }
+
+                    return (
+                      <li
+                        key={key}
+                        onDragOver={(event) => handleDragOver(event, index)}
+                        onDrop={() => handleDrop(index)}
+                        className={drag_over_index === index ? 'bg-slate-100' : ''}
+                      >
+                        <div
+                          className={`flex w-full items-center gap-2 px-2 py-1 text-left text-sm hover:bg-slate-50 ${
+                            selected_user_id === user.id ? 'bg-slate-100' : ''
+                          }`}
+                        >
+                          <span
+                            draggable
+                            onDragStart={() => handleDragStart(index)}
+                            onDragEnd={handleDragEnd}
+                            className="cursor-move select-none px-1 text-slate-400"
+                          >
+                            ⠿
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => selectUser(user.id)}
+                            className="flex flex-1 items-center justify-between py-2 text-left"
+                          >
+                            <span className="font-medium text-slate-900">{user.name}</span>
+                            <span className="text-xs text-slate-400">{user.login_id}</span>
+                            <span className="text-xs text-slate-500">
+                              {type_labels[user.type]}
+                            </span>
+                          </button>
+                        </div>
+                      </li>
+                    )
+                  }
+
+                  const draft = draft_users_by_id.get(row.id)
+
+                  if (draft === undefined) {
+                    return null
+                  }
+
+                  return (
+                    <li
+                      key={key}
+                      onDragOver={(event) => handleDragOver(event, index)}
+                      onDrop={() => handleDrop(index)}
+                      className={drag_over_index === index ? 'bg-slate-100' : ''}
+                    >
+                      <div
+                        className={`flex w-full items-center gap-2 px-2 py-1 text-left text-sm hover:bg-slate-100 ${
+                          selected_draft_id === draft.draft_id ? 'bg-slate-100' : 'bg-slate-50'
+                        }`}
+                      >
+                        <span
+                          draggable
+                          onDragStart={() => handleDragStart(index)}
+                          onDragEnd={handleDragEnd}
+                          className="cursor-move select-none px-1 text-slate-400"
+                        >
+                          ⠿
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => selectDraftUser(draft.draft_id)}
+                          className="flex flex-1 items-center justify-between py-2 text-left"
+                        >
+                          <span className="font-medium text-slate-400">未入力</span>
+                          <span className="text-xs text-slate-400">ID未指定</span>
+                          <span className="text-xs text-slate-500">
+                            {type_labels[draft.type]}
+                          </span>
+                        </button>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-1">
+          {form === null ? (
+            <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-slate-300 py-24 text-center text-sm text-slate-400">
+              左の一覧からユーザーを選択するか、ユーザーを追加を押してください
+            </div>
+          ) : (
+            <div className="rounded-lg border border-slate-200 bg-white p-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">
+                    課
+                  </label>
+                  <select
+                    value={form.department_id ?? ''}
+                    onChange={(event) =>
+                      updateForm('department_id', Number(event.target.value))
+                    }
+                    className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+                  >
+                    {departments.map((department) => (
+                      <option key={department.id} value={department.id ?? ''}>
+                        {department.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">
+                    区分
+                  </label>
+                  <select
+                    value={form.type}
+                    onChange={(event) =>
+                      updateForm('type', Number(event.target.value) as UserType)
+                    }
+                    className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+                  >
+                    <option value={USER_TYPE_STAFF}>スタッフ</option>
+                    <option value={USER_TYPE_EXTERNAL_STAFF}>外部スタッフ</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">
+                    氏名
+                  </label>
+                  <input
+                    type="text"
+                    value={form.name}
+                    onChange={(event) => updateForm('name', event.target.value)}
+                    className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+                  />
+                  {getFieldError('name') && (
+                    <span className="mt-1 block text-xs text-red-600">
+                      {getFieldError('name')}
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">
+                    印刷用名
+                  </label>
+                  <input
+                    type="text"
+                    value={form.print_name}
+                    onChange={(event) => updateForm('print_name', event.target.value)}
+                    className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+                  />
+                  {getFieldError('print_name') && (
+                    <span className="mt-1 block text-xs text-red-600">
+                      {getFieldError('print_name')}
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">
+                    ログインID
+                  </label>
+                  <input
+                    type="text"
+                    value={form.login_id}
+                    onChange={(event) => updateForm('login_id', event.target.value)}
+                    className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+                  />
+                  {getFieldError('login_id') && (
+                    <span className="mt-1 block text-xs text-red-600">
+                      {getFieldError('login_id')}
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-500">
+                    パスワード
+                    {selected_user_id !== null && '（変更する場合のみ入力）'}
+                  </label>
+                  <input
+                    type="password"
+                    value={form.password}
+                    onChange={(event) => updateForm('password', event.target.value)}
+                    placeholder={
+                      selected_user_id !== null && has_password ? '●●●●●●●●' : undefined
+                    }
+                    className="w-full rounded-md border border-slate-300 px-2 py-1 focus:border-slate-500 focus:outline-none"
+                  />
+                  {getFieldError('password') && (
+                    <span className="mt-1 block text-xs text-red-600">
+                      {getFieldError('password')}
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -1997,7 +2436,7 @@ export function UserManagementPage() {
   )
 }
 
-et draft_id_sequence = -1
+let draft_id_sequence = -1
 
   役割：まだサーバーに保存されていない「新規追加中のユーザー」に、一時的な負のIDを振るためのカウンター。
 
@@ -2219,6 +2658,84 @@ let draft_id_sequence = -1
   ユーザーが実際に保存（save関数）すると、サーバーからの応答で本物のIDが払い出され、draft_usersはクリアされてusers（本物の一覧）に置き換わる、という流れ。
   draft_id自体はサーバーには送信されず、あくまでReactのkeyとUI表示のためだけに使われる一時的な値。
 
+
+
+
+
+class ShowUserUseCase
+{
+    public function __construct(
+        private UserRepositoryInterface $user_repository,
+        private UserPermissionRepositoryInterface $user_permission_repository,
+    ) {
+    }
+
+    public function execute(int $id): array
+    {
+        $user = $this->user_repository->find($id);
+
+        if ($user === null) {
+            throw NotFoundException::forId('ユーザー', $id);
+        }
+
+        return [
+            'id' => $user->getId(),
+            'print_name' => $user->getPrintName(),
+            'name' => $user->getName(),
+            'type' => $user->getType()->value,
+            'department_id' => $user->getDepartmentId(),
+            'login_id' => $user->getLoginId(),
+            'has_password' => $user->getPassword() !== null,
+            'permission_ids' => $this->user_permission_repository->findPermissionIdsByUserId($id),
+        ];
+    }
+}
+
+
+
+
+class UserControllerShowTest extends DoctrineTestCase
+{
+    private function persistDepartment(): Department
+    {
+        $department = new Department('経理部', null, 0);
+        $this->entity_manager->persist($department);
+        $this->entity_manager->flush();
+
+        return $department;
+    }
+
+    public function test_passwordが設定されている場合はhas_passwordがtrueになること(): void
+    {
+        $department = $this->persistDepartment();
+        $user = new User('山田', '山田太郎', UserType::Staff, $department->getId(), 'yamada', Hash::make('password123'), 0);
+        $this->entity_manager->persist($user);
+        $this->entity_manager->flush();
+
+        $response = $this->getJson(route('api.master.users.show', ['id' => $user->getId()]));
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'data' => ['has_password' => true],
+        ]);
+        $response->assertJsonMissingPath('data.password');
+    }
+
+    public function test_passwordが未設定の場合はhas_passwordがfalseになること(): void
+    {
+        $department = $this->persistDepartment();
+        $user = new User('山田', '山田太郎', UserType::Staff, $department->getId(), null, null, 0);
+        $this->entity_manager->persist($user);
+        $this->entity_manager->flush();
+
+        $response = $this->getJson(route('api.master.users.show', ['id' => $user->getId()]));
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'data' => ['has_password' => false],
+        ]);
+    }
+}
 
 
 
