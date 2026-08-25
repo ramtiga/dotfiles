@@ -159,391 +159,140 @@
   │ P    │ Props（React関連でよく見る）                                                  │
   └──────┴───────────────────────────────────────────────────────────────────────────────┘
 
-        Route::get('/detail', [PlanTeamController::class, 'detail'])->name('detail');
+- TypeScript 7はTS6.0との機能パリティを目指すプレビュー版であり、6→7の変更は基本的に破壊的変更が少ない設計。7→6に戻す場合も、7固有の新機能を使っていなければ実害はほぼない
+- このプロジェクトの `tsconfig.json` は、TS7で非推奨になった設定値（`module: "amd"/"umd"`、`moduleResolution: "node"/"classic"`、`target: "es5"` など）を使っていないため、影響なし
+- 実際にダウングレード後、`tsc --noEmit` と `vite build` の両方が正常に通ることを確認済み
 
+### ダウングレードコマンド
 
-    public function detail(Request $request)
-    {
-        $plan_date = (string) $request->query('plan_date');
+```bash
+cd src
+npm install --save-dev typescript@6.0.3
+```
 
-        $plan_teams = $this->detail_list_use_case->execute($plan_date);
+`package.json` の `typescript` が `^6.0.3` になっていればOK。
 
-        return response()->json([
-            'data' => $plan_teams,
-        ]);
-    }
+```bash
+npx tsc --version
+# → Version 6.0.3
+```
 
+## ESLint本体・関連パッケージのインストール
 
-usecase
-    public function __construct(
-        private PlanTeamRepositoryInterface $plan_team_repository,
-        private PlanVehicleListUseCase $plan_vehicle_list_use_case,
-        private PlanEquipmentListUseCase $plan_equipment_list_use_case,
-        private DoctorAssignmentListUseCase $doctor_assignment_list_use_case,
-    ) {
+```bash
+cd src
+npm install --save-dev eslint @eslint/js typescript-eslint eslint-plugin-react-hooks eslint-plugin-react-refresh eslint-config-prettier globals
+```
+インストールされるパッケージ（2026-08-22時点のバージョン）:
 
-    public function execute(string $plan_date): array
-    {
-        $plan_teams = $this->plan_team_repository->findAllByPlanDate($plan_date);
-        $plan_team_ids = array_map(fn (PlanTeam $plan_team) => $plan_team->getId(), $plan_teams);
+| パッケージ | バージョン | 役割 |
+|---|---|---|
+| `eslint` | `^10.9.0` | ESLint本体 |
+| `@eslint/js` | `^10.0.1` | ESLint公式の基本ルールセット |
+| `typescript-eslint` | `^8.67.0` | TypeScript対応（パーサー・ルール一式） |
+| `eslint-plugin-react-hooks` | `^7.1.1` | Reactフックのルール（依存配列チェックなど） |
+| `eslint-plugin-react-refresh` | `^0.5.4` | Vite HMR（React Fast Refresh）を壊すコードを検出 |
+| `eslint-config-prettier` | `^10.1.8` | 既存のPrettierとフォーマット系ルールが競合しないよう無効化 |
+| `globals` | `^17.11.0` | ブラウザ環境のグローバル変数定義（`window`, `document` 等） |
 
-        $plan_vehicles = $this->plan_vehicle_list_use_case->execute($plan_team_ids);
-        $plan_equipments = $this->plan_equipment_list_use_case->execute($plan_team_ids);
-        $doctor_assignments = $this->doctor_assignment_list_use_case->execute($plan_team_ids);
+既存の `prettier`（`^3.9.6`）はそのまま使い続ける。ESLintはコードの誤りや設計上の問題を指摘する役割、Prettierはフォーマット（インデント・改行など）の役割で使い分けている。
 
-        return array_map(
-            fn (PlanTeam $plan_team) => [
-                'id' => $plan_team->getId(),
-                'plan_date' => $plan_team->getPlanDate(),
-                'team_id' => $plan_team->getTeamId(),
-                'team_name' => $plan_team->getTeamName(),
-                'depart_time' => $plan_team->getDepartTime(),
-                'arrive_time' => $plan_team->getArriveTime(),
-                'sort_order' => $plan_team->getSortOrder(),
-                'vehicles' => array_values(array_filter(
-                    $plan_vehicles,
-                    fn (array $row) => $row['plan_team_id'] === $plan_team->getId(),
-                )),
-                'equipments' => array_values(array_filter(
-                    $plan_equipments,
-                    fn (array $row) => $row['plan_team_id'] === $plan_team->getId(),
-                )),
-                'doctor_assignments' => array_values(array_filter(
-                    $doctor_assignments,
-                    fn (array $row) => $row['plan_team_id'] === $plan_team->getId(),
-                )),
-            ],
-            $plan_teams,
-        );
-    }
+## 設定ファイル
 
-import { useEffect, useState } from 'react'
-import axios from '@/lib/axios'
-import type { Team, Vehicle } from '@/types/settings'
-import type { TeamAssignment } from '@/types/monthlyPlan'
-import {
-  TEAM_CODE_DOCK,
-  TEAM_CODE_INDUSTRIAL,
-  VEHICLE_CODE_CENTER_INTERNAL,
-} from '@/types/monthlyPlan'
+`src/eslint.config.js`（新規作成、ESLintのフラットコンフィグ形式）:
 
-type PlanVehicleRow = {
-  id: number
-  plan_team_id: number
-  vehicle_id: number
-  vehicle_name: string
+```js
+// @ts-check
+
+import js from '@eslint/js'
+import tseslint from 'typescript-eslint'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import globals from 'globals'
+
+export default tseslint.config(
+  {
+    ignores: ['node_modules', 'public', 'vendor', 'storage', 'bootstrap/cache'],
+  },
+  {
+    files: ['resources/js/**/*.{ts,tsx}'],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-hooks/set-state-in-effect': 'off',
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { caughtErrors: 'none' },
+      ],
+    },
+  },
+  eslintConfigPrettier,
+)
+```
+
+### ルールセットの選定について
+
+`typescript-eslint` には型情報を使う厳格なルールセット（`recommendedTypeChecked`）と、型情報を使わない軽量なルールセット（`recommended`）がある。当初 `recommendedTypeChecked` を試したところ、既存コード全体で **76件** のエラー（主に `no-floating-promises` / `no-misused-promises` — Promiseの戻り値を無視している箇所、`onClick` に `async` 関数を直接渡している箇所）が検出された。実際のバグの可能性がある指摘だが、一度に全部直すのは変更量が大きいため、**まず軽量な `recommended` を採用し既存コードを0件の状態にし、今後の新規コードから段階的に厳格なルールを適用する**方針にした。
+
+### 個別に無効化・調整したルール
+
+- **`react-hooks/set-state-in-effect`（無効化）**: `useEffect(() => { fetchXxx() }, [...])` という「マウント時にデータ取得する」定石パターン全体に警告が出る。React公式でも一般的なパターンであり、実害がないため無効化した
+- **`@typescript-eslint/no-unused-vars` に `caughtErrors: 'none'`**: `catch (error) { setErrorMessage('...') }` のように、エラーの詳細を使わず固定の日本語メッセージだけ表示する既存の設計パターンがプロジェクト全体で一貫して使われているため、`catch` の引数が未使用でもエラーにしないよう調整した
+
+## package.json への追加
+
+```json
+"scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "lint": "eslint ."
 }
+```
 
-type PlanEquipmentRow = {
-  id: number
-  plan_team_id: number
-  equipment_id: number
-  equipment_name: string
-}
+## 実行コマンド（チェック方法）
 
-type DoctorAssignmentRow = {
-  id: number
-  plan_team_id: number
-  doctor_id: number
-  type: number
-  has_am: boolean
-  has_pm: boolean
-}
+すべてMac側、`src/` ディレクトリで実行する。
 
-type PlanTeamDetailRow = {
-  id: number
-  plan_date: string
-  team_id: number
-  team_name: string
-  depart_time: string
-  arrive_time: string
-  sort_order: number
-  vehicles: PlanVehicleRow[]
-  equipments: PlanEquipmentRow[]
-  doctor_assignments: DoctorAssignmentRow[]
-}
+```bash
+cd src
 
-export class PlanTeamNotSavedError extends Error {}
+# ESLintチェック
+npm run lint
 
-let local_id_sequence = -1
+# TypeScript型チェック（既存）
+npx tsc --noEmit
 
-function findTeamByCode(teams: Team[], code: string): Team | undefined {
-  return teams.find((team) => team.code === code)
-}
+# 本番ビルド確認（既存）
+npm run build
+```
 
-function findCenterInternalVehicleIds(vehicles: Vehicle[]): number[] {
-  return vehicles
-    .filter((vehicle) => vehicle.code === VEHICLE_CODE_CENTER_INTERNAL)
-    .map((vehicle) => vehicle.id)
-    .filter((id): id is number => id !== null)
-}
+`npm run lint` が **exit code 0** かつ出力なしであれば問題なし。
 
-function createFixedAssignment(
-  team: Team | undefined,
-  departure_time: string,
-  arrival_time: string,
-  center_internal_vehicle_ids: number[],
-): TeamAssignment {
-  return {
-    local_id: local_id_sequence--,
-    plan_team_id: null,
-    team_id: team?.id ?? null,
-    team_code: team?.code ?? null,
-    departure_time,
-    arrival_time,
-    vehicle_ids: center_internal_vehicle_ids,
-    equipment_ids: [],
-    am_doctor_ids: [],
-    pm_doctor_ids: [],
-  }
-}
+## 別PCでのセットアップ手順まとめ
 
-function createEmptyAssignment(): TeamAssignment {
-  return {
-    local_id: local_id_sequence--,
-    plan_team_id: null,
-    team_id: null,
-    team_code: null,
-    departure_time: '',
-    arrival_time: '',
-    vehicle_ids: [],
-    equipment_ids: [],
-    am_doctor_ids: [],
-    pm_doctor_ids: [],
-  }
-}
+1. リポジトリを `git pull` して最新の `package.json` / `package-lock.json` / `eslint.config.js` を取得する
+2. `src/` で `npm install` を実行する（`package.json` に基づき、TypeScript6系・ESLint関連パッケージが自動的にインストールされる。個別にバージョン指定してのインストールコマンドを再実行する必要はない）
+3. `npx tsc --version` で `Version 6.0.3` になっていることを確認する
+4. `npm run lint` を実行し、エラーが出ないことを確認する
 
-export function useTeamAssignments(plan_date: string | null, teams: Team[], vehicles: Vehicle[]) {
-  const [assignments, setAssignments] = useState<TeamAssignment[]>([])
-  const [is_loading, setIsLoading] = useState(false)
+つまり、このドキュメントの「インストールコマンド」は初回導入時の手順であり、**別PCで最新のコミットを `pull` した後は `npm install` だけで環境が揃う**（`package-lock.json` にバージョンが固定されているため）。
 
-  useEffect(() => {
-    if (plan_date === null) {
-      setAssignments([])
-      return
-    }
+## 留意点
 
-    let is_current = true
-
-    async function load() {
-      setIsLoading(true)
-
-      try {
-        const plan_teams_response = await axios.get<{ data: PlanTeamDetailRow[] }>(
-          '/api/monthly-plan/plan-teams/detail',
-          { params: { plan_date } },
-        )
-        const plan_teams = plan_teams_response.data.data
-
-        if (!is_current) {
-          return
-        }
-
-        function toAssignment(plan_team: PlanTeamDetailRow): TeamAssignment {
-          const team = teams.find((row) => row.id === plan_team.team_id)
-
-          return {
-            local_id: local_id_sequence--,
-            plan_team_id: plan_team.id,
-            team_id: plan_team.team_id,
-            team_code: team?.code ?? null,
-            departure_time: plan_team.depart_time,
-            arrival_time: plan_team.arrive_time,
-            vehicle_ids: plan_team.vehicles.map((row) => row.vehicle_id),
-            equipment_ids: plan_team.equipments.map((row) => row.equipment_id),
-            am_doctor_ids: plan_team.doctor_assignments
-              .filter((row) => row.has_am)
-              .map((row) => row.doctor_id),
-            pm_doctor_ids: plan_team.doctor_assignments
-              .filter((row) => row.has_pm)
-              .map((row) => row.doctor_id),
-          }
-        }
-
-        const center_internal_vehicle_ids = findCenterInternalVehicleIds(vehicles)
-        const industrial_team = findTeamByCode(teams, TEAM_CODE_INDUSTRIAL)
-        const dock_team = findTeamByCode(teams, TEAM_CODE_DOCK)
-        const industrial_plan_team = plan_teams.find((row) => row.team_id === industrial_team?.id)
-        const dock_plan_team = plan_teams.find((row) => row.team_id === dock_team?.id)
-
-        const industrial_assignment = industrial_plan_team
-          ? toAssignment(industrial_plan_team)
-          : createFixedAssignment(industrial_team, '07:45', '15:00', center_internal_vehicle_ids)
-        const dock_assignment = dock_plan_team
-          ? toAssignment(dock_plan_team)
-          : createFixedAssignment(dock_team, '08:00', '15:00', center_internal_vehicle_ids)
-
-        const other_assignments = plan_teams
-          .filter((row) => row.id !== industrial_plan_team?.id && row.id !== dock_plan_team?.id)
-          .sort((a, b) => a.sort_order - b.sort_order)
-          .map(toAssignment)
-
-        setAssignments([industrial_assignment, dock_assignment, ...other_assignments])
-      } finally {
-        if (is_current) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    load()
-
-    return () => {
-      is_current = false
-    }
-    // plan_dateが変わった時だけ再読込する（teams/vehiclesの参照変化では再読込しない）
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan_date])
-
-  function addAssignment() {
-    setAssignments((prev) => [...prev, createEmptyAssignment()])
-  }
-
-  function removeAssignment(local_id: number) {
-    setAssignments((prev) => prev.filter((row) => row.local_id !== local_id))
-  }
-
-  function updateAssignment<K extends keyof TeamAssignment>(
-    local_id: number,
-    field: K,
-    value: TeamAssignment[K],
-  ) {
-    setAssignments((prev) =>
-      prev.map((row) => (row.local_id === local_id ? { ...row, [field]: value } : row)),
-    )
-  }
-
-  function toggleVehicle(local_id: number, vehicle_id: number) {
-    setAssignments((prev) =>
-      prev.map((row) => {
-        if (row.local_id !== local_id) {
-          return row
-        }
-        const has = row.vehicle_ids.includes(vehicle_id)
-        return {
-          ...row,
-          vehicle_ids: has
-            ? row.vehicle_ids.filter((id) => id !== vehicle_id)
-            : [...row.vehicle_ids, vehicle_id],
-        }
-      }),
-    )
-  }
-
-  function toggleEquipment(local_id: number, equipment_id: number) {
-    setAssignments((prev) =>
-      prev.map((row) => {
-        if (row.local_id !== local_id) {
-          return row
-        }
-        const has = row.equipment_ids.includes(equipment_id)
-        return {
-          ...row,
-          equipment_ids: has
-            ? row.equipment_ids.filter((id) => id !== equipment_id)
-            : [...row.equipment_ids, equipment_id],
-        }
-      }),
-    )
-  }
-
-  function updateDoctorAssignment(local_id: number, am_doctor_ids: number[], pm_doctor_ids: number[]) {
-    setAssignments((prev) =>
-      prev.map((row) =>
-        row.local_id === local_id ? { ...row, am_doctor_ids, pm_doctor_ids } : row,
-      ),
-    )
-  }
-
-  function copyAssignment(local_id: number) {
-    setAssignments((prev) => {
-      const target = prev.find((row) => row.local_id === local_id)
-      if (target === undefined) {
-        return prev
-      }
-      const copied: TeamAssignment = {
-        ...target,
-        local_id: local_id_sequence--,
-        plan_team_id: null,
-        team_id: null,
-        team_code: null,
-      }
-      return [...prev, copied]
-    })
-  }
-
-  async function saveAssignment(local_id: number) {
-    const target = assignments.find((row) => row.local_id === local_id)
-    if (target === undefined || target.team_id === null || plan_date === null) {
-      return
-    }
-
-    let plan_team_id = target.plan_team_id
-
-    if (plan_team_id === null) {
-      const response = await axios.post<{ data: { id: number } }>('/api/monthly-plan/plan-teams/save', {
-        plan_date,
-        team_id: target.team_id,
-        depart_time: target.departure_time,
-        arrive_time: target.arrival_time,
-      })
-      plan_team_id = response.data.data.id
-    } else {
-      await axios.put(`/api/monthly-plan/plan-teams/${plan_team_id}`, {
-        team_id: target.team_id,
-        depart_time: target.departure_time,
-        arrive_time: target.arrival_time,
-      })
-    }
-
-    await Promise.all([
-      axios.put(`/api/monthly-plan/plan-vehicles/${plan_team_id}`, {
-        vehicle_ids: target.vehicle_ids,
-      }),
-      axios.put(`/api/monthly-plan/plan-equipments/${plan_team_id}`, {
-        equipment_ids: target.equipment_ids,
-      }),
-      axios.put(`/api/monthly-plan/doctor-assignments/${plan_team_id}`, {
-        am_doctor_ids: target.am_doctor_ids,
-        pm_doctor_ids: target.pm_doctor_ids,
-      }),
-    ])
-
-    setAssignments((prev) =>
-      prev.map((row) => (row.local_id === local_id ? { ...row, plan_team_id } : row)),
-    )
-  }
-
-  async function saveDoctorAssignment(local_id: number) {
-    const target = assignments.find((row) => row.local_id === local_id)
-    if (target === undefined) {
-      return
-    }
-
-    if (target.plan_team_id === null) {
-      throw new PlanTeamNotSavedError()
-    }
-
-    await axios.put(`/api/monthly-plan/doctor-assignments/${target.plan_team_id}`, {
-      am_doctor_ids: target.am_doctor_ids,
-      pm_doctor_ids: target.pm_doctor_ids,
-    })
-  }
-
-  return {
-    assignments,
-    is_loading,
-    addAssignment,
-    removeAssignment,
-    updateAssignment,
-    toggleVehicle,
-    toggleEquipment,
-    updateDoctorAssignment,
-    copyAssignment,
-    saveAssignment,
-    saveDoctorAssignment,
-  }
-}
-
-
+- TypeScriptを6系に固定しているため、今後 `vite` や他の依存パッケージがTS7固有の機能を要求するようになった場合、追従できなくなる可能性がある
+- `typescript-eslint` のTS7サポートは公式Issueで追跡中（`typescript-eslint/typescript-eslint#10940`）。解決した際はTS7への復帰を検討する余地がある
+- 型情報を使う厳格なルール（`recommendedTypeChecked`）へ将来的に移行したい場合は、既存コードの76件の指摘（Promise関連が中心）を先に解消する必要がある
 
