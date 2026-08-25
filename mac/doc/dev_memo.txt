@@ -159,5 +159,391 @@
   │ P    │ Props（React関連でよく見る）                                                  │
   └──────┴───────────────────────────────────────────────────────────────────────────────┘
 
+        Route::get('/detail', [PlanTeamController::class, 'detail'])->name('detail');
+
+
+    public function detail(Request $request)
+    {
+        $plan_date = (string) $request->query('plan_date');
+
+        $plan_teams = $this->detail_list_use_case->execute($plan_date);
+
+        return response()->json([
+            'data' => $plan_teams,
+        ]);
+    }
+
+
+usecase
+    public function __construct(
+        private PlanTeamRepositoryInterface $plan_team_repository,
+        private PlanVehicleListUseCase $plan_vehicle_list_use_case,
+        private PlanEquipmentListUseCase $plan_equipment_list_use_case,
+        private DoctorAssignmentListUseCase $doctor_assignment_list_use_case,
+    ) {
+
+    public function execute(string $plan_date): array
+    {
+        $plan_teams = $this->plan_team_repository->findAllByPlanDate($plan_date);
+        $plan_team_ids = array_map(fn (PlanTeam $plan_team) => $plan_team->getId(), $plan_teams);
+
+        $plan_vehicles = $this->plan_vehicle_list_use_case->execute($plan_team_ids);
+        $plan_equipments = $this->plan_equipment_list_use_case->execute($plan_team_ids);
+        $doctor_assignments = $this->doctor_assignment_list_use_case->execute($plan_team_ids);
+
+        return array_map(
+            fn (PlanTeam $plan_team) => [
+                'id' => $plan_team->getId(),
+                'plan_date' => $plan_team->getPlanDate(),
+                'team_id' => $plan_team->getTeamId(),
+                'team_name' => $plan_team->getTeamName(),
+                'depart_time' => $plan_team->getDepartTime(),
+                'arrive_time' => $plan_team->getArriveTime(),
+                'sort_order' => $plan_team->getSortOrder(),
+                'vehicles' => array_values(array_filter(
+                    $plan_vehicles,
+                    fn (array $row) => $row['plan_team_id'] === $plan_team->getId(),
+                )),
+                'equipments' => array_values(array_filter(
+                    $plan_equipments,
+                    fn (array $row) => $row['plan_team_id'] === $plan_team->getId(),
+                )),
+                'doctor_assignments' => array_values(array_filter(
+                    $doctor_assignments,
+                    fn (array $row) => $row['plan_team_id'] === $plan_team->getId(),
+                )),
+            ],
+            $plan_teams,
+        );
+    }
+
+import { useEffect, useState } from 'react'
+import axios from '@/lib/axios'
+import type { Team, Vehicle } from '@/types/settings'
+import type { TeamAssignment } from '@/types/monthlyPlan'
+import {
+  TEAM_CODE_DOCK,
+  TEAM_CODE_INDUSTRIAL,
+  VEHICLE_CODE_CENTER_INTERNAL,
+} from '@/types/monthlyPlan'
+
+type PlanVehicleRow = {
+  id: number
+  plan_team_id: number
+  vehicle_id: number
+  vehicle_name: string
+}
+
+type PlanEquipmentRow = {
+  id: number
+  plan_team_id: number
+  equipment_id: number
+  equipment_name: string
+}
+
+type DoctorAssignmentRow = {
+  id: number
+  plan_team_id: number
+  doctor_id: number
+  type: number
+  has_am: boolean
+  has_pm: boolean
+}
+
+type PlanTeamDetailRow = {
+  id: number
+  plan_date: string
+  team_id: number
+  team_name: string
+  depart_time: string
+  arrive_time: string
+  sort_order: number
+  vehicles: PlanVehicleRow[]
+  equipments: PlanEquipmentRow[]
+  doctor_assignments: DoctorAssignmentRow[]
+}
+
+export class PlanTeamNotSavedError extends Error {}
+
+let local_id_sequence = -1
+
+function findTeamByCode(teams: Team[], code: string): Team | undefined {
+  return teams.find((team) => team.code === code)
+}
+
+function findCenterInternalVehicleIds(vehicles: Vehicle[]): number[] {
+  return vehicles
+    .filter((vehicle) => vehicle.code === VEHICLE_CODE_CENTER_INTERNAL)
+    .map((vehicle) => vehicle.id)
+    .filter((id): id is number => id !== null)
+}
+
+function createFixedAssignment(
+  team: Team | undefined,
+  departure_time: string,
+  arrival_time: string,
+  center_internal_vehicle_ids: number[],
+): TeamAssignment {
+  return {
+    local_id: local_id_sequence--,
+    plan_team_id: null,
+    team_id: team?.id ?? null,
+    team_code: team?.code ?? null,
+    departure_time,
+    arrival_time,
+    vehicle_ids: center_internal_vehicle_ids,
+    equipment_ids: [],
+    am_doctor_ids: [],
+    pm_doctor_ids: [],
+  }
+}
+
+function createEmptyAssignment(): TeamAssignment {
+  return {
+    local_id: local_id_sequence--,
+    plan_team_id: null,
+    team_id: null,
+    team_code: null,
+    departure_time: '',
+    arrival_time: '',
+    vehicle_ids: [],
+    equipment_ids: [],
+    am_doctor_ids: [],
+    pm_doctor_ids: [],
+  }
+}
+
+export function useTeamAssignments(plan_date: string | null, teams: Team[], vehicles: Vehicle[]) {
+  const [assignments, setAssignments] = useState<TeamAssignment[]>([])
+  const [is_loading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    if (plan_date === null) {
+      setAssignments([])
+      return
+    }
+
+    let is_current = true
+
+    async function load() {
+      setIsLoading(true)
+
+      try {
+        const plan_teams_response = await axios.get<{ data: PlanTeamDetailRow[] }>(
+          '/api/monthly-plan/plan-teams/detail',
+          { params: { plan_date } },
+        )
+        const plan_teams = plan_teams_response.data.data
+
+        if (!is_current) {
+          return
+        }
+
+        function toAssignment(plan_team: PlanTeamDetailRow): TeamAssignment {
+          const team = teams.find((row) => row.id === plan_team.team_id)
+
+          return {
+            local_id: local_id_sequence--,
+            plan_team_id: plan_team.id,
+            team_id: plan_team.team_id,
+            team_code: team?.code ?? null,
+            departure_time: plan_team.depart_time,
+            arrival_time: plan_team.arrive_time,
+            vehicle_ids: plan_team.vehicles.map((row) => row.vehicle_id),
+            equipment_ids: plan_team.equipments.map((row) => row.equipment_id),
+            am_doctor_ids: plan_team.doctor_assignments
+              .filter((row) => row.has_am)
+              .map((row) => row.doctor_id),
+            pm_doctor_ids: plan_team.doctor_assignments
+              .filter((row) => row.has_pm)
+              .map((row) => row.doctor_id),
+          }
+        }
+
+        const center_internal_vehicle_ids = findCenterInternalVehicleIds(vehicles)
+        const industrial_team = findTeamByCode(teams, TEAM_CODE_INDUSTRIAL)
+        const dock_team = findTeamByCode(teams, TEAM_CODE_DOCK)
+        const industrial_plan_team = plan_teams.find((row) => row.team_id === industrial_team?.id)
+        const dock_plan_team = plan_teams.find((row) => row.team_id === dock_team?.id)
+
+        const industrial_assignment = industrial_plan_team
+          ? toAssignment(industrial_plan_team)
+          : createFixedAssignment(industrial_team, '07:45', '15:00', center_internal_vehicle_ids)
+        const dock_assignment = dock_plan_team
+          ? toAssignment(dock_plan_team)
+          : createFixedAssignment(dock_team, '08:00', '15:00', center_internal_vehicle_ids)
+
+        const other_assignments = plan_teams
+          .filter((row) => row.id !== industrial_plan_team?.id && row.id !== dock_plan_team?.id)
+          .sort((a, b) => a.sort_order - b.sort_order)
+          .map(toAssignment)
+
+        setAssignments([industrial_assignment, dock_assignment, ...other_assignments])
+      } finally {
+        if (is_current) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    load()
+
+    return () => {
+      is_current = false
+    }
+    // plan_dateが変わった時だけ再読込する（teams/vehiclesの参照変化では再読込しない）
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plan_date])
+
+  function addAssignment() {
+    setAssignments((prev) => [...prev, createEmptyAssignment()])
+  }
+
+  function removeAssignment(local_id: number) {
+    setAssignments((prev) => prev.filter((row) => row.local_id !== local_id))
+  }
+
+  function updateAssignment<K extends keyof TeamAssignment>(
+    local_id: number,
+    field: K,
+    value: TeamAssignment[K],
+  ) {
+    setAssignments((prev) =>
+      prev.map((row) => (row.local_id === local_id ? { ...row, [field]: value } : row)),
+    )
+  }
+
+  function toggleVehicle(local_id: number, vehicle_id: number) {
+    setAssignments((prev) =>
+      prev.map((row) => {
+        if (row.local_id !== local_id) {
+          return row
+        }
+        const has = row.vehicle_ids.includes(vehicle_id)
+        return {
+          ...row,
+          vehicle_ids: has
+            ? row.vehicle_ids.filter((id) => id !== vehicle_id)
+            : [...row.vehicle_ids, vehicle_id],
+        }
+      }),
+    )
+  }
+
+  function toggleEquipment(local_id: number, equipment_id: number) {
+    setAssignments((prev) =>
+      prev.map((row) => {
+        if (row.local_id !== local_id) {
+          return row
+        }
+        const has = row.equipment_ids.includes(equipment_id)
+        return {
+          ...row,
+          equipment_ids: has
+            ? row.equipment_ids.filter((id) => id !== equipment_id)
+            : [...row.equipment_ids, equipment_id],
+        }
+      }),
+    )
+  }
+
+  function updateDoctorAssignment(local_id: number, am_doctor_ids: number[], pm_doctor_ids: number[]) {
+    setAssignments((prev) =>
+      prev.map((row) =>
+        row.local_id === local_id ? { ...row, am_doctor_ids, pm_doctor_ids } : row,
+      ),
+    )
+  }
+
+  function copyAssignment(local_id: number) {
+    setAssignments((prev) => {
+      const target = prev.find((row) => row.local_id === local_id)
+      if (target === undefined) {
+        return prev
+      }
+      const copied: TeamAssignment = {
+        ...target,
+        local_id: local_id_sequence--,
+        plan_team_id: null,
+        team_id: null,
+        team_code: null,
+      }
+      return [...prev, copied]
+    })
+  }
+
+  async function saveAssignment(local_id: number) {
+    const target = assignments.find((row) => row.local_id === local_id)
+    if (target === undefined || target.team_id === null || plan_date === null) {
+      return
+    }
+
+    let plan_team_id = target.plan_team_id
+
+    if (plan_team_id === null) {
+      const response = await axios.post<{ data: { id: number } }>('/api/monthly-plan/plan-teams/save', {
+        plan_date,
+        team_id: target.team_id,
+        depart_time: target.departure_time,
+        arrive_time: target.arrival_time,
+      })
+      plan_team_id = response.data.data.id
+    } else {
+      await axios.put(`/api/monthly-plan/plan-teams/${plan_team_id}`, {
+        team_id: target.team_id,
+        depart_time: target.departure_time,
+        arrive_time: target.arrival_time,
+      })
+    }
+
+    await Promise.all([
+      axios.put(`/api/monthly-plan/plan-vehicles/${plan_team_id}`, {
+        vehicle_ids: target.vehicle_ids,
+      }),
+      axios.put(`/api/monthly-plan/plan-equipments/${plan_team_id}`, {
+        equipment_ids: target.equipment_ids,
+      }),
+      axios.put(`/api/monthly-plan/doctor-assignments/${plan_team_id}`, {
+        am_doctor_ids: target.am_doctor_ids,
+        pm_doctor_ids: target.pm_doctor_ids,
+      }),
+    ])
+
+    setAssignments((prev) =>
+      prev.map((row) => (row.local_id === local_id ? { ...row, plan_team_id } : row)),
+    )
+  }
+
+  async function saveDoctorAssignment(local_id: number) {
+    const target = assignments.find((row) => row.local_id === local_id)
+    if (target === undefined) {
+      return
+    }
+
+    if (target.plan_team_id === null) {
+      throw new PlanTeamNotSavedError()
+    }
+
+    await axios.put(`/api/monthly-plan/doctor-assignments/${target.plan_team_id}`, {
+      am_doctor_ids: target.am_doctor_ids,
+      pm_doctor_ids: target.pm_doctor_ids,
+    })
+  }
+
+  return {
+    assignments,
+    is_loading,
+    addAssignment,
+    removeAssignment,
+    updateAssignment,
+    toggleVehicle,
+    toggleEquipment,
+    updateDoctorAssignment,
+    copyAssignment,
+    saveAssignment,
+    saveDoctorAssignment,
+  }
+}
+
 
 
