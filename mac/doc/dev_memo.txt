@@ -159,6 +159,9 @@
   │ P    │ Props（React関連でよく見る）                                                  │
   └──────┴───────────────────────────────────────────────────────────────────────────────┘
 
+
+
+
 - TypeScript 7はTS6.0との機能パリティを目指すプレビュー版であり、6→7の変更は基本的に破壊的変更が少ない設計。7→6に戻す場合も、7固有の新機能を使っていなければ実害はほぼない
 - このプロジェクトの `tsconfig.json` は、TS7で非推奨になった設定値（`module: "amd"/"umd"`、`moduleResolution: "node"/"classic"`、`target: "es5"` など）を使っていないため、影響なし
 - 実際にダウングレード後、`tsc --noEmit` と `vite build` の両方が正常に通ることを確認済み
@@ -295,4 +298,334 @@ npm run build
 - TypeScriptを6系に固定しているため、今後 `vite` や他の依存パッケージがTS7固有の機能を要求するようになった場合、追従できなくなる可能性がある
 - `typescript-eslint` のTS7サポートは公式Issueで追跡中（`typescript-eslint/typescript-eslint#10940`）。解決した際はTS7への復帰を検討する余地がある
 - 型情報を使う厳格なルール（`recommendedTypeChecked`）へ将来的に移行したい場合は、既存コードの76件の指摘（Promise関連が中心）を先に解消する必要がある
+
+    public function save(SaveRequest $request)
+    {
+        $input = SaveInput::fromArray($request->validated());
+        $plan_team = $this->save_use_case->execute($input);
+
+        return response()->json([
+            'data' => ['id' => $plan_team->getId()],
+        ], 201);
+    }
+
+    public function update(UpdateRequest $request, int $id)
+    {
+        $input = UpdateInput::fromArray($id, $request->validated());
+        $plan_team = $this->update_use_case->execute($input);
+
+        return response()->json([
+            'data' => ['id' => $plan_team->getId()],
+        ]);
+    }
+class SaveRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'plan_date' => ['required', 'date_format:Ymd'],
+            'team_id' => [
+                'required',
+                'integer',
+                'exists:m_teams,id',
+                Rule::unique('t_plan_teams', 'team_id')
+                    ->where('plan_date', $this->input('plan_date'))
+                    ->whereNull('deleted_at'),
+            ],
+            'depart_time' => ['required', 'date_format:H:i'],
+            'arrive_time' => ['required', 'date_format:H:i'],
+        ];
+    }
+}
+class UpdateRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'team_id' => ['required', 'integer', 'exists:m_teams,id'],
+            'depart_time' => ['required', 'date_format:H:i'],
+            'arrive_time' => ['required', 'date_format:H:i'],
+        ];
+    }
+}
+
+
+final class UpdateInput
+{
+    public function __construct(
+        public readonly int $id,
+        public readonly int $team_id,
+        public readonly string $depart_time,
+        public readonly string $arrive_time,
+    ) {
+    }
+
+    public static function fromArray(int $id, array $validated): self
+    {
+        return new self(
+            id: $id,
+            team_id: $validated['team_id'],
+            depart_time: $validated['depart_time'],
+            arrive_time: $validated['arrive_time'],
+        );
+    }
+
+    public function __construct(
+        private PlanTeamRepositoryInterface $plan_team_repository,
+        private TeamRepositoryInterface $team_repository,
+    ) {
+    }
+
+    public function execute(SaveInput $input): PlanTeam
+    {
+        $team = $this->team_repository->find($input->team_id);
+
+        if ($team === null) {
+            throw NotFoundException::forId('班', $input->team_id);
+        }
+
+        $max_sort_order = $this->plan_team_repository->findMaxSortOrderByPlanDate($input->plan_date);
+        $next_sort_order = $max_sort_order === null ? 0 : $max_sort_order + 1;
+
+        $plan_team = new PlanTeam(
+            plan_year_month: substr($input->plan_date, 0, 6),
+            plan_date: $input->plan_date,
+            team_id: $team->getId(),
+            team_name: $team->getName(),
+            depart_time: $input->depart_time,
+            arrive_time: $input->arrive_time,
+            sort_order: $next_sort_order,
+        );
+
+        $this->plan_team_repository->save($plan_team);
+        $this->plan_team_repository->flush();
+
+        return $plan_team;
+    }
+
+    updateusecase
+
+        public function __construct(
+        private PlanTeamRepositoryInterface $plan_team_repository,
+        private TeamRepositoryInterface $team_repository,
+    ) {
+    }
+
+    public function execute(UpdateInput $input): PlanTeam
+    {
+        $plan_team = $this->plan_team_repository->find($input->id);
+
+        if ($plan_team === null) {
+            throw NotFoundException::forId('xx情報', $input->id);
+        }
+
+        $team = $this->team_repository->find($input->team_id);
+
+        if ($team === null) {
+            throw NotFoundException::forId('xx', $input->team_id);
+        }
+
+        $duplicated = array_filter(
+            $this->plan_team_repository->findAllByPlanDate($plan_team->getPlanDate()),
+            fn (PlanTeam $row) => $row->getId() !== $plan_team->getId() && $row->getTeamId() === $input->team_id,
+        );
+
+        if ($duplicated !== []) {
+            throw ValidationException::withMessages([
+                'team_id' => ['同じ日にすでに登録されているxxです。'],
+            ]);
+        }
+
+        $plan_team->changeTeamId($team->getId());
+        $plan_team->changeTeamName($team->getName());
+        $plan_team->changeDepartTime($input->depart_time);
+        $plan_team->changeArriveTime($input->arrive_time);
+
+        $this->plan_team_repository->flush();
+
+        return $plan_team;
+    }
+
+        public function replace(ReplaceRequest $request, int $plan_team_id)
+    {
+        $input = ReplaceInput::fromArray($plan_team_id, $request->validated());
+        $this->replace_use_case->execute($input);
+
+        return response()->json(null, 200);
+    }
+
+    class ReplaceRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'vehicle_ids' => ['present', 'array'],
+            'vehicle_ids.*' => ['integer', 'distinct', 'exists:vehicles,id'],
+        ];
+    }
+}
+
+final class ReplaceInput
+{
+    /**
+     * @param int[] $vehicle_ids
+     */
+    public function __construct(
+        public readonly int $plan_team_id,
+        public readonly array $vehicle_ids,
+    ) {
+    }
+
+    public static function fromArray(int $plan_team_id, array $validated): self
+    {
+        return new self(
+            plan_team_id: $plan_team_id,
+            vehicle_ids: $validated['vehicle_ids'],
+        );
+    }
+}
+final class ReplaceInput
+{
+    /**
+     * @param int[] $equipment_ids
+     */
+    public function __construct(
+        public readonly int $plan_team_id,
+        public readonly array $equipment_ids,
+    ) {
+    }
+
+    public static function fromArray(int $plan_team_id, array $validated): self
+    {
+        return new self(
+            plan_team_id: $plan_team_id,
+            equipment_ids: $validated['equipment_ids'],
+        );
+    }
+}
+
+class ReplaceUseCase
+{
+    public function __construct(
+        private PlanVehicleRepositoryInterface $plan_vehicle_repository,
+        private PlanTeamRepositoryInterface $plan_team_repository,
+        private VehicleRepositoryInterface $vehicle_repository,
+    ) {
+    }
+
+    public function execute(ReplaceInput $input): void
+    {
+        $plan_team = $this->plan_team_repository->find($input->plan_team_id);
+
+        if ($plan_team === null) {
+            throw NotFoundException::forId('xxxxx', $input->plan_team_id);
+        }
+
+        $vehicles = $this->vehicle_repository->findByIds($input->vehicle_ids);
+        $vehicles_by_id = [];
+
+        foreach ($vehicles as $vehicle) {
+            $vehicles_by_id[$vehicle->getId()] = $vehicle;
+        }
+
+        $this->plan_vehicle_repository->deleteAllByPlanTeamId($input->plan_team_id);
+
+        $plan_vehicles = [];
+
+        foreach ($input->vehicle_ids as $vehicle_id) {
+            $vehicle = $vehicles_by_id[$vehicle_id] ?? null;
+
+            if ($vehicle === null) {
+                throw NotFoundException::forId('xxxx', $vehicle_id);
+            }
+
+            $plan_vehicles[] = new PlanVehicle($input->plan_team_id, $vehicle_id, $vehicle->getName());
+        }
+
+        $this->plan_vehicle_repository->saveAll($plan_vehicles);
+        $this->plan_vehicle_repository->flush();
+    }
+}
+
+equip
+class ReplaceUseCase
+{
+    public function __construct(
+        private PlanEquipmentRepositoryInterface $plan_equipment_repository,
+        private PlanTeamRepositoryInterface $plan_team_repository,
+        private EquipmentRepositoryInterface $equipment_repository,
+    ) {
+    }
+
+    public function execute(ReplaceInput $input): void
+    {
+        $plan_team = $this->plan_team_repository->find($input->plan_team_id);
+
+        if ($plan_team === null) {
+            throw NotFoundException::forId('xxxxxx', $input->plan_team_id);
+        }
+
+        $equipments = $this->equipment_repository->findByIds($input->equipment_ids);
+        $equipments_by_id = [];
+
+        foreach ($equipments as $equipment) {
+            $equipments_by_id[$equipment->getId()] = $equipment;
+        }
+
+        $this->plan_equipment_repository->deleteAllByPlanTeamId($input->plan_team_id);
+
+        $plan_equipments = [];
+
+        foreach ($input->equipment_ids as $equipment_id) {
+            $equipment = $equipments_by_id[$equipment_id] ?? null;
+
+            if ($equipment === null) {
+                throw NotFoundException::forId('iiiiii', $equipment_id);
+            }
+
+            $plan_equipments[] = new PlanEquipment($input->plan_team_id, $equipment_id, $equipment->getName());
+        }
+
+        $this->plan_equipment_repository->saveAll($plan_equipments);
+        $this->plan_equipment_repository->flush();
+    }
+}
+
+
+createpage
+  const [saving_local_id, setSavingLocalId] = useState<number | null>(null)
+  const [save_error_messages, setSaveErrorMessages] = useState<Record<number, string>>({})
+  const [save_success_messages, setSaveSuccessMessages] = useState<Record<number, string>>({})
+
+
+  async function handleSaveAssignment(local_id: number) {
+    setSavingLocalId(local_id)
+    setSaveErrorMessages((prev) => {
+      const rest = { ...prev }
+      delete rest[local_id]
+      return rest
+    })
+    setSaveSuccessMessages((prev) => {
+      const rest = { ...prev }
+      delete rest[local_id]
+      return rest
+    })
+
+    try {
+      await saveAssignment(local_id)
+      setSaveSuccessMessages((prev) => ({ ...prev, [local_id]: '保存しました' }))
+    } catch (error) {
+      let message = '保存に失敗しました'
+      if (axios.isAxiosError(error) && error.response?.status === 422) {
+        const errors = error.response.data.errors ?? {}
+        const first = Object.values(errors)[0] as string[] | undefined
+        message = first?.[0] ?? message
+      }
+      setSaveErrorMessages((prev) => ({ ...prev, [local_id]: message }))
+    } finally {
+      setSavingLocalId(null)
+    }
+  }
+
+                  onSave={() => handleSaveAssignment(assignment.local_id)}
 
