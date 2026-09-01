@@ -300,23 +300,421 @@ npm run build
 - 型情報を使う厳格なルール（`recommendedTypeChecked`）へ将来的に移行したい場合は、既存コードの76件の指摘（Promise関連が中心）を先に解消する必要がある
 
 
-final class ReplaceInput
+final class DestinationInput
 {
-    /**
-     * @param int[] $equipment_ids
-     */
     public function __construct(
-        public readonly int $plan_team_id,
-        public readonly array $equipment_ids,
+        public readonly ?int $id,
+        public readonly int $status,
+        public readonly bool $has_am,
+        public readonly bool $has_pm,
+        public readonly ?string $company_name,
+        public readonly ?string $place,
+        public readonly ?string $kenpo_name,
+        public readonly ?string $area,
+        public readonly ?string $memo,
+        public readonly DestinationSessionInput $am,
+        public readonly DestinationSessionInput $pm,
     ) {
     }
 
-    public static function fromArray(int $plan_team_id, array $validated): self
+    public static function fromArray(array $validated): self
     {
         return new self(
-            plan_team_id: $plan_team_id,
-            equipment_ids: $validated['equipment_ids'],
+            id: $validated['id'] ?? null,
+            status: $validated['status'],
+            has_am: (bool) $validated['has_am'],
+            has_pm: (bool) $validated['has_pm'],
+            company_name: $validated['company_name'] ?? null,
+            place: $validated['place'] ?? null,
+            kenpo_name: $validated['kenpo_name'] ?? null,
+            area: $validated['area'] ?? null,
+            memo: $validated['memo'] ?? null,
+            am: DestinationSessionInput::fromArray($validated['am'] ?? []),
+            pm: DestinationSessionInput::fromArray($validated['pm'] ?? []),
         );
     }
 }
 
+
+final class DestinationSessionInput
+{
+    /**
+     * @param SpecialItemInput[] $special_items
+     */
+    public function __construct(
+        public readonly ?string $start_time,
+        public readonly ?string $end_time,
+        public readonly ?int $total_count,
+        public readonly ?int $blood_count,
+        public readonly ?int $serum_count,
+        public readonly ?int $ecg_count,
+        public readonly ?int $fundus_count,
+        public readonly ?int $iop_count,
+        public readonly ?int $chest_count,
+        public readonly ?int $stomach_indirect_count,
+        public readonly ?int $stomach_direct_count,
+        public readonly ?int $us_count,
+        public readonly ?int $solvent_count,
+        public readonly ?int $metabolism_count,
+        public readonly ?int $urine_spitz,
+        public readonly ?int $chest_xray_staff_count,
+        public readonly ?int $stomach_xray_staff_count,
+        public readonly ?int $labo_staff_count,
+        public readonly ?int $us_staff_count,
+        public readonly array $special_items,
+    ) {
+    }
+
+    public static function fromArray(array $validated): self
+    {
+        return new self(
+            start_time: $validated['start_time'] ?? null,
+            end_time: $validated['end_time'] ?? null,
+            total_count: $validated['total_count'] ?? null,
+            blood_count: $validated['blood_count'] ?? null,
+            serum_count: $validated['serum_count'] ?? null,
+            ecg_count: $validated['ecg_count'] ?? null,
+            fundus_count: $validated['fundus_count'] ?? null,
+            iop_count: $validated['iop_count'] ?? null,
+            chest_count: $validated['chest_count'] ?? null,
+            stomach_indirect_count: $validated['stomach_indirect_count'] ?? null,
+            stomach_direct_count: $validated['stomach_direct_count'] ?? null,
+            us_count: $validated['us_count'] ?? null,
+            solvent_count: $validated['solvent_count'] ?? null,
+            metabolism_count: $validated['metabolism_count'] ?? null,
+            urine_spitz: $validated['urine_spitz'] ?? null,
+            chest_xray_staff_count: $validated['chest_xray_staff_count'] ?? null,
+            stomach_xray_staff_count: $validated['stomach_xray_staff_count'] ?? null,
+            labo_staff_count: $validated['labo_staff_count'] ?? null,
+            us_staff_count: $validated['us_staff_count'] ?? null,
+            special_items: array_map(
+                fn (array $item) => SpecialItemInput::fromArray($item),
+                $validated['special_items'] ?? [],
+            ),
+        );
+    }
+}
+
+SaveInput
+        return new self(
+            plan_date: $validated['plan_date'],
+            team_id: $validated['team_id'],
+            depart_time: $validated['depart_time'] ?? null,
+            arrive_time: $validated['arrive_time'] ?? null,
+            vehicle_ids: $validated['vehicle_ids'],
+            equipment_ids: $validated['equipment_ids'],
+            destinations: array_map(
+                fn (array $destination) => DestinationInput::fromArray($destination),
+                $validated['destinations'] ?? [],
+            ),
+        );
+
+
+usecase
+            foreach ($input->destinations as $sort_order => $destination_input) {
+                $this->saveDestination($plan_team_id, $sort_order, $destination_input);
+            }
+
+    private function applyDestinationFields(PlanDestination $plan_destination, DestinationInput $input): void
+    {
+        $plan_destination->changeCompanyName($input->company_name);
+        $plan_destination->changePlace($input->place);
+        $plan_destination->changeKenpoName($input->kenpo_name);
+        $plan_destination->changeArea($input->area);
+        $plan_destination->changeMemo($input->memo);
+
+        $plan_destination->changeHasAm($input->has_am);
+        $plan_destination->changeAmStartTime($input->am->start_time);
+        $plan_destination->changeAmEndTime($input->am->end_time);
+        $plan_destination->changeAmTotalCount($input->am->total_count);
+        $plan_destination->changeAmBloodCount($input->am->blood_count);
+        $plan_destination->changeAmSerumCount($input->am->serum_count);
+        $plan_destination->changeAmEcgCount($input->am->ecg_count);
+        $plan_destination->changeAmFundusCount($input->am->fundus_count);
+        $plan_destination->changeAmIopCount($input->am->iop_count);
+        $plan_destination->changeAmChestCount($input->am->chest_count);
+        $plan_destination->changeAmStomachIndirectCount($input->am->stomach_indirect_count);
+        $plan_destination->changeAmStomachDirectCount($input->am->stomach_direct_count);
+        $plan_destination->changeAmUsCount($input->am->us_count);
+        $plan_destination->changeAmSolventCount($input->am->solvent_count);
+        $plan_destination->changeAmMetabolismCount($input->am->metabolism_count);
+        $plan_destination->changeAmUrineSpitz($input->am->urine_spitz);
+        $plan_destination->changeAmChestXrayStaffCount($input->am->chest_xray_staff_count);
+        $plan_destination->changeAmStomachXrayStaffCount($input->am->stomach_xray_staff_count);
+        $plan_destination->changeAmLaboStaffCount($input->am->labo_staff_count);
+        $plan_destination->changeAmUsStaffCount($input->am->us_staff_count);
+
+        $plan_destination->changeHasPm($input->has_pm);
+        $plan_destination->changePmStartTime($input->pm->start_time);
+        $plan_destination->changePmEndTime($input->pm->end_time);
+        $plan_destination->changePmTotalCount($input->pm->total_count);
+        $plan_destination->changePmBloodCount($input->pm->blood_count);
+        $plan_destination->changePmSerumCount($input->pm->serum_count);
+        $plan_destination->changePmEcgCount($input->pm->ecg_count);
+        $plan_destination->changePmFundusCount($input->pm->fundus_count);
+        $plan_destination->changePmIopCount($input->pm->iop_count);
+        $plan_destination->changePmChestCount($input->pm->chest_count);
+        $plan_destination->changePmStomachIndirectCount($input->pm->stomach_indirect_count);
+        $plan_destination->changePmStomachDirectCount($input->pm->stomach_direct_count);
+        $plan_destination->changePmUsCount($input->pm->us_count);
+        $plan_destination->changePmSolventCount($input->pm->solvent_count);
+        $plan_destination->changePmMetabolismCount($input->pm->metabolism_count);
+        $plan_destination->changePmUrineSpitz($input->pm->urine_spitz);
+        $plan_destination->changePmChestXrayStaffCount($input->pm->chest_xray_staff_count);
+        $plan_destination->changePmStomachXrayStaffCount($input->pm->stomach_xray_staff_count);
+        $plan_destination->changePmLaboStaffCount($input->pm->labo_staff_count);
+        $plan_destination->changePmUsStaffCount($input->pm->us_staff_count);
+    }
+teigi.ts
+export const PLAN_DESTINATION_STATUS_CONFIRMED = 1
+export const PLAN_DESTINATION_STATUS_ADJUSTING = 2
+export const PLAN_DESTINATION_STATUS_PARTIALLY_CHANGED = 3
+export const PLAN_DESTINATION_STATUS_INPUTTING = 4
+
+export const URINE_SPITZ_COLLECT = 1
+export const URINE_SPITZ_ON_SITE = 2
+
+type Props = {
+  destination: PlanDestination
+  index: number
+  can_delete: boolean
+  onChangeStatus: (status: number) => void
+  is_saving_status: boolean
+  status_save_error_message: string | undefined
+  onCopy: () => void
+  onDelete: () => void
+  onChangeField: <K extends keyof PlanDestination>(field: K, value: PlanDestination[K]) => void
+  onChangeSession: <K extends keyof DestinationSession>(
+    session_key: 'am' | 'pm',
+    field: K,
+    value: DestinationSession[K],
+  ) => void
+  onAddSpecialItem: (session_key: 'am' | 'pm') => void
+  onRemoveSpecialItem: (session_key: 'am' | 'pm', special_item_local_id: number) => void
+  onChangeSpecialItemName: (session_key: 'am' | 'pm', special_item_local_id: number, value: string) => void
+  onChangeSpecialItemHeadCount: (
+    session_key: 'am' | 'pm',
+    special_item_local_id: number,
+    value: number | null,
+  ) => void
+}
+
+export function PlanDestinationCard({
+  destination,
+  index,
+  can_delete,
+  onChangeStatus,
+  is_saving_status,
+  status_save_error_message,
+  onCopy,
+  onDelete,
+  onChangeField,
+  onChangeSession,
+  onAddSpecialItem,
+  onRemoveSpecialItem,
+  onChangeSpecialItemName,
+  onChangeSpecialItemHeadCount,
+}: Props) {
+  return (
+    <div className="mt-3 rounded-md border border-slate-200 p-3">
+      <div className="flex items-center justify-between">
+        <h5 className="text-sm font-semibold text-slate-900">健診先{index + 1}</h5>
+        <div className="flex items-center gap-1.5">
+          {is_saving_status && <span className="text-xs text-slate-500">保存中...</span>}
+          {status_save_error_message !== undefined && (
+            <span className="text-xs text-red-600">{status_save_error_message}</span>
+          )}
+          <Button
+            variant="secondary"
+            onClick={() => onChangeStatus(PLAN_DESTINATION_STATUS_CONFIRMED)}
+            disabled={is_saving_status}
+            className="px-2 py-0.5 text-xs"
+          >
+            確定
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => onChangeStatus(PLAN_DESTINATION_STATUS_ADJUSTING)}
+            disabled={is_saving_status}
+            className="px-2 py-0.5 text-xs"
+          >
+            調整中
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => onChangeStatus(PLAN_DESTINATION_STATUS_PARTIALLY_CHANGED)}
+            disabled={is_saving_status}
+            className="px-2 py-0.5 text-xs"
+          >
+            一部変更
+          </Button>
+          <Button variant="secondary" onClick={onCopy} className="px-2 py-0.5 text-xs">
+            コピー
+          </Button>
+          {can_delete && (
+            <Button variant="danger" onClick={onDelete} className="px-2 py-0.5 text-xs">
+              削除
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-slate-500">企業名</label>
+          <input
+            type="text"
+            value={destination.company_name}
+            onChange={(event) => onChangeField('company_name', event.target.value)}
+            className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-slate-500">健診場所</label>
+          <input
+            type="text"
+            value={destination.place}
+            onChange={(event) => onChangeField('place', event.target.value)}
+            className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm"
+          />
+        </div>
+      </div>
+
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-slate-500">kenpo名</label>
+          <input
+            type="text"
+            value={destination.kenpo_name}
+            onChange={(event) => onChangeField('kenpo_name', event.target.value)}
+            className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-slate-500">地域</label>
+          <input
+            type="text"
+            value={destination.area}
+            onChange={(event) => onChangeField('area', event.target.value)}
+            className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm"
+          />
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <label className="flex items-center gap-1.5 text-sm font-semibold text-slate-900">
+          <input
+            type="checkbox"
+            checked={destination.has_am}
+            onChange={(event) => onChangeField('has_am', event.target.checked)}
+          />
+          AM
+          <span className="text-xs font-normal text-slate-500">チェックすると</span>
+        </label>
+        {destination.has_am && (
+          <PlanDestinationSessionFields
+            label="AM"
+            session={destination.am}
+            onChangeField={(field, value) => onChangeSession('am', field, value)}
+            onAddSpecialItem={() => onAddSpecialItem('am')}
+            onRemoveSpecialItem={(special_item_local_id) => onRemoveSpecialItem('am', special_item_local_id)}
+            onChangeSpecialItemName={(special_item_local_id, value) =>
+              onChangeSpecialItemName('am', special_item_local_id, value)
+            }
+            onChangeSpecialItemHeadCount={(special_item_local_id, value) =>
+              onChangeSpecialItemHeadCount('am', special_item_local_id, value)
+            }
+          />
+        )}
+      </div>
+
+      <div className="mt-3">
+        <label className="flex items-center gap-1.5 text-sm font-semibold text-slate-900">
+          <input
+            type="checkbox"
+            checked={destination.has_pm}
+            onChange={(event) => onChangeField('has_pm', event.target.checked)}
+          />
+          PM
+          <span className="text-xs font-normal text-slate-500">チェックすると</span>
+        </label>
+        {destination.has_pm && (
+          <PlanDestinationSessionFields
+            label="PM"
+            session={destination.pm}
+            onChangeField={(field, value) => onChangeSession('pm', field, value)}
+            onAddSpecialItem={() => onAddSpecialItem('pm')}
+            onRemoveSpecialItem={(special_item_local_id) => onRemoveSpecialItem('pm', special_item_local_id)}
+            onChangeSpecialItemName={(special_item_local_id, value) =>
+              onChangeSpecialItemName('pm', special_item_local_id, value)
+            }
+            onChangeSpecialItemHeadCount={(special_item_local_id, value) =>
+              onChangeSpecialItemHeadCount('pm', special_item_local_id, value)
+            }
+          />
+        )}
+      </div>
+
+      <div className="mt-3">
+        <label className="mb-1 block text-xs font-medium text-slate-500">備考</label>
+        <textarea
+          value={destination.memo}
+          onChange={(event) => onChangeField('memo', event.target.value)}
+          rows={3}
+          className="w-full rounded-md border border-slate-300 px-2 py-1 text-sm"
+        />
+      </div>
+    </div>
+  )
+}
+
+        {destinations.map((destination, index) => (
+          <PlanDestinationCard
+            key={destination.local_id}
+            destination={destination}
+            index={index}
+            can_delete={can_delete}
+            onChangeStatus={(status) => onChangeDestinationStatus(destination.local_id, status)}
+            is_saving_status={saving_destination_status_local_id === destination.local_id}
+            status_save_error_message={destination_status_save_error_messages[destination.local_id]}
+            onCopy={() => onCopyDestination(destination.local_id)}
+            onDelete={() => onDeleteDestination(destination.local_id)}
+            onChangeField={(field, value) => onChangeDestinationField(destination.local_id, field, value)}
+            onChangeSession={(session_key, field, value) =>
+              onChangeDestinationSession(destination.local_id, session_key, field, value)
+            }
+            onAddSpecialItem={(session_key) => onAddSpecialItem(destination.local_id, session_key)}
+            onRemoveSpecialItem={(session_key, special_item_local_id) =>
+              onRemoveSpecialItem(destination.local_id, session_key, special_item_local_id)
+            }
+            onChangeSpecialItemName={(session_key, special_item_local_id, value) =>
+              onChangeSpecialItemName(destination.local_id, session_key, special_item_local_id, value)
+            }
+            onChangeSpecialItemHeadCount={(session_key, special_item_local_id, value) =>
+              onChangeSpecialItemHeadCount(destination.local_id, session_key, special_item_local_id, value)
+            }
+          />
+        ))}
+
+
+teamassignca
+<PlanDestinationCard
+            onChangeField={(field, value) => onChangeDestinationField(destination.local_id, field, value)}
+            onChangeSession={(session_key, field, value) =>
+              onChangeDestinationSession(destination.local_id, session_key, field, value)
+            }
+
+monplancreatepage
+                  onChangeDestinationField={(destination_local_id, field, value) =>
+                    updateDestination(assignment.local_id, destination_local_id, field, value)
+                  }
+                  onChangeDestinationSession={(destination_local_id, session_key, field, value) =>
+                    updateSession(assignment.local_id, destination_local_id, session_key, field, value)
+                  }
+
+
+            try {
+      const saved_destinations = await saveAssignment(local_id, destinations_by_team[local_id] ?? [])
+      syncDestinationIds(local_id, saved_destinations)
+      setSaveSuccessMessages((prev) => ({ ...prev, [local_id]: '保存しました' }))
+    } catch (error) {
