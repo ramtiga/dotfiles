@@ -299,4 +299,559 @@ npm run build
 - `typescript-eslint` のTS7サポートは公式Issueで追跡中（`typescript-eslint/typescript-eslint#10940`）。解決した際はTS7への復帰を検討する余地がある
 - 型情報を使う厳格なルール（`recommendedTypeChecked`）へ将来的に移行したい場合は、既存コードの76件の指摘（Promise関連が中心）を先に解消する必要がある
 
+saverequest
+    public function rules(): array
+    {
+        return array_merge(
+            [
+                'plan_date' => ['required', 'date_format:Ymd'],
+                'team_id' => [
+                    'required',
+                    'integer',
+                    'exists:m_teams,id',
+                    Rule::unique('t_plan_teams', 'team_id')
+                        ->where('plan_date', $this->input('plan_date'))
+                        ->whereNull('deleted_at'),
+                ],
+                'depart_time' => ['nullable', 'date_format:H:i'],
+                'arrive_time' => ['nullable', 'date_format:H:i'],
+                'vehicle_ids' => ['present', 'array'],
+                'vehicle_ids.*' => ['integer', 'distinct', 'exists:m_vehicles,id'],
+                'equipment_ids' => ['present', 'array'],
+                'equipment_ids.*' => ['integer', 'distinct', 'exists:m_equipments,id'],
+                'destinations' => ['present', 'array'],
+                'destinations.*.id' => ['nullable', 'integer'],
+                'destinations.*.status' => ['required', 'integer', 'in:1,2,3,4'],
+                'destinations.*.has_am' => ['required', 'boolean'],
+                'destinations.*.has_pm' => ['required', 'boolean'],
+                'destinations.*.company_name' => ['nullable', 'string', 'max:255'],
+                'destinations.*.place' => ['nullable', 'string', 'max:255'],
+                'destinations.*.kenpo_name' => ['nullable', 'string', 'max:255'],
+                'destinations.*.area' => ['nullable', 'string', 'max:255'],
+                'destinations.*.memo' => ['nullable', 'string'],
+            ],
+            $this->sessionRules('destinations.*.am'),
+            $this->sessionRules('destinations.*.pm'),
+        );
+    }
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    private function sessionRules(string $prefix): array
+    {
+        return [
+            "{$prefix}.start_time" => ['nullable', 'date_format:H:i'],
+            "{$prefix}.end_time" => ['nullable', 'date_format:H:i'],
+            "{$prefix}.total_count" => ['nullable', 'integer'],
+            "{$prefix}.blood_count" => ['nullable', 'integer'],
+            "{$prefix}.serum_count" => ['nullable', 'integer'],
+            "{$prefix}.ecg_count" => ['nullable', 'integer'],
+            "{$prefix}.fundus_count" => ['nullable', 'integer'],
+            "{$prefix}.iop_count" => ['nullable', 'integer'],
+            "{$prefix}.chest_count" => ['nullable', 'integer'],
+            "{$prefix}.stomach_indirect_count" => ['nullable', 'integer'],
+            "{$prefix}.stomach_direct_count" => ['nullable', 'integer'],
+            "{$prefix}.us_count" => ['nullable', 'integer'],
+            "{$prefix}.solvent_count" => ['nullable', 'integer'],
+            "{$prefix}.metabolism_count" => ['nullable', 'integer'],
+            "{$prefix}.urine_spitz" => ['nullable', 'integer', 'in:1,2'],
+            "{$prefix}.chest_xray_staff_count" => ['nullable', 'integer'],
+            "{$prefix}.stomach_xray_staff_count" => ['nullable', 'integer'],
+            "{$prefix}.labo_staff_count" => ['nullable', 'integer'],
+            "{$prefix}.us_staff_count" => ['nullable', 'integer'],
+            "{$prefix}.special_items" => ['present', 'array'],
+            "{$prefix}.special_items.*.id" => ['nullable', 'integer'],
+            "{$prefix}.special_items.*.item_name" => ['nullable', 'string', 'max:255'],
+            "{$prefix}.special_items.*.head_count" => ['nullable', 'integer'],
+        ];
+    }
+
+class UpdateRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return array_merge(
+            [
+                'team_id' => ['required', 'integer', 'exists:m_teams,id'],
+                'depart_time' => ['nullable', 'date_format:H:i'],
+                'arrive_time' => ['nullable', 'date_format:H:i'],
+                'vehicle_ids' => ['present', 'array'],
+                'vehicle_ids.*' => ['integer', 'distinct', 'exists:m_vehicles,id'],
+                'equipment_ids' => ['present', 'array'],
+                'equipment_ids.*' => ['integer', 'distinct', 'exists:m_equipments,id'],
+                'destinations' => ['present', 'array'],
+                'destinations.*.id' => ['nullable', 'integer', 'exists:t_plan_destinations,id'],
+                'destinations.*.status' => ['required', 'integer', 'in:1,2,3,4'],
+                'destinations.*.has_am' => ['required', 'boolean'],
+                'destinations.*.has_pm' => ['required', 'boolean'],
+                'destinations.*.company_name' => ['nullable', 'string', 'max:255'],
+                'destinations.*.place' => ['nullable', 'string', 'max:255'],
+                'destinations.*.kenpo_name' => ['nullable', 'string', 'max:255'],
+                'destinations.*.area' => ['nullable', 'string', 'max:255'],
+                'destinations.*.memo' => ['nullable', 'string'],
+            ],
+            $this->sessionRules('destinations.*.am'),
+            $this->sessionRules('destinations.*.pm'),
+        );
+    }
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    private function sessionRules(string $prefix): array
+    {
+        return [
+            "{$prefix}.start_time" => ['nullable', 'date_format:H:i'],
+            "{$prefix}.end_time" => ['nullable', 'date_format:H:i'],
+            "{$prefix}.total_count" => ['nullable', 'integer'],
+            "{$prefix}.blood_count" => ['nullable', 'integer'],
+            "{$prefix}.serum_count" => ['nullable', 'integer'],
+            "{$prefix}.ecg_count" => ['nullable', 'integer'],
+            "{$prefix}.fundus_count" => ['nullable', 'integer'],
+            "{$prefix}.iop_count" => ['nullable', 'integer'],
+            "{$prefix}.chest_count" => ['nullable', 'integer'],
+            "{$prefix}.stomach_indirect_count" => ['nullable', 'integer'],
+            "{$prefix}.stomach_direct_count" => ['nullable', 'integer'],
+            "{$prefix}.us_count" => ['nullable', 'integer'],
+            "{$prefix}.solvent_count" => ['nullable', 'integer'],
+            "{$prefix}.metabolism_count" => ['nullable', 'integer'],
+            "{$prefix}.urine_spitz" => ['nullable', 'integer', 'in:1,2'],
+            "{$prefix}.chest_xray_staff_count" => ['nullable', 'integer'],
+            "{$prefix}.stomach_xray_staff_count" => ['nullable', 'integer'],
+            "{$prefix}.labo_staff_count" => ['nullable', 'integer'],
+            "{$prefix}.us_staff_count" => ['nullable', 'integer'],
+            "{$prefix}.special_items" => ['present', 'array'],
+            "{$prefix}.special_items.*.id" => ['nullable', 'integer', 'exists:t_plan_special_items,id'],
+            "{$prefix}.special_items.*.item_name" => ['nullable', 'string', 'max:255'],
+            "{$prefix}.special_items.*.head_count" => ['nullable', 'integer'],
+        ];
+    }
+}
+
+    /**
+     * @param PlanSpecialItem[] $special_items
+     */
+    private function formatDestination(PlanDestination $destination, array $special_items): array
+    {
+        $own_special_items = array_values(array_filter(
+            $special_items,
+            fn (PlanSpecialItem $item) => $item->getDestinationId() === $destination->getId(),
+        ));
+
+        return [
+            'id' => $destination->getId(),
+            'status' => $destination->getStatus(),
+            'has_am' => $destination->hasAm(),
+            'has_pm' => $destination->hasPm(),
+            'company_name' => $destination->getCompanyName(),
+            'place' => $destination->getPlace(),
+            'kenpo_name' => $destination->getKenpoName(),
+            'area' => $destination->getArea(),
+            'memo' => $destination->getMemo(),
+            'am' => [
+                'start_time' => $destination->getAmStartTime(),
+                'end_time' => $destination->getAmEndTime(),
+                'total_count' => $destination->getAmTotalCount(),
+                'blood_count' => $destination->getAmBloodCount(),
+                'serum_count' => $destination->getAmSerumCount(),
+                'ecg_count' => $destination->getAmEcgCount(),
+                'fundus_count' => $destination->getAmFundusCount(),
+                'iop_count' => $destination->getAmIopCount(),
+                'chest_count' => $destination->getAmChestCount(),
+                'stomach_indirect_count' => $destination->getAmStomachIndirectCount(),
+                'stomach_direct_count' => $destination->getAmStomachDirectCount(),
+                'us_count' => $destination->getAmUsCount(),
+                'solvent_count' => $destination->getAmSolventCount(),
+                'metabolism_count' => $destination->getAmMetabolismCount(),
+                'urine_spitz' => $destination->getAmUrineSpitz(),
+                'chest_xray_staff_count' => $destination->getAmChestXrayStaffCount(),
+                'stomach_xray_staff_count' => $destination->getAmStomachXrayStaffCount(),
+                'labo_staff_count' => $destination->getAmLaboStaffCount(),
+                'us_staff_count' => $destination->getAmUsStaffCount(),
+                'special_items' => array_values(array_map(
+                    fn (PlanSpecialItem $item) => ['id' => $item->getId(), 'item_name' => $item->getItemName(), 'head_count' => $item->getHeadCount()],
+                    array_filter($own_special_items, fn (PlanSpecialItem $item) => $item->getAmpmType() === AmPmType::Am->value),
+                )),
+            ],
+            'pm' => [
+                'start_time' => $destination->getPmStartTime(),
+                'end_time' => $destination->getPmEndTime(),
+                'total_count' => $destination->getPmTotalCount(),
+                'blood_count' => $destination->getPmBloodCount(),
+                'serum_count' => $destination->getPmSerumCount(),
+                'ecg_count' => $destination->getPmEcgCount(),
+                'fundus_count' => $destination->getPmFundusCount(),
+                'iop_count' => $destination->getPmIopCount(),
+                'chest_count' => $destination->getPmChestCount(),
+                'stomach_indirect_count' => $destination->getPmStomachIndirectCount(),
+                'stomach_direct_count' => $destination->getPmStomachDirectCount(),
+                'us_count' => $destination->getPmUsCount(),
+                'solvent_count' => $destination->getPmSolventCount(),
+                'metabolism_count' => $destination->getPmMetabolismCount(),
+                'urine_spitz' => $destination->getPmUrineSpitz(),
+                'chest_xray_staff_count' => $destination->getPmChestXrayStaffCount(),
+                'stomach_xray_staff_count' => $destination->getPmStomachXrayStaffCount(),
+                'labo_staff_count' => $destination->getPmLaboStaffCount(),
+                'us_staff_count' => $destination->getPmUsStaffCount(),
+                'special_items' => array_values(array_map(
+                    fn (PlanSpecialItem $item) => ['id' => $item->getId(), 'item_name' => $item->getItemName(), 'head_count' => $item->getHeadCount()],
+                    array_filter($own_special_items, fn (PlanSpecialItem $item) => $item->getAmpmType() === AmPmType::Pm->value),
+                )),
+            ],
+        ];
+    }
+
+    public function test_健診先を登録できること(): void
+    {
+        $team = $this->persistTeam();
+
+        $destination = $this->destinationPayload([
+            'status' => 1,
+            'has_am' => true,
+            'has_pm' => false,
+            'company_name' => 'テスト企業',
+            'am' => array_merge($this->emptyDestinationSession(), [
+                'start_time' => '08:00',
+                'end_time' => '11:00',
+                'total_count' => 10,
+                'urine_spitz' => 1,
+                'special_items' => [
+                    ['item_name' => '特健項目A', 'head_count' => 3],
+                ],
+            ]),
+        ]);
+
+        $response = $this->postJson(
+            route('api.monthly-plan.plan-teams.save'),
+            $this->savePayload('20260823', $team->getId(), destinations: [$destination]),
+        );
+
+        $response->assertStatus(201);
+        $plan_team_id = $response->json('data.id');
+
+        $this->entity_manager->clear();
+
+        $plan_destinations = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findBy(['plan_team_id' => $plan_team_id]);
+
+        $this->assertCount(1, $plan_destinations);
+        $plan_destination = $plan_destinations[0];
+        $this->assertSame(1, $plan_destination->getStatus());
+        $this->assertSame('テスト企業', $plan_destination->getCompanyName());
+        $this->assertTrue($plan_destination->hasAm());
+        $this->assertFalse($plan_destination->hasPm());
+        $this->assertSame('08:00', $plan_destination->getAmStartTime());
+        $this->assertSame('11:00', $plan_destination->getAmEndTime());
+        $this->assertSame(10, $plan_destination->getAmTotalCount());
+        $this->assertSame(1, $plan_destination->getAmUrineSpitz());
+
+        $special_items = $this->entity_manager
+            ->getRepository(PlanSpecialItem::class)
+            ->findBy(['destination_id' => $plan_destination->getId()]);
+
+        $this->assertCount(1, $special_items);
+        $this->assertSame('特健項目A', $special_items[0]->getItemName());
+        $this->assertSame(3, $special_items[0]->getHeadCount());
+        $this->assertSame(1, $special_items[0]->getAmpmType());
+    }
+
+    public function test_特健項目名が空の場合は保存対象から除外されること(): void
+    {
+        $team = $this->persistTeam();
+
+        $destination = $this->destinationPayload([
+            'am' => array_merge($this->emptyDestinationSession(), [
+                'special_items' => [
+                    ['item_name' => null, 'head_count' => null],
+                    ['item_name' => '', 'head_count' => 1],
+                ],
+            ]),
+        ]);
+
+        $response = $this->postJson(
+            route('api.monthly-plan.plan-teams.save'),
+            $this->savePayload('20260823', $team->getId(), destinations: [$destination]),
+        );
+
+        $response->assertStatus(201);
+        $plan_team_id = $response->json('data.id');
+
+        $this->entity_manager->clear();
+
+        $plan_destination = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findOneBy(['plan_team_id' => $plan_team_id]);
+
+        $special_items = $this->entity_manager
+            ->getRepository(PlanSpecialItem::class)
+            ->findBy(['destination_id' => $plan_destination->getId()]);
+
+        $this->assertCount(0, $special_items);
+    }
+
+    public function test_更新でidを指定しない健診先は新規作成され既存が削除されること(): void
+    {
+        $team = $this->persistTeam();
+
+        $first_destination = $this->destinationPayload(['company_name' => '最初の企業']);
+
+        $save_response = $this->postJson(
+            route('api.monthly-plan.plan-teams.save'),
+            $this->savePayload('20260823', $team->getId(), destinations: [$first_destination]),
+        );
+        $plan_team_id = $save_response->json('data.id');
+
+        $original_destination_id = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findOneBy(['plan_team_id' => $plan_team_id])
+            ->getId();
+
+        $second_destination = $this->destinationPayload(['company_name' => '更新後の企業']);
+
+        $response = $this->putJson(
+            route('api.monthly-plan.plan-teams.update', ['id' => $plan_team_id]),
+            $this->updatePayload($team->getId(), destinations: [$second_destination]),
+        );
+
+        $response->assertStatus(200);
+
+        $this->entity_manager->clear();
+
+        $plan_destinations = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findBy(['plan_team_id' => $plan_team_id]);
+
+        $this->assertCount(1, $plan_destinations);
+        $this->assertSame('更新後の企業', $plan_destinations[0]->getCompanyName());
+        $this->assertNotSame($original_destination_id, $plan_destinations[0]->getId());
+    }
+
+    public function test_更新でidを指定した健診先は同一レコードが更新されること(): void
+    {
+        $team = $this->persistTeam();
+
+        $first_destination = $this->destinationPayload([
+            'company_name' => '最初の企業',
+            'am' => array_merge($this->emptyDestinationSession(), [
+                'special_items' => [['item_name' => '特健A', 'head_count' => 1]],
+            ]),
+        ]);
+
+        $save_response = $this->postJson(
+            route('api.monthly-plan.plan-teams.save'),
+            $this->savePayload('20260823', $team->getId(), destinations: [$first_destination]),
+        );
+        $plan_team_id = $save_response->json('data.id');
+
+        $this->entity_manager->clear();
+
+        $original_destination = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findOneBy(['plan_team_id' => $plan_team_id]);
+        $original_destination_id = $original_destination->getId();
+
+        $original_special_item = $this->entity_manager
+            ->getRepository(PlanSpecialItem::class)
+            ->findOneBy(['destination_id' => $original_destination_id]);
+        $original_special_item_id = $original_special_item->getId();
+
+        $updated_destination = $this->destinationPayload([
+            'id' => $original_destination_id,
+            'company_name' => '更新後の企業',
+            'am' => array_merge($this->emptyDestinationSession(), [
+                'special_items' => [
+                    ['id' => $original_special_item_id, 'item_name' => '特健A改', 'head_count' => 2],
+                ],
+            ]),
+        ]);
+
+        $response = $this->putJson(
+            route('api.monthly-plan.plan-teams.update', ['id' => $plan_team_id]),
+            $this->updatePayload($team->getId(), destinations: [$updated_destination]),
+        );
+
+        $response->assertStatus(200);
+
+        $this->entity_manager->clear();
+
+        $plan_destinations = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findBy(['plan_team_id' => $plan_team_id]);
+
+        $this->assertCount(1, $plan_destinations);
+        $this->assertSame($original_destination_id, $plan_destinations[0]->getId());
+        $this->assertSame('更新後の企業', $plan_destinations[0]->getCompanyName());
+
+        $special_items = $this->entity_manager
+            ->getRepository(PlanSpecialItem::class)
+            ->findBy(['destination_id' => $original_destination_id]);
+
+        $this->assertCount(1, $special_items);
+        $this->assertSame($original_special_item_id, $special_items[0]->getId());
+        $this->assertSame('特健A改', $special_items[0]->getItemName());
+        $this->assertSame(2, $special_items[0]->getHeadCount());
+    }
+
+    public function test_更新で送信されなかった健診先idは削除されること(): void
+    {
+        $team = $this->persistTeam();
+
+        $destination_1 = $this->destinationPayload(['company_name' => '企業1']);
+        $destination_2 = $this->destinationPayload(['company_name' => '企業2']);
+
+        $save_response = $this->postJson(
+            route('api.monthly-plan.plan-teams.save'),
+            $this->savePayload('20260823', $team->getId(), destinations: [$destination_1, $destination_2]),
+        );
+        $plan_team_id = $save_response->json('data.id');
+
+        $this->entity_manager->clear();
+
+        $existing = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findBy(['plan_team_id' => $plan_team_id]);
+        $keep_destination = current(array_filter($existing, fn ($d) => $d->getCompanyName() === '企業1'));
+
+        $response = $this->putJson(
+            route('api.monthly-plan.plan-teams.update', ['id' => $plan_team_id]),
+            $this->updatePayload($team->getId(), destinations: [
+                $this->destinationPayload(['id' => $keep_destination->getId(), 'company_name' => '企業1']),
+            ]),
+        );
+
+        $response->assertStatus(200);
+
+        $this->entity_manager->clear();
+
+        $plan_destinations = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findBy(['plan_team_id' => $plan_team_id]);
+
+        $this->assertCount(1, $plan_destinations);
+        $this->assertSame('企業1', $plan_destinations[0]->getCompanyName());
+    }
+
+    public function test_産業ドックはデフォルト状態でも健診先を保存できること(): void
+    {
+        $team = $this->persistTeam('産業');
+
+        $destination = $this->destinationPayload();
+
+        $response = $this->postJson(
+            route('api.monthly-plan.plan-teams.save'),
+            $this->savePayload('20260823', $team->getId(), destinations: [$destination]),
+        );
+
+        $response->assertStatus(201);
+    }
+
+    public function test_新規登録時にhas_amがfalseならAM関連データは保存されないこと(): void
+    {
+        $team = $this->persistTeam();
+
+        $destination = $this->destinationPayload([
+            'has_am' => false,
+            'am' => array_merge($this->emptyDestinationSession(), [
+                'start_time' => '08:00',
+                'end_time' => '11:00',
+                'total_count' => 10,
+                'special_items' => [['item_name' => '特健A', 'head_count' => 1]],
+            ]),
+        ]);
+
+        $save_response = $this->postJson(
+            route('api.monthly-plan.plan-teams.save'),
+            $this->savePayload('20260823', $team->getId(), destinations: [$destination]),
+        );
+        $plan_team_id = $save_response->json('data.id');
+
+        $this->entity_manager->clear();
+
+        $plan_destination = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findOneBy(['plan_team_id' => $plan_team_id]);
+
+        $this->assertFalse($plan_destination->hasAm());
+        $this->assertNull($plan_destination->getAmStartTime());
+        $this->assertNull($plan_destination->getAmEndTime());
+        $this->assertNull($plan_destination->getAmTotalCount());
+
+        $special_items = $this->entity_manager
+            ->getRepository(PlanSpecialItem::class)
+            ->findBy(['destination_id' => $plan_destination->getId()]);
+
+        $this->assertCount(0, $special_items);
+    }
+
+    public function test_更新でhas_amをfalseにするとAM関連データが保持され上書きされないこと(): void
+    {
+        $team = $this->persistTeam();
+
+        $original_destination = $this->destinationPayload([
+            'am' => array_merge($this->emptyDestinationSession(), [
+                'start_time' => '08:00',
+                'end_time' => '11:00',
+                'total_count' => 10,
+                'special_items' => [['item_name' => '特健A', 'head_count' => 1]],
+            ]),
+        ]);
+
+        $save_response = $this->postJson(
+            route('api.monthly-plan.plan-teams.save'),
+            $this->savePayload('20260823', $team->getId(), destinations: [$original_destination]),
+        );
+        $plan_team_id = $save_response->json('data.id');
+
+        $this->entity_manager->clear();
+
+        $plan_destination = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->findOneBy(['plan_team_id' => $plan_team_id]);
+        $plan_destination_id = $plan_destination->getId();
+
+        $special_item = $this->entity_manager
+            ->getRepository(PlanSpecialItem::class)
+            ->findOneBy(['destination_id' => $plan_destination_id]);
+        $special_item_id = $special_item->getId();
+
+        $updated_destination = $this->destinationPayload([
+            'id' => $plan_destination_id,
+            'has_am' => false,
+            'am' => array_merge($this->emptyDestinationSession(), [
+                'start_time' => null,
+                'end_time' => null,
+                'total_count' => null,
+                'special_items' => [],
+            ]),
+        ]);
+
+        $response = $this->putJson(
+            route('api.monthly-plan.plan-teams.update', ['id' => $plan_team_id]),
+            $this->updatePayload($team->getId(), destinations: [$updated_destination]),
+        );
+
+        $response->assertStatus(200);
+
+        $this->entity_manager->clear();
+
+        $plan_destination = $this->entity_manager
+            ->getRepository(PlanDestination::class)
+            ->find($plan_destination_id);
+
+        $this->assertFalse($plan_destination->hasAm());
+        $this->assertSame('08:00', $plan_destination->getAmStartTime());
+        $this->assertSame('11:00', $plan_destination->getAmEndTime());
+        $this->assertSame(10, $plan_destination->getAmTotalCount());
+
+        $special_items = $this->entity_manager
+            ->getRepository(PlanSpecialItem::class)
+            ->findBy(['destination_id' => $plan_destination_id]);
+
+        $this->assertCount(1, $special_items);
+        $this->assertSame($special_item_id, $special_items[0]->getId());
+        $this->assertSame('特健A', $special_items[0]->getItemName());
+    }
+}
 
